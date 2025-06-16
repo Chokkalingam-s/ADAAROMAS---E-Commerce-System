@@ -19,6 +19,12 @@ body {
   border-radius: 12px;
   transition: transform 0.2s ease;
 }
+@media (min-width: 992px) {
+  .navbar .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+  }
+}
 
 .card:hover {
   transform: scale(1.03);

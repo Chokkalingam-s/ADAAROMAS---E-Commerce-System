@@ -1,34 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ADA Aromas - Home</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css"/>
-</head>
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="index.html">ADA Aromas</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="products/perfume-men.html">Perfume</a></li>
-          <li class="nav-item"><a class="nav-link" href="products/attar.html">Attar</a></li>
-          <li class="nav-item"><a class="nav-link" href="products/oud.html">Oud</a></li>
-          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-          <li class="nav-item"><a class="nav-link" href="cart.html">Cart</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+<?php include "components/header.php"; ?>
 
   <!-- Banner -->
   
@@ -82,19 +52,11 @@ $products = [
 foreach ($products as $p) {
   $discount = round((($p["mrp"] - $p["price"]) / $p["mrp"]) * 100);
   extract($p);
-  include "product-card.php";
+  include "components/product-card.php";
 }
 ?>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="bg-dark text-light text-center py-3">
-    <p class="mb-0">© 2025 ADA Aromas. All Rights Reserved.</p>
-  </footer>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/main.js"></script>
- 
-</body>
-</html>
+<?php include "components/footer.php"; ?>

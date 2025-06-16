@@ -9,3 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 });
+
+const range = document.getElementById("priceRange");
+const minPrice = document.getElementById("minPrice");
+const maxPrice = document.getElementById("maxPrice");
+
+if (range) {
+  range.addEventListener("input", () => {
+    const val = range.value;
+    minPrice.value = 0;
+    maxPrice.value = val;
+  });
+}
+
