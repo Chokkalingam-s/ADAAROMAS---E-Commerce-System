@@ -50,9 +50,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'i
           <a class="nav-link <?= $currentPage === 'oud.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/oud.php">Oud</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'about.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/about.php">About</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link <?= $currentPage === 'contact.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/contact.php">Contact</a>
         </li>
         <li class="nav-item">
