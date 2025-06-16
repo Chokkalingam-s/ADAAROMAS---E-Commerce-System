@@ -1,16 +1,17 @@
 <?php
-// products/perfume-Women.php
+// products/perfume-women.php
 $category = "Perfume-Women";
 $pageTitle = "Women's Perfume Collection";
+
 $products = [
-  ["title" => "Ombre Nomade", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 5.0, "reviews" => 1, "stock" => true, "date" => "2024-06-01"],
-  ["title" => "Flora", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.04, "reviews" => 90, "stock" => true, "date" => "2024-05-28"],
-  ["title" => "Aventus", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.09, "reviews" => 43, "stock" => false, "date" => "2024-04-10"],
-  ["title" => "Creed Viking", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.5, "reviews" => 12, "stock" => true, "date" => "2024-03-15"],
-  ["title" => "Tom Ford Noir", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.2, "reviews" => 25, "stock" => true, "date" => "2024-02-20"],
-  ["title" => "Bleu de Chanel", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.8, "reviews" => 30, "stock" => false, "date" => "2024-01-05"],
-  ["title" => "Dior Sauvage", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.7, "reviews" => 60, "stock" => true, "date" => "2023-12-15"],
-  ["title" => "Yves Saint Laurent La Nuit", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.6, "reviews" => 20, "stock" => true, "date" => "2023-11-10"]
+  ["title" => "Ombre Nomade", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "rating" => 5.0, "reviews" => 1, "stock" => true, "date" => "2024-06-01"],
+  ["title" => "Flora", "image" => "../assets/images/image.png", "price" => 949, "mrp" => 1999,  "rating" => 4.04, "reviews" => 90, "stock" => true, "date" => "2024-05-28"],
+  ["title" => "Aventus", "image" => "../assets/images/image.png", "price" => 749, "mrp" => 1999,"rating" => 4.09, "reviews" => 43, "stock" => false, "date" => "2024-04-10"],
+  ["title" => "Creed Viking", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.5, "reviews" => 12, "stock" => true, "date" => "2024-03-15"],
+  ["title" => "Tom Ford Noir", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "rating" => 4.2, "reviews" => 25, "stock" => true, "date" => "2024-02-20"],
+  ["title" => "Bleu de Chanel", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.8, "reviews" => 30, "stock" => false, "date" => "2024-01-05"],
+  ["title" => "Dior Sauvage", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.7, "reviews" => 60, "stock" => true, "date" => "2023-12-15"],
+  ["title" => "Yves Saint Laurent", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.6, "reviews" => 20, "stock" => true, "date" => "2023-11-10"]
 ];
 
 include "../components/header.php";
@@ -20,27 +21,59 @@ include "../components/header.php";
   <h2 class="text-center mb-4"><?= $pageTitle ?></h2>
 
   <div class="row">
-    <!-- Filter Sidebar -->
-    <div class="col-md-3 mb-4 mb-md-0">
-      <h5>Filters</h5>
-      <div class="border rounded p-3 bg-light">
-        <div class="mb-3">
-          <h6 class="mb-2">Availability</h6>
-          <div><input type="checkbox" id="inStock" checked> <label for="inStock">In stock</label></div>
-          <div><input type="checkbox" id="outOfStock"> <label for="outOfStock">Out of stock</label></div>
-        </div>
+<!-- Filter Sidebar -->
+<div class="col-md-3 mb-4 mb-md-0">
+  <h5 class="fw-bold">Filters</h5>
 
-        <div>
-          <h6 class="mb-2">Price</h6>
-          <input type="range" class="form-range" min="0" max="2000" id="priceRange" step="10">
-          <div class="d-flex justify-content-between mt-2">
-            <input type="text" id="minPrice" class="form-control w-45" value="0" readonly>
+  <!-- Active Filter Tag -->
+  <div id="activePriceFilter" class="bg-light text-dark px-3 py-2 rounded mb-3 d-none">
+    <span id="priceRangeText">Price: ₹0 - ₹2000</span>
+    <button onclick="clearPriceFilter()" class="btn-close btn-close-sm float-end mt-1" aria-label="Close"></button>
+  </div>
+
+  <div class="border rounded p-3 bg-white shadow-sm">
+    <!-- Availability Filter -->
+    <div class="mb-4">
+      <button class="btn w-100 text-start fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#availabilityCollapse">
+        Availability
+      </button>
+      <div class="collapse show" id="availabilityCollapse">
+        <div class="form-check ms-2">
+          <input class="form-check-input" type="checkbox" id="inStock" checked />
+          <label class="form-check-label" for="inStock">In stock</label>
+        </div>
+        <div class="form-check ms-2">
+          <input class="form-check-input" type="checkbox" id="outOfStock" />
+          <label class="form-check-label" for="outOfStock">Out of stock</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Price Filter -->
+    <div>
+      <button class="btn w-100 text-start fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse">
+        Price
+      </button>
+      <div class="collapse show" id="priceCollapse">
+        <div class="px-2 mt-2">
+          <input type="range" class="form-range" min="0" max="2000" value="2000" step="10" id="priceRange">
+          <div class="d-flex justify-content-between mt-2 align-items-center">
+            <div class="input-group w-45">
+              <span class="input-group-text">₹</span>
+              <input type="text" id="minPrice" class="form-control" value="0" readonly>
+            </div>
             <span class="mx-2">to</span>
-            <input type="text" id="maxPrice" class="form-control w-45" value="2000" readonly>
+            <div class="input-group w-45">
+              <span class="input-group-text">₹</span>
+              <input type="text" id="maxPrice" class="form-control" value="2000" readonly>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
 
     <!-- Products Grid -->
     <div class="col-md-9">
@@ -66,19 +99,42 @@ include "../components/header.php";
 
 <script>
 const products = <?= json_encode($products) ?>;
+function clearPriceFilter() {
+  document.getElementById("priceRange").value = 2000;
+  document.getElementById("maxPrice").value = 2000;
+  document.getElementById("activePriceFilter").classList.add("d-none");
+  applyFilters();
+}
+
+document.getElementById("priceRange").addEventListener("input", function (e) {
+  const value = e.target.value;
+  document.getElementById("maxPrice").value = value;
+  const minVal = document.getElementById("minPrice").value;
+  document.getElementById("priceRangeText").innerText = `Price: ₹${minVal} - ₹${value}`;
+  document.getElementById("activePriceFilter").classList.remove("d-none");
+  applyFilters();
+});
+
 
 function renderProducts(productList) {
   const grid = document.getElementById("productGrid");
   const count = document.getElementById("productCount");
   grid.innerHTML = "";
   count.textContent = `${productList.length} products`;
+
   productList.forEach(p => {
+    const discount = Math.round(((p.mrp - p.price) / p.mrp) * 100);
+    
     const card = document.createElement("div");
     card.className = "col-sm-6 col-md-4 col-lg-3";
     card.innerHTML = `
       <div class="product-card shadow position-relative overflow-hidden rounded">
-        <div class="badge bg-dark position-absolute top-0 start-0 m-2 px-2 py-1 fs-6 text-white">SAVE ${p.discount}%</div>
         <div class="product-image-wrapper position-relative">
+          ${
+            discount > 0 
+              ? `<div class="discount-badge bg-dark text-white px-2 py-1 position-absolute top-0 start-0 m-2">SAVE ${discount}%</div>` 
+              : ""
+          }
           <img src="${p.image}" class="img-fluid w-100 product-img" alt="${p.title}">
           <button class="add-to-cart-btn btn btn-light fw-bold">+ Add to cart</button>
         </div>
@@ -95,6 +151,7 @@ function renderProducts(productList) {
     grid.appendChild(card);
   });
 }
+
 
 function applyFilters() {
   let filtered = [...products];

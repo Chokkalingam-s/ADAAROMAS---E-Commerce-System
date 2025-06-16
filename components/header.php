@@ -10,6 +10,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'i
   <title>ADA Aromas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css"/>
 </head>
 <body>
@@ -18,7 +19,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'i
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="/index.php">ADA Aromas</a>
+    <a class="navbar-brand fw-bold" href="/adaaromas/index.php">ADA Aromas</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>

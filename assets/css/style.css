@@ -90,10 +90,15 @@ footer {
   .add-to-cart-btn {
     font-size: 0.85rem;
     padding: 6px 16px;
+      position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: bottom 0.3s ease;
+  opacity: 0.95;
+ 
   }
 }
-
-
 
 .product-card {
   background: #fff;
@@ -113,7 +118,6 @@ footer {
 .product-img {
   transition: transform 0.3s ease;
   border-radius: 10px;
-  object-fit: cover;
 }
 
 .add-to-cart-btn {
@@ -129,13 +133,7 @@ footer {
 .product-card:hover .add-to-cart-btn {
   bottom: 10px;
 }
-.product-card:hover .product-img {
-  transform: scale(1.05);
-}
 
-.badge.z-1 {
-  z-index: 3;
-}
 
 .discount-badge {
   font-size: 0.85rem;
