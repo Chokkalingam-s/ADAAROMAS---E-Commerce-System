@@ -63,7 +63,30 @@ footer {
   .card-img-top {
     height: 200px;
   }
+    .product-img {
+    height: 180px;
+    object-fit: cover;
+  }
 }
+@media (max-width: 576px) {
+  .card {
+    font-size: 0.9rem;
+  }
+
+  .card-img-top {
+    height: 180px;
+  }
+
+  .product-img {
+    height: 160px;
+  }
+
+  .add-to-cart-btn {
+    font-size: 0.85rem;
+    padding: 6px 16px;
+  }
+}
+
 
 
 .product-card {
