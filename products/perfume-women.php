@@ -1,8 +1,7 @@
 <?php
-// products/perfume-men.php
-$category = "Perfume-Men";
-$pageTitle = "Men's Perfume Collection";
-
+// products/perfume-Women.php
+$category = "Perfume-Women";
+$pageTitle = "Women's Perfume Collection";
 $products = [
   ["title" => "Ombre Nomade", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 5.0, "reviews" => 1, "stock" => true, "date" => "2024-06-01"],
   ["title" => "Flora", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "discount" => 58, "rating" => 4.04, "reviews" => 90, "stock" => true, "date" => "2024-05-28"],
