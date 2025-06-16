@@ -31,11 +31,11 @@
   </nav>
 
   <!-- Banner -->
-  <div class="py-1 container-fluid px-0">
+  
     <div class="banner">
       <img src="assets/images/banner.png" class="img-fluid w-100 banner" alt="Banner" />
     </div>
-  </div>
+  
 
   <!-- Featured Products -->
   <section class="py-5">

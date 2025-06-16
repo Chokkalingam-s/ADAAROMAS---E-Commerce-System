@@ -41,12 +41,17 @@ body {
   border-color: #6e3b2f;
 }
 
-/* Banner */
-.banner img {
-  max-height: 500px;
-  object-fit: cover;
+
+.banner {
+  width: 100%;
+  overflow: hidden;
 }
 
+.banner img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
 /* Footer */
 footer {
   background-color: #2f2f2f;
@@ -57,10 +62,6 @@ footer {
 @media (max-width: 768px) {
   .card-img-top {
     height: 200px;
-  }
-
-  .banner img {
-    height: 300px;
   }
 }
 
@@ -84,12 +85,6 @@ footer {
   transition: transform 0.3s ease;
   border-radius: 10px;
   object-fit: cover;
-}
-
-.banner{
-  position: relative;
-  overflow: hidden;
-  object-fit: fill;
 }
 
 .add-to-cart-btn {
