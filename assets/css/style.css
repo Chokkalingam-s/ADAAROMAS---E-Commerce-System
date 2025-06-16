@@ -1,0 +1,120 @@
+/* Reset & Base Styles */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar Brand */
+.navbar-brand {
+  font-size: 1.8rem;
+  color: #4b2c20 !important;
+}
+
+/* Card Styling */
+.card {
+  border: none;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.card-img-top {
+  height: 250px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #4b2c20;
+  border-color: #4b2c20;
+}
+
+.btn-primary:hover {
+  background-color: #6e3b2f;
+  border-color: #6e3b2f;
+}
+
+/* Banner */
+.banner img {
+  max-height: 500px;
+  object-fit: cover;
+}
+
+/* Footer */
+footer {
+  background-color: #2f2f2f;
+  color: white;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 768px) {
+  .card-img-top {
+    height: 200px;
+  }
+
+  .banner img {
+    height: 300px;
+  }
+}
+
+
+.product-card {
+  background: #fff;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+  transform: scale(1.02);
+}
+
+.product-image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.product-img {
+  transition: transform 0.3s ease;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.banner{
+  position: relative;
+  overflow: hidden;
+  object-fit: fill;
+}
+
+.add-to-cart-btn {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: bottom 0.3s ease;
+  opacity: 0.95;
+  padding: 8px 20px;
+}
+
+.product-card:hover .add-to-cart-btn {
+  bottom: 10px;
+}
+.product-card:hover .product-img {
+  transform: scale(1.05);
+}
+
+.badge.z-1 {
+  z-index: 3;
+}
+
+.discount-badge {
+  font-size: 0.85rem;
+  border-radius: 4px;
+  z-index: 10;
+}
