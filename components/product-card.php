@@ -22,6 +22,7 @@
   onclick='addToCart({
     title: "<?= addslashes($title) ?>",
     price: <?= $price ?>,
+     mrp: <?= $mrp ?>,
     image: "<?= $absImage ?>"
   })'>
   + Add to cart
@@ -37,10 +38,10 @@
         Rs. <?= $price ?> 
         <span class="text-muted text-decoration-line-through fs-6">Rs. <?= $mrp ?></span>
       </p>
-      <p class="text-warning mb-1">
+      <!-- <p class="text-warning mb-1">
         ⭐ <?= $rating ?> 
         <span class="text-primary">| <i class="bi bi-patch-check-fill"></i> (<?= $reviews ?> Reviews)</span>
-      </p>
+      </p> -->
     </div>
   </div>
 </div>

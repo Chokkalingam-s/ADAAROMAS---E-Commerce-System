@@ -33,6 +33,8 @@
     count.textContent = cart.length;
   }
 </script>
+
+<!-- Add to cart script -->
 <script>
 function toggleCartSidebar() {
   document.getElementById("cartSidebar").classList.toggle("open");
@@ -123,6 +125,87 @@ function updateCartCount() {
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
 });
+</script>
+<!-- checkout.php script -->
+<script>
+function renderCheckoutOrder() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const summary = document.getElementById("checkoutOrderSummary");
+  if (!summary) return;
+
+  if (cart.length === 0) {
+    summary.innerHTML = "<p>No items in cart.</p>";
+    return;
+  }
+
+  let total = 0;
+  let savings = 0;
+  summary.innerHTML = cart.map(p => {
+    total += p.price * p.quantity;
+    savings += (p.mrp - p.price) * p.quantity;
+    return `
+      <div class='d-flex justify-content-between align-items-center mb-2'>
+        <div class="w-75">
+          <strong>${p.title}</strong>
+          <div class="d-flex align-items-center gap-2 mt-1">
+            <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateCheckoutQuantity('${p.title}', -1)">-</button>
+            <span>${p.quantity}</span>
+            <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateCheckoutQuantity('${p.title}', 1)">+</button>
+          </div>
+          <small class="text-muted"><s>₹${p.mrp}</s> → ₹${p.price}</small>
+        </div>
+        <div class="text-end">
+          <button class="btn btn-sm text-danger mb-1" onclick="removeFromCheckout('${p.title}')"><i class="bi bi-x-lg"></i></button>
+          <div><strong>₹${p.price * p.quantity}</strong></div>
+        </div>
+      </div>`;
+  }).join("");
+
+  summary.innerHTML += `<hr><div class='d-flex justify-content-between'><strong>Total:</strong><strong>₹${total}</strong></div><div class='d-flex justify-content-between text-success'><span>Total Savings:</span><span>₹${savings}</span></div>`;
+}
+
+function updateCheckoutQuantity(title, change) {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const item = cart.find(p => p.title === title);
+  if (!item) return;
+  item.quantity += change;
+  if (item.quantity < 1) item.quantity = 1;
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCheckoutOrder();
+  if (typeof renderCart === 'function') renderCart();
+  window.dispatchEvent(new Event("storage"));
+}
+
+function removeFromCheckout(title) {
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  cart = cart.filter(p => p.title !== title);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCheckoutOrder();
+  if (typeof renderCart === 'function') renderCart();
+  window.dispatchEvent(new Event("storage"));
+}
+
+window.addEventListener("storage", function (e) {
+  if (e.key === "cart") renderCheckoutOrder();
+});
+
+function requestCoupon(e) {
+  e.preventDefault();
+  const email = document.getElementById("billingEmail").value.trim();
+  const phone = document.getElementById("billingPhone").value.trim();
+  if (!email || !phone) {
+    alert("Please fill in both email and phone to request a coupon.");
+  } else {
+    alert("Coupon request submitted for " + email);
+  }
+}
+
+const shipCheckbox = document.getElementById("shipDifferent");
+shipCheckbox.addEventListener("change", function () {
+  document.getElementById("shippingAddressBox").classList.toggle("d-none", !this.checked);
+});
+
+document.addEventListener("DOMContentLoaded", renderCheckoutOrder);
 </script>
 
 </body>

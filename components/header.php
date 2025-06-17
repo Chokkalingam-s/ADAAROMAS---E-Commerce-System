@@ -115,9 +115,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <div class="cart-sidebar-body" id="cartItems">
     <p class="text-muted">No items in cart.</p>
   </div>
-  <div class="p-3 border-top">
-    <button class="btn btn-primary w-100">Go to Checkout</button>
-  </div>
+ <div class="p-3 border-top">
+  <a href="/adaaromas/checkout.php" class="btn btn-primary w-100">Go to Checkout</a>
+</div>
+
 </div>
 
 
