@@ -14,178 +14,127 @@ $products = [
   ["title" => "Yves Saint Laurent", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.6, "reviews" => 20, "stock" => true, "date" => "2023-11-10"]
 ];
 
+$inStock = $_GET['inStock'] ?? '1';
+$outOfStock = $_GET['outOfStock'] ?? '1';
+$min = $_GET['min'] ?? 0;
+$max = $_GET['max'] ?? 2000;
+
+$filteredProducts = array_filter($products, function ($p) use ($inStock, $outOfStock, $min, $max) {
+  $stockStatus = $p['stock'] ? 'in' : 'out';
+  $stockMatch = ($stockStatus === 'in' && $inStock === '1') || ($stockStatus === 'out' && $outOfStock === '1');
+  return $stockMatch && $p['price'] >= $min && $p['price'] <= $max;
+});
+
 include "../components/header.php";
 ?>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+
 <div class="container-fluid mt-4 mb-5">
   <h2 class="text-center mb-4"><?= $pageTitle ?></h2>
-
   <div class="row">
-<!-- Filter Sidebar -->
-<div class="col-md-3 mb-4 mb-md-0">
-  <h5 class="fw-bold">Filters</h5>
-
-  <!-- Active Filter Tag -->
-  <div id="activePriceFilter" class="bg-light text-dark px-3 py-2 rounded mb-3 d-none">
-    <span id="priceRangeText">Price: ₹0 - ₹2000</span>
-    <button onclick="clearPriceFilter()" class="btn-close btn-close-sm float-end mt-1" aria-label="Close"></button>
-  </div>
-
-  <div class="border rounded p-3 bg-white shadow-sm">
-    <!-- Availability Filter -->
-    <div class="mb-4">
-      <button class="btn w-100 text-start fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#availabilityCollapse">
-        Availability
-      </button>
-      <div class="collapse show" id="availabilityCollapse">
-        <div class="form-check ms-2">
-          <input class="form-check-input" type="checkbox" id="inStock" checked />
-          <label class="form-check-label" for="inStock">In stock</label>
-        </div>
-        <div class="form-check ms-2">
-          <input class="form-check-input" type="checkbox" id="outOfStock" />
-          <label class="form-check-label" for="outOfStock">Out of stock</label>
-        </div>
+    <div class="col-md-3 mb-4 mb-md-0">
+      <h4 class="fw-semibold mb-3">Filters</h4>
+      <div class="filter-tags mb-3">
+        <?php if ($min > 0 || $max < 2000): ?>
+          <span class="filter-tag">
+            Price: Rs. <?= $min ?> – Rs. <?= $max ?>
+            <a href="?inStock=<?= $inStock ?>&outOfStock=<?= $outOfStock ?>" class="filter-tag-close" title="Remove filter">&times;</a>
+          </span>
+        <?php endif; ?>
       </div>
-    </div>
-
-    <!-- Price Filter -->
-    <div>
-      <button class="btn w-100 text-start fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse">
-        Price
-      </button>
-      <div class="collapse show" id="priceCollapse">
-        <div class="px-2 mt-2">
-          <input type="range" class="form-range" min="0" max="2000" value="2000" step="10" id="priceRange">
-          <div class="d-flex justify-content-between mt-2 align-items-center">
-            <div class="input-group w-45">
-              <span class="input-group-text">₹</span>
-              <input type="text" id="minPrice" class="form-control" value="0" readonly>
+      <form method="GET" id="filterForm">
+        <div class="border rounded p-3 bg-white shadow-sm">
+          <div class="mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="fw-semibold">Availability</span>
+              <span class="chevron">&#9660;</span>
             </div>
-            <span class="mx-2">to</span>
-            <div class="input-group w-45">
-              <span class="input-group-text">₹</span>
-              <input type="text" id="maxPrice" class="form-control" value="2000" readonly>
+            <label class="form-check-label d-flex align-items-center mb-1">
+              <input class="form-check-input me-2" type="checkbox" name="inStock" value="1" <?= $inStock == '1' ? 'checked' : '' ?>>
+              In stock <span class="text-muted ms-2">(<?= count(array_filter($products, fn($p) => $p['stock'])) ?>)</span>
+            </label>
+            <label class="form-check-label d-flex align-items-center">
+              <input class="form-check-input me-2" type="checkbox" name="outOfStock" value="1" <?= $outOfStock == '1' ? 'checked' : '' ?>>
+              Out of stock <span class="text-muted ms-2">(<?= count(array_filter($products, fn($p) => !$p['stock'])) ?>)</span>
+            </label>
+          </div>
+          <div class="mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="fw-semibold">Price</span>
+              <span class="chevron">&#9660;</span>
             </div>
+            <div id="priceSlider"></div>
+            <div class="d-flex justify-content-between mt-2">
+              <div class="price-box">₹ <span id="minVal"><?= $min ?></span></div>
+              <span>to</span>
+              <div class="price-box">₹ <span id="maxVal"><?= $max ?></span></div>
+            </div>
+            <input type="hidden" id="min" name="min" value="<?= $min ?>">
+            <input type="hidden" id="max" name="max" value="<?= $max ?>">
           </div>
         </div>
-      </div>
+      </form>
     </div>
-  </div>
-</div>
-
-
-    <!-- Products Grid -->
     <div class="col-md-9">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <span><strong id="productCount"></strong></span>
-        <select class="form-select w-auto" id="sortSelect">
-          <option value="best" selected>Best selling</option>
-          <option value="low">Price, low to high</option>
-          <option value="high">Price, high to low</option>
-          <option value="az">Alphabetically, A-Z</option>
-          <option value="za">Alphabetically, Z-A</option>
-          <option value="old">Date, old to new</option>
-          <option value="new">Date, new to old</option>
-        </select>
-      </div>
-
       <div class="row g-4" id="productGrid">
-        <!-- Product cards will be rendered by JS -->
+        <?php
+        $sortOrder = $_GET['sort'] ?? 'best';
+        if ($sortOrder === 'low') usort($filteredProducts, fn($a, $b) => $a['price'] <=> $b['price']);
+        if ($sortOrder === 'high') usort($filteredProducts, fn($a, $b) => $b['price'] <=> $a['price']);
+        if ($sortOrder === 'az') usort($filteredProducts, fn($a, $b) => strcmp($a['title'], $b['title']));
+        if ($sortOrder === 'za') usort($filteredProducts, fn($a, $b) => strcmp($b['title'], $a['title']));
+        if ($sortOrder === 'old') usort($filteredProducts, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+        if ($sortOrder === 'new') usort($filteredProducts, fn($a, $b) => strtotime($b['date']) <=> strtotime($a['date']));
+
+        foreach ($filteredProducts as $p): 
+          extract($p);
+          $discount = round((($mrp - $price) / $mrp) * 100);
+          include "../components/product-card.php";
+        endforeach;
+        ?>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const products = <?= json_encode($products) ?>;
-function clearPriceFilter() {
-  document.getElementById("priceRange").value = 2000;
-  document.getElementById("maxPrice").value = 2000;
-  document.getElementById("activePriceFilter").classList.add("d-none");
-  applyFilters();
-}
+  const minVal = document.getElementById('minVal');
+  const maxVal = document.getElementById('maxVal');
+  const minInput = document.getElementById('min');
+  const maxInput = document.getElementById('max');
+  const slider = document.getElementById('priceSlider');
+  const form = document.getElementById('filterForm');
 
-document.getElementById("priceRange").addEventListener("input", function (e) {
-  const value = e.target.value;
-  document.getElementById("maxPrice").value = value;
-  const minVal = document.getElementById("minPrice").value;
-  document.getElementById("priceRangeText").innerText = `Price: ₹${minVal} - ₹${value}`;
-  document.getElementById("activePriceFilter").classList.remove("d-none");
-  applyFilters();
-});
-
-
-function renderProducts(productList) {
-  const grid = document.getElementById("productGrid");
-  const count = document.getElementById("productCount");
-  grid.innerHTML = "";
-  count.textContent = `${productList.length} products`;
-
-  productList.forEach(p => {
-    const discount = Math.round(((p.mrp - p.price) / p.mrp) * 100);
-    
-    const card = document.createElement("div");
-    card.className = "col-sm-6 col-md-4 col-lg-3";
-    card.innerHTML = `
-      <div class="product-card shadow position-relative overflow-hidden rounded">
-        <div class="product-image-wrapper position-relative">
-          ${
-            discount > 0 
-              ? `<div class="discount-badge bg-dark text-white px-2 py-1 position-absolute top-0 start-0 m-2">SAVE ${discount}%</div>` 
-              : ""
-          }
-          <img src="${p.image}" class="img-fluid w-100 product-img" alt="${p.title}">
-          <button class="add-to-cart-btn btn btn-light fw-bold">+ Add to cart</button>
-        </div>
-        <div class="text-center mt-3">
-          <h5 class="mb-1">${p.title}</h5>
-          <p class="mb-1 fs-6">
-            Rs. ${p.price} <span class="text-muted text-decoration-line-through fs-6">Rs. ${p.mrp}</span>
-          </p>
-          <p class="text-warning mb-1">
-            ⭐ ${p.rating} <span class="text-primary">| <i class="bi bi-patch-check-fill"></i> (${p.reviews} Reviews)</span>
-          </p>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-
-function applyFilters() {
-  let filtered = [...products];
-  const inStock = document.getElementById("inStock").checked;
-  const outOfStock = document.getElementById("outOfStock").checked;
-  const priceLimit = parseInt(document.getElementById("priceRange").value);
-
-  filtered = filtered.filter(p => (p.price <= priceLimit));
-  if (!inStock) filtered = filtered.filter(p => !p.stock);
-  if (!outOfStock) filtered = filtered.filter(p => p.stock);
-
-  const sort = document.getElementById("sortSelect").value;
-  if (sort === "low") filtered.sort((a, b) => a.price - b.price);
-  if (sort === "high") filtered.sort((a, b) => b.price - a.price);
-  if (sort === "az") filtered.sort((a, b) => a.title.localeCompare(b.title));
-  if (sort === "za") filtered.sort((a, b) => b.title.localeCompare(a.title));
-  if (sort === "old") filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-  if (sort === "new") filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  renderProducts(filtered);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("priceRange").addEventListener("input", e => {
-    document.getElementById("maxPrice").value = e.target.value;
-    applyFilters();
+  noUiSlider.create(slider, {
+    start: [parseInt(minInput.value), parseInt(maxInput.value)],
+    connect: true,
+    step: 10,
+    range: {
+      min: 0,
+      max: 2000
+    },
+    tooltips: false,
+    format: {
+      to: value => Math.round(value),
+      from: value => Number(value)
+    }
   });
 
-  document.getElementById("inStock").addEventListener("change", applyFilters);
-  document.getElementById("outOfStock").addEventListener("change", applyFilters);
-  document.getElementById("sortSelect").addEventListener("change", applyFilters);
+  slider.noUiSlider.on('update', (values, handle) => {
+    const [minValNum, maxValNum] = values;
+    minVal.innerText = minValNum;
+    maxVal.innerText = maxValNum;
+    minInput.value = minValNum;
+    maxInput.value = maxValNum;
+  });
 
-  applyFilters();
-});
+  slider.noUiSlider.on('change', () => form.submit());
+
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => form.submit());
+  });
 </script>
 
 <?php include "../components/footer.php"; ?>

@@ -95,8 +95,6 @@ footer {
   left: 50%;
   transform: translateX(-50%);
   transition: bottom 0.3s ease;
-  opacity: 0.95;
- 
   }
 }
 
@@ -125,14 +123,19 @@ footer {
   bottom: -50px;
   left: 50%;
   transform: translateX(-50%);
-  transition: bottom 0.3s ease;
-  opacity: 0.95;
+  transition: bottom 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
   padding: 8px 20px;
+  pointer-events: none;
+ 
+}
+.product-image-wrapper:hover .add-to-cart-btn {
+  bottom: 10px;
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 10;
 }
 
-.product-card:hover .add-to-cart-btn {
-  bottom: 10px;
-}
 
 
 .discount-badge {

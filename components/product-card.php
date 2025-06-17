@@ -2,7 +2,7 @@
   <div class="product-card shadow position-relative overflow-hidden rounded">
     
     <!-- Image Container with badge and hover button -->
-    <div class="product-image-wrapper position-relative">
+    <div class="position-relative overflow-hidden ">
       <!-- ✅ Discount Badge -->
       <?php if (isset($discount) && $discount > 0): ?>
         <div class="discount-badge bg-dark text-white px-2 py-1 position-absolute top-0 start-0 m-2">
@@ -14,17 +14,21 @@
       <img src="<?= $image ?>" class="img-fluid w-100 product-img" alt="<?= $title ?>">
 
       <!-- Hover Add to Cart Button -->
-       <button 
-  class="add-to-cart-btn btn btn-light fw-bold" 
+ <?php
+  $absImage = "/adaaromas/assets/images/" . basename($image); 
+?>
+<button 
+  class="add-to-cart-btn btn btn-light fw-bold"
   onclick='addToCart({
     title: "<?= addslashes($title) ?>",
     price: <?= $price ?>,
-      image: "<?= "/adaaromas/" . ltrim($image, "/") ?>"
+    image: "<?= $absImage ?>"
   })'>
   + Add to cart
 </button>
+
      
-    </div>
+ 
 
     <!-- Card Body -->
     <div class="text-center mt-3">
@@ -40,3 +44,4 @@
     </div>
   </div>
 </div>
+   </div>
