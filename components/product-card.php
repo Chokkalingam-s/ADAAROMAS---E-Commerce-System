@@ -14,7 +14,16 @@
       <img src="<?= $image ?>" class="img-fluid w-100 product-img" alt="<?= $title ?>">
 
       <!-- Hover Add to Cart Button -->
-      <button class="add-to-cart-btn btn btn-light fw-bold">+ Add to cart</button>
+       <button 
+  class="add-to-cart-btn btn btn-light fw-bold" 
+  onclick='addToCart({
+    title: "<?= addslashes($title) ?>",
+    price: <?= $price ?>,
+    image: "<?= $image ?>"
+  })'>
+  + Add to cart
+</button>
+     
     </div>
 
     <!-- Card Body -->

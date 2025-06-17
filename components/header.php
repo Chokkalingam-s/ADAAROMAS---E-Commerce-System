@@ -1,5 +1,5 @@
-<?php
-$currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'index.php'
+<?php 
+$currentPage = basename($_SERVER['PHP_SELF']); 
 ?>
 
 <!DOCTYPE html>
@@ -10,12 +10,60 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'i
   <title>ADA Aromas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css"/>
+  <style>
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100vh;
+      background: #fff;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      z-index: 1050;
+      transition: right 0.3s ease-in-out;
+      overflow-y: auto;
+    }
+    .cart-sidebar.open {
+      right: 0;
+    }
+    .cart-sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid #ccc;
+    }
+    .cart-sidebar-body {
+      padding: 1rem;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+    }
+    .cart-count-badge {
+      position: absolute;
+      top: 0;
+      right: -5px;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
   <div class="container">
@@ -29,11 +77,7 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'i
         <!-- Perfume Dropdown -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle <?= in_array($currentPage, ['perfume-men.php', 'perfume-women.php']) ? 'active fw-bold text-primary' : '' ?>" 
-             href="#" id="perfumeDropdown" 
-             role="button" 
-             data-bs-toggle="dropdown" 
-             aria-expanded="false"
-             onclick="return false;"> <!-- Prevent clicking -->
+             href="#" id="perfumeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Perfume
           </a>
           <ul class="dropdown-menu" aria-labelledby="perfumeDropdown">
@@ -42,7 +86,6 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'i
           </ul>
         </li>
 
-        <!-- Other Items -->
         <li class="nav-item">
           <a class="nav-link <?= $currentPage === 'attar.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/attar.php">Attar</a>
         </li>
@@ -52,11 +95,29 @@ $currentPage = basename($_SERVER['PHP_SELF']); // gets current file name like 'i
         <li class="nav-item">
           <a class="nav-link <?= $currentPage === 'contact.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/contact.php">Contact</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'cart.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/cart.php">Cart</a>
+        <li class="nav-item position-relative">
+          <a class="nav-link <?= $currentPage === 'cart.php' ? 'active fw-bold text-primary' : '' ?>" href="#" onclick="toggleCartSidebar()">
+            <i class="bi bi-cart3 fs-5"></i>
+            <span class="cart-count-badge" id="cartCount">0</span>
+          </a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
+
+<!-- Cart Sidebar -->
+<div id="cartSidebar" class="cart-sidebar">
+  <div class="cart-sidebar-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Your Cart</h5>
+    <button class="btn-close" onclick="toggleCartSidebar()"></button>
+  </div>
+  <div class="cart-sidebar-body" id="cartItems">
+    <p class="text-muted">No items in cart.</p>
+  </div>
+  <div class="p-3 border-top">
+    <button class="btn btn-primary w-100">Go to Checkout</button>
+  </div>
+</div>
+
 
