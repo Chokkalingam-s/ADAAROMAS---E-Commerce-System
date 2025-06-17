@@ -19,7 +19,7 @@
   onclick='addToCart({
     title: "<?= addslashes($title) ?>",
     price: <?= $price ?>,
-    image: "<?= $image ?>"
+      image: "<?= "/adaaromas/" . ltrim($image, "/") ?>"
   })'>
   + Add to cart
 </button>

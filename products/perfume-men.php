@@ -115,7 +115,7 @@ include "../components/header.php";
       min: 0,
       max: 2000
     },
-    tooltips: true,
+    tooltips: false,
     format: {
       to: value => Math.round(value),
       from: value => Number(value)
