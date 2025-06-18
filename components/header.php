@@ -154,6 +154,53 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         width: 100%;
       }
     }
+
+    .scroll-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+.scroll-row::-webkit-scrollbar {
+  display: none;
+}
+.rec-card {
+  flex: 0 0 160px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  background: #f9f9f9;
+}
+.rec-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.rec-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 6px 0 4px;
+}
+.rec-price {
+  font-size: 13px;
+}
+.rec-old {
+  text-decoration: line-through;
+  color: gray;
+  font-size: 12px;
+}
+.rec-star {
+  font-size: 12px;
+  color: #ffc107;
+}
+.rec-add {
+  font-size: 12px;
+  color: #007bff;
+  cursor: pointer;
+}
+
   </style>
 </head>
 <body>
@@ -200,18 +247,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
   <div class="cart-body" id="cartItems"><p class="text-muted">No items in cart.</p></div>
 
-  <div class="recommendations" id="recommendationBox">
-    <div class="recommend-title">You May Also Like</div>
-    <div class="rec-item">
-      <img src="/assets/img/sample1.png" alt="">
-      <div>
-        <p class="title mb-0">The Vikings</p>
-        <div class="price">₹849 <span class="old">₹1,999</span></div>
-        <div class="star"><i class="bi bi-star-fill"></i> 5.0 (1)</div>
-        <a href="#" onclick="addToCart({title:'The Vikings', price:849, image:'/assets/img/sample1.png', mrp:1999})">+ Add to cart</a>
-      </div>
-    </div>
-  </div>
+<div class="recommendations">
+  <div class="recommend-title">You May Also Like</div>
+  <div id="recommendationBox" class="scroll-row"></div>
+</div>
 
   <div class="cart-footer">
     <a href="/adaaromas/checkout.php" class="btn btn-dark w-100">

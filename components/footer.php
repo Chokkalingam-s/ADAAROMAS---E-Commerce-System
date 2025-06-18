@@ -103,8 +103,57 @@ const itemDiv = document.createElement("div");
   totalSpan.textContent = `₹${total.toLocaleString()}`;
 }
 
+function renderRecommendations() {
+  const container = document.getElementById("recommendationBox");
+  container.innerHTML = "";
+
+  const products = [
+    {
+      title: "The Vikings",
+      price: 849,
+      mrp: 1999,
+      image: "/assets/img/sample1.png",
+      rating: 5,
+      reviews: 1
+    },
+    {
+      title: "Savage Perfume",
+      price: 1099,
+      mrp: 2598,
+      image: "/assets/img/sample2.png",
+      rating: 0,
+      reviews: 0
+    },
+    {
+      title: "Ombre Leather",
+      price: 849,
+      mrp: 1999,
+      image: "/assets/img/sample3.png",
+      rating: 4.2,
+      reviews: 12
+    }
+  ];
+
+  products.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "rec-card";
+
+    card.innerHTML = `
+      <img src="${p.image}" alt="${p.title}">
+      <div class="rec-title">${p.title}</div>
+      <div class="rec-price">₹${p.price} <span class="rec-old">₹${p.mrp}</span></div>
+      <div class="rec-star"><i class="bi bi-star-fill"></i> ${p.rating} (${p.reviews})</div>
+      <div class="rec-add" onclick="addToCart(${JSON.stringify(p).replace(/"/g, '&quot;')})">+ Add to cart</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
+  renderRecommendations();
 });
 </script>
 <!-- checkout.php script -->
