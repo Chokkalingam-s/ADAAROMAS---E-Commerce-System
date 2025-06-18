@@ -10,55 +10,149 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <title>ADA Aromas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css"/>
   <style>
     .cart-sidebar {
       position: fixed;
       top: 0;
-      right: -400px;
-      width: 350px;
+      right: -100%;
+      width: 380px;
       height: 100vh;
       background: #fff;
-      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
-      z-index: 1050;
-      transition: right 0.3s ease-in-out;
+      box-shadow: -4px 0 10px rgba(0,0,0,0.2);
+      z-index: 1055;
+      transition: right 0.35s ease-in-out;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
     .cart-sidebar.open {
       right: 0;
     }
-    .cart-sidebar-header {
+    .cart-header {
       padding: 1rem;
-      border-bottom: 1px solid #ccc;
+      font-size: 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .cart-sidebar-body {
+    .cart-body {
+      flex-grow: 1;
       padding: 1rem;
     }
     .cart-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1rem;
+     display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
     }
     .cart-item img {
       width: 60px;
       height: 60px;
       object-fit: cover;
+      border-radius: 5px;
     }
+    .cart-info {
+      flex-grow: 1;
+    }
+    .cart-title {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .cart-price {
+      font-size: 14px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .original-price {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 13px;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .qty-controls button {
+      padding: 2px 6px;
+      font-size: 12px;
+    }
+    .remove-btn {
+      font-size: 14px;
+      color: #dc3545;
+      background: none;
+      border: none;
+      margin-top: 4px;
+      padding: 0;
+    }
+    .cart-footer {
+      padding: 1rem;
+      border-top: 1px solid #eee;
+    }
+    .recommendations {
+      border-top: 1px solid #eee;
+      padding: 1rem;
+    }
+    .recommend-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .rec-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .rec-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+    .rec-item .title {
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0;
+    }
+    .rec-item .price {
+      font-size: 13px;
+    }
+    .rec-item .old {
+      text-decoration: line-through;
+      font-size: 12px;
+      color: gray;
+    }
+    .rec-item .star {
+      color: #ffc107;
+      font-size: 12px;
+    }
+
     .cart-count-badge {
       position: absolute;
-      top: 0;
-      right: -5px;
-      background: red;
+      top: -2px;
+      right: -6px;
+      background: #dc3545;
       color: white;
-      border-radius: 50%;
       font-size: 12px;
       width: 18px;
       height: 18px;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+    }
+
+    @media(max-width: 420px){
+      .cart-sidebar {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -73,30 +167,21 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-
-        <!-- Perfume Dropdown -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle <?= in_array($currentPage, ['perfume-men.php', 'perfume-women.php']) ? 'active fw-bold text-primary' : '' ?>" 
-             href="#" id="perfumeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+             href="#" id="perfumeDropdown" data-bs-toggle="dropdown">
             Perfume
           </a>
-          <ul class="dropdown-menu" aria-labelledby="perfumeDropdown">
+          <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/adaaromas/products/perfume-men.php">For Him</a></li>
             <li><a class="dropdown-item" href="/adaaromas/products/perfume-women.php">For Her</a></li>
           </ul>
         </li>
-
-        <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'attar.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/attar.php">Attar</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'oud.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/oud.php">Oud</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'contact.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/contact.php">Contact</a>
-        </li>
+        <li class="nav-item"><a class="nav-link <?= $currentPage === 'attar.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/attar.php">Attar</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentPage === 'oud.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/oud.php">Oud</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentPage === 'contact.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/contact.php">Contact</a></li>
         <li class="nav-item position-relative">
-          <a class="nav-link <?= $currentPage === 'cart.php' ? 'active fw-bold text-primary' : '' ?>" href="#" onclick="toggleCartSidebar()">
+          <a class="nav-link" href="javascript:void(0)" onclick="toggleCartSidebar()">
             <i class="bi bi-cart3 fs-5"></i>
             <span class="cart-count-badge" id="cartCount">0</span>
           </a>
@@ -108,17 +193,31 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
 <!-- Cart Sidebar -->
 <div id="cartSidebar" class="cart-sidebar">
-  <div class="cart-sidebar-header d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">Your Cart</h5>
+  <div class="cart-header">
+    <span><i class="bi bi-bag me-2"></i><span id="cartItemCount">0 items</span></span>
     <button class="btn-close" onclick="toggleCartSidebar()"></button>
   </div>
-  <div class="cart-sidebar-body" id="cartItems">
-    <p class="text-muted">No items in cart.</p>
-  </div>
- <div class="p-3 border-top">
-  <a href="/adaaromas/checkout.php" class="btn btn-primary w-100">Go to Checkout</a>
-</div>
 
+  <div class="cart-body" id="cartItems"><p class="text-muted">No items in cart.</p></div>
+
+  <div class="recommendations" id="recommendationBox">
+    <div class="recommend-title">You May Also Like</div>
+    <div class="rec-item">
+      <img src="/assets/img/sample1.png" alt="">
+      <div>
+        <p class="title mb-0">The Vikings</p>
+        <div class="price">₹849 <span class="old">₹1,999</span></div>
+        <div class="star"><i class="bi bi-star-fill"></i> 5.0 (1)</div>
+        <a href="#" onclick="addToCart({title:'The Vikings', price:849, image:'/assets/img/sample1.png', mrp:1999})">+ Add to cart</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="cart-footer">
+    <a href="/adaaromas/checkout.php" class="btn btn-dark w-100">
+      <i class="bi bi-lock"></i> Checkout • <span id="cartTotal">₹0</span>
+    </a>
+  </div>
 </div>
 
 
