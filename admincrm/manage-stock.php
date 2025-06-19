@@ -38,6 +38,21 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
   height: 100%;
 }
 
+.editable-display-margin {
+  position: relative;
+  height: 38px;
+}
+
+.editable-display-margin input,
+.editable-display-margin select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
   </style>
 </head>
 <body class="bg-light">
@@ -100,8 +115,17 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 </td>
             <td><input type="text" class="form-control form-control-sm asp" value="<?= $r['asp'] ?>" readonly></td>
-            <td><input type="number" class="form-control form-control-sm displayMargin" value="<?= round((($r['mrp'] - $r['asp']) / $r['asp']) * 100 / 5) * 5 ?>"></td>
-            <td><input type="text" class="form-control form-control-sm mrp" value="<?= $r['mrp'] ?>" readonly></td>
+            <td>
+  <div class="editable-display-margin" style="position: relative; height: 38px;">
+    <input type="text" class="form-control form-control-sm displayMargin" value="<?= round((($r['mrp'] - $r['asp']) / $r['asp']) * 100 / 5) * 5 ?>" readonly style="position:absolute; top:0; left:0; width:100%; height:100%;">
+    <select class="form-select form-select-sm displayMargin-select d-none" style="position:absolute; top:0; left:0; width:100%; height:100%;">
+      <?php for($i=40; $i<=75; $i+=5): ?>
+        <option value="<?= $i ?>"><?= $i ?></option>
+      <?php endfor; ?>
+    </select>
+  </div>
+</td>
+<td><input type="text" class="form-control form-control-sm mrp" value="<?= $r['mrp'] ?>" readonly></td>
             <td><input type="number" class="form-control form-control-sm stockInHand" value="<?= $r['stockInHand'] ?>"></td>
             <td class="text-nowrap">
               <button class="btn btn-sm btn-secondary apply-btn" disabled>Apply</button>
@@ -248,6 +272,36 @@ function filterTable() {
 document.getElementById('searchInput').addEventListener('input', filterTable);
 document.getElementById('filterCategory').addEventListener('change', filterTable);
 
+document.querySelectorAll('.displayMargin').forEach(input => {
+  input.addEventListener('click', function () {
+    const container = this.closest('.editable-display-margin');
+    const select = container.querySelector('.displayMargin-select');
+    const val = this.value;
+    this.classList.add('d-none');
+    select.classList.remove('d-none');
+    select.value = val;
+  });
+});
+
+document.querySelectorAll('.displayMargin-select').forEach(select => {
+  select.addEventListener('change', function () {
+    const container = this.closest('.editable-display-margin');
+    const input = container.querySelector('.displayMargin');
+    input.value = this.value;
+    this.classList.add('d-none');
+    input.classList.remove('d-none');
+
+    // Trigger MRP update
+    const tr = this.closest('tr');
+    const asp = parseFloat(tr.querySelector('.asp').value) || 0;
+    const dispMargin = parseFloat(this.value) || 0;
+    const newMRP = Math.round((asp + (asp * dispMargin / 100)) / 50) * 50;
+    tr.querySelector('.mrp').value = newMRP;
+    input.dispatchEvent(new Event('input'));
+  });
+});
+
+
 document.querySelectorAll('.editable-margin').forEach(container => {
   const input = container.querySelector('.margin');
   const select = container.querySelector('.margin-select');
@@ -290,6 +344,8 @@ document.querySelectorAll('.editable-margin').forEach(container => {
     }
   });
 });
+
+
 
 </script>
 
