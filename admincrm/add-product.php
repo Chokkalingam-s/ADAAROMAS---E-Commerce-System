@@ -14,6 +14,22 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
   </style>
 </head>
 <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <a class="navbar-brand" href="../admincrm">ADA Aromas Admin</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="adminNav">
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item"><a class="nav-link active" href="add-product.php">Add Product</a></li>
+      <li class="nav-item"><a class="nav-link" href="manage-stock.php">Manage Stock</a></li>
+      <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
+      <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+      <li class="nav-item"><a class="nav-link" href="report.php">View Report</a></li>
+      <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
+    </ul>
+  </div>
+</nav>
 
 <div class="form-section mt-5">
   <h4>Add Product to Inventory</h4>
