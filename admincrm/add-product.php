@@ -19,10 +19,10 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
   <h4>Add Product to Inventory</h4>
   <form action="handle-add-product.php" method="POST" id="addProductForm">
     <!-- Product Name -->
-    <div class="mb-3">
+    <div class="mb-3 position-relative" style="z-index:999;">
       <label for="productName" class="form-label">Product Name</label>
-      <input list="productList" name="productName" id="productName" class="form-control" required>
-      <datalist id="productList"></datalist>
+<input type="text" name="productName" id="productName" class="form-control" placeholder="Start typing product name..." autocomplete="off" required>
+<div id="suggestionsBox" class="border rounded bg-white shadow-sm mt-1 position-absolute w-100 d-none" style="z-index:1000;"></div>
     </div>
 
     <!-- Category -->
@@ -105,16 +105,39 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 const productList = document.getElementById("productList");
 const productInput = document.getElementById("productName");
 
-// Load products
-fetch('/admincrm/assets/products.json')
+let allProducts = [];
+
+fetch('assets/products.json')
   .then(res => res.json())
-  .then(data => {
-    data.forEach(name => {
-      const opt = document.createElement("option");
-      opt.value = name;
-      productList.appendChild(opt);
-    });
-  });
+  .then(data => allProducts = data);
+
+const input = document.getElementById("productName");
+const suggestions = document.getElementById("suggestionsBox");
+
+input.addEventListener("input", () => {
+  const val = input.value.toLowerCase();
+  if (!val) return suggestions.classList.add("d-none");
+
+  const filtered = allProducts.filter(p => p.toLowerCase().includes(val)).slice(0, 8);
+
+  if (filtered.length === 0) {
+    suggestions.classList.add("d-none");
+    return;
+  }
+
+  suggestions.innerHTML = filtered.map(name => `<div class="p-2 suggestion-item" style="cursor:pointer;">${name}</div>`).join('');
+  suggestions.classList.remove("d-none");
+});
+
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("suggestion-item")) {
+    input.value = e.target.innerText;
+    suggestions.classList.add("d-none");
+  } else if (!input.contains(e.target)) {
+    suggestions.classList.add("d-none");
+  }
+});
+
 
 // Category to sizes
 const sizes = {
