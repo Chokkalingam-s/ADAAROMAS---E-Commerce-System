@@ -23,7 +23,7 @@ $imageUploaded = false;
 if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] === UPLOAD_ERR_OK) {
   $tmp = $_FILES['productImage']['tmp_name'];
   $ext = pathinfo($_FILES['productImage']['name'], PATHINFO_EXTENSION);
-  $fileName = clean($name) . clean($category) . '.' . $ext;
+  $fileName = clean($name) . clean($category) . clean($size) . '.' . $ext;
   $targetDir = "../assets/images/";
   $imagePath = $targetDir . $fileName;
   move_uploaded_file($tmp, $imagePath);
