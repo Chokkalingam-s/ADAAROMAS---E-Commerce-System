@@ -19,12 +19,7 @@ $mrp = $_POST['mrp'];
 $desc = $_POST['description'];
 $imagePath = '';
 
-$check = $conn->prepare("SELECT * FROM products WHERE name = ? AND category = ?");
-$check->execute([$name, $category]);
-if ($check->rowCount() > 0) {
-  die("<script>alert('Product already exists. Check inventory to manage stock.');window.location='add-product.php';</script>");
-}
-
+$imageUploaded = false;
 if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] === UPLOAD_ERR_OK) {
   $tmp = $_FILES['productImage']['tmp_name'];
   $ext = pathinfo($_FILES['productImage']['name'], PATHINFO_EXTENSION);
@@ -32,15 +27,34 @@ if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] === UPLOA
   $targetDir = "../assets/images/";
   $imagePath = $targetDir . $fileName;
   move_uploaded_file($tmp, $imagePath);
-  $imagePath = substr($imagePath, 3); // remove ../
+  $imagePath = substr($imagePath, 3); // remove ../ for DB
+  $imageUploaded = true;
 }
 
-$insertProduct = $conn->prepare("INSERT INTO products (name, category, costPrice, margin, msp, asp, mrp, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+// Check for existing same name + category + size combo
+$check = $conn->prepare("
+  SELECT ps.size FROM products p
+  JOIN product_stock ps ON p.productId = ps.productId
+  WHERE p.name = ? AND p.category = ? AND ps.size = ?
+");
+$check->execute([$name, $category, $size]);
+
+if ($check->rowCount() > 0) {
+  echo "<script>alert('Product with this name, category, and size already exists.');window.location='add-product.php';</script>";
+  exit;
+}
+
+// Create a new product entry (even if same name & category) for new size and price
+$insertProduct = $conn->prepare("
+  INSERT INTO products (name, category, costPrice, margin, msp, asp, mrp, description, image)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+");
 $insertProduct->execute([$name, $category, $cost, $margin, $msp, $asp, $mrp, $desc, $imagePath]);
 $productId = $conn->lastInsertId();
 
+// Create new stock
 $insertStock = $conn->prepare("INSERT INTO product_stock (productId, size, stockInHand) VALUES (?, ?, ?)");
 $insertStock->execute([$productId, $size, $stock]);
 
-header("Location: add-product.php?success=1");
-?>
+echo "<script>alert('New product with specified size added successfully.');window.location='add-product.php';</script>";
+exit;
