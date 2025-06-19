@@ -9,6 +9,8 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $users = [
     'atuldevarora' => 'jugad',
+    'Atuldevarora' => 'jugad',
+    'Choks' => 'jugad',
     'choks' => 'jugad',
   ];
 
