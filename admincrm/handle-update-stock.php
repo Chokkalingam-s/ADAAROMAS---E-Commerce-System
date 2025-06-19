@@ -7,12 +7,12 @@ $stmt = $conn->prepare("
   UPDATE product_stock ps
   JOIN products p ON ps.productId = p.productId
   SET
-    p.costPrice = ?, p.margin = ?, p.asp = ?, p.mrp = ?,
+    p.costPrice = ?, p.margin = ?, p.msp=?, p.asp = ?, p.mrp = ?,
     ps.stockInHand = ?
   WHERE ps.stockId = ?
 ");
 $stmt->execute([
-  $data['costPrice'], $data['margin'], $data['asp'], $data['mrp'],
+  $data['costPrice'], $data['margin'], $data['msp'], $data['asp'], $data['mrp'],
   $data['stockInHand'], $data['stockId']
 ]);
 

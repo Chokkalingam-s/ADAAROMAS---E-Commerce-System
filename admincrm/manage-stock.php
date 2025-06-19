@@ -24,6 +24,20 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     @media(max-width:768px){
       .hide-mobile { display:none!important; }
     }
+    .editable-margin {
+  position: relative;
+  height: 38px;
+}
+
+.editable-margin input,
+.editable-margin select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
   </style>
 </head>
 <body class="bg-light">
@@ -74,7 +88,17 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <td><?= htmlspecialchars($r['category']) ?></td>
             <td><input type="number" class="form-control form-control-sm costPrice" value="<?= $r['costPrice'] ?>"></td>
             <td><input type="text" class="form-control form-control-sm msp" value="<?= $r['msp'] ?>" readonly></td>
-            <td><input type="number" class="form-control form-control-sm margin" value="<?= $r['margin'] ?>"></td> 
+            <td>
+                <div class="editable-margin" style="position: relative; height: 38px;">
+                    <input type="text" class="form-control form-control-sm margin" value="<?= $r['margin'] ?>" readonly style="position:absolute; top:0; left:0; width:100%; height:100%;">
+                    <select class="form-select form-select-sm margin-select d-none" style="position:absolute; top:0; left:0; width:100%; height:100%;">
+                    <option value="200">200</option>
+                    <option value="300">300</option>
+                    <option value="400">400</option>
+                    <option value="500">500</option>
+                    </select>
+                </div>
+                </td>
             <td><input type="text" class="form-control form-control-sm asp" value="<?= $r['asp'] ?>" readonly></td>
             <td><input type="number" class="form-control form-control-sm displayMargin" value="<?= round((($r['mrp'] - $r['asp']) / $r['asp']) * 100 / 5) * 5 ?>"></td>
             <td><input type="text" class="form-control form-control-sm mrp" value="<?= $r['mrp'] ?>" readonly></td>
@@ -112,7 +136,7 @@ function calculateASP(msp, margin) {
 function calculateMSP(cost) {
   // Fixed charges
   const courier = 60, box = 100, packing = 10, shelf = 30;
-  return Math.round((cost + courier + box + packing + shelf) / 50) * 50;
+  return Math.round(cost + courier + box + packing + shelf);
 }
 
 function calculateMRP(asp, dispMargin) {
@@ -172,6 +196,7 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
       stockId: row.dataset.id,
       costPrice: costInput.value,
       margin: marginInput.value,
+      msp: mspField.value,
       asp: aspField.value,
       displayMargin: displayMarginInput.value,
       mrp: mrpField.value,
@@ -222,6 +247,50 @@ function filterTable() {
 }
 document.getElementById('searchInput').addEventListener('input', filterTable);
 document.getElementById('filterCategory').addEventListener('change', filterTable);
+
+document.querySelectorAll('.editable-margin').forEach(container => {
+  const input = container.querySelector('.margin');
+  const select = container.querySelector('.margin-select');
+  const tr = container.closest('tr');
+
+  // Show dropdown on click of input
+  input.addEventListener('click', () => {
+    input.classList.add('d-none');
+    select.classList.remove('d-none');
+    select.value = input.value;
+    select.focus();
+  });
+
+  // On dropdown change
+  select.addEventListener('change', () => {
+    input.value = select.value;
+    input.classList.remove('d-none');
+    select.classList.add('d-none');
+
+    // Trigger recalculation
+    const msp = parseFloat(tr.querySelector('.msp').value) || 0;
+    const margin = parseFloat(input.value) || 0;
+    const asp = calculateASP(msp, margin);
+    tr.querySelector('.asp').value = asp;
+
+    const disp = parseFloat(tr.querySelector('.displayMargin').value) || 0;
+    tr.querySelector('.mrp').value = calculateMRP(asp, disp);
+
+    // Trigger Apply enable
+    tr.querySelector('.apply-btn').disabled = false;
+    tr.querySelector('.apply-btn').classList.add('btn-success');
+    tr.querySelector('.apply-btn').classList.remove('btn-secondary');
+  });
+
+  // Click outside to close
+  document.addEventListener('click', e => {
+    if (!container.contains(e.target)) {
+      input.classList.remove('d-none');
+      select.classList.add('d-none');
+    }
+  });
+});
+
 </script>
 
 </body>
