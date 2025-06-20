@@ -28,9 +28,6 @@
   + Add to cart
 </button>
 
-     
- 
-
     <!-- Card Body -->
     <div class="text-center mt-3">
       <h5 class="mb-1"><?= $title ?></h5>

@@ -3,16 +3,32 @@
 $category = "Perfume-Men";
 $pageTitle = "Men's Perfume Collection";
 
-$products = [
-  ["title" => "Ombre Nomade", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "rating" => 5.0, "reviews" => 1, "stock" => true, "date" => "2024-06-01"],
-  ["title" => "Flora", "image" => "../assets/images/image.png", "price" => 949, "mrp" => 1999,  "rating" => 4.04, "reviews" => 90, "stock" => true, "date" => "2024-05-28"],
-  ["title" => "Aventus", "image" => "../assets/images/image.png", "price" => 749, "mrp" => 1999,"rating" => 4.09, "reviews" => 43, "stock" => false, "date" => "2024-04-10"],
-  ["title" => "Creed Viking", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.5, "reviews" => 12, "stock" => true, "date" => "2024-03-15"],
-  ["title" => "Tom Ford Noir", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999, "rating" => 4.2, "reviews" => 25, "stock" => true, "date" => "2024-02-20"],
-  ["title" => "Bleu de Chanel", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.8, "reviews" => 30, "stock" => false, "date" => "2024-01-05"],
-  ["title" => "Dior Sauvage", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.7, "reviews" => 60, "stock" => true, "date" => "2023-12-15"],
-  ["title" => "Yves Saint Laurent", "image" => "../assets/images/image.png", "price" => 849, "mrp" => 1999,  "rating" => 4.6, "reviews" => 20, "stock" => true, "date" => "2023-11-10"]
-];
+require "../config/db.php";
+
+// Fetch products from DB where category is 'Perfume' and 'Men' appears in title
+$stmt = $conn->prepare("
+  SELECT p.name AS title, p.asp AS price, p.mrp, p.image, p.rating,p.reviewCount, ps.stockInHand
+  FROM products p
+  JOIN product_stock ps ON p.productId = ps.productId
+  WHERE p.category = 'Perfume'
+");
+$stmt->execute();
+$rawProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Format to match existing structure
+$products = array_map(function ($p) {
+  return [
+    "title" => $p['title'],
+    "image" => "../" . $p['image'],
+    "price" => (int)$p['price'],
+    "mrp" => (int)$p['mrp'],
+    "rating" => $p['rating'], // random or fetch from reviews table
+    "reviews" => $p['reviewCount'],  // same here or join another table
+    "stock" => $p['stockInHand'] > 0,
+    "date" => $p['created_at'] ?? '2024-01-01'
+  ];
+}, $rawProducts);
+
 
 $inStock = $_GET['inStock'] ?? '1';
 $outOfStock = $_GET['outOfStock'] ?? '1';

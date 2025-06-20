@@ -1,7 +1,7 @@
 <?php
-// products/Attar.php
-$category = "Attar";
-$pageTitle = "Attar Collection";
+// products/Diffuser.php
+$category = "Diffuser";
+$pageTitle = "Diffuser Collection";
 require "../config/db.php";
 
 
@@ -9,7 +9,7 @@ $stmt = $conn->prepare("
   SELECT p.name AS title, p.asp AS price, p.mrp, p.image, p.rating,p.reviewCount, ps.stockInHand
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
-  WHERE p.category = 'Attar'
+  WHERE p.category = 'Diffuser'
 ");
 $stmt->execute();
 $rawProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
