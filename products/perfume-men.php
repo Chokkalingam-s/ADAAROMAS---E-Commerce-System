@@ -1,37 +1,67 @@
 <?php
-// products/perfume-men.php
-$category = "Perfume-Men";
-$pageTitle = "Men's Perfume Collection";
+include('../config/db.php');
 
-require "../config/db.php";
-
-// Fetch products from DB where category is 'Perfume' and 'Men' appears in title
+// Set your desired category, e.g. Perfume, Attar, Essence Oil, etc.
+$category = 'Perfume'; // Or 'Perfume'/'Perfume-Men'/'Perfume-Women'/...
+$pageTitle = "Perfume Collection";
+$gender = 'Men';
 $stmt = $conn->prepare("
-  SELECT p.name AS title, p.asp AS price, p.mrp, p.image, p.rating, p.reviewCount , p.gender , ps.stockInHand
+  SELECT 
+    p.productId, p.name, p.category, p.asp, p.mrp, p.image, p.rating, p.reviewCount,
+    ps.size, ps.stockInHand
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
-  WHERE p.category = 'Perfume' and p.gender = 'Men'
+  WHERE p.category = ?  AND p.gender = ?
+  ORDER BY p.name ASC, ps.size ASC
 ");
-$stmt->execute();
-$rawProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->execute([$category, $gender]);
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Format to match existing structure
-$products = array_map(function ($p) {
-  return [
-    "title" => $p['title'],
-    "image" => "../" . $p['image'],
-    "price" => (int)$p['price'],
-    "mrp" => (int)$p['mrp'],
-    "rating" => $p['rating'], 
-    "reviews" => $p['reviewCount'], 
-    "stock" => $p['stockInHand'] > 0,
-    "date" => $p['created_at'] ?? '2024-01-01'
-  ];
-}, $rawProducts);
+// STEP 1: Group by name-category (lowest size used for display, but stock from all sizes)
+$grouped = [];
+$stockMap = [];
 
+foreach ($rows as $row) {
+  $key = strtolower(trim($row['name'])) . '_' . strtolower(trim($row['category']));
+  
+  if (!isset($grouped[$key])) {
+    $grouped[$key] = [
+      "title" => $row['name'],
+      "image" => "../" . $row['image'],
+      "price" => (int)$row['asp'],
+      "mrp" => (int)$row['mrp'],
+      "rating" => $row['rating'],
+      "reviews" => $row['reviewCount'],
+      "stock" => false, // default
+      "date" => $row['created_at'] ?? '2024-01-01'
+    ];
+  }
 
+  // track if at least one size is in stock
+  if (!isset($stockMap[$key])) $stockMap[$key] = [];
+  $stockMap[$key][] = (int)$row['stockInHand'];
+}
+
+// STEP 2: Mark stock status
+foreach ($grouped as $key => &$item) {
+  $hasStock = array_filter($stockMap[$key], fn($v) => $v > 0);
+  $item['stock'] = count($hasStock) > 0;
+}
+unset($item); // break reference
+
+$products = array_values($grouped);
+
+// STOCK COUNTERS
+$stockInHand = 0;
+$stockOutOfHand = 0;
+foreach ($products as $p) {
+  if ($p['stock']) $stockInHand++;
+  else $stockOutOfHand++;
+}
+
+// FILTER
 $inStock = $_GET['inStock'] ?? '1';
-$outOfStock = $_GET['outOfStock'] ?? '1';
+$outOfStock = $_GET['outOfStock'] ?? '0';
 $min = $_GET['min'] ?? 0;
 $max = $_GET['max'] ?? 2000;
 
@@ -67,14 +97,16 @@ include "../components/header.php";
               <span class="fw-semibold">Availability</span>
               <span class="chevron">&#9660;</span>
             </div>
-            <label class="form-check-label d-flex align-items-center mb-1">
-              <input class="form-check-input me-2" type="checkbox" name="inStock" value="1" <?= $inStock == '1' ? 'checked' : '' ?>>
-              In stock <span class="text-muted ms-2">(<?= count(array_filter($products, fn($p) => $p['stock'])) ?>)</span>
-            </label>
-            <label class="form-check-label d-flex align-items-center">
-              <input class="form-check-input me-2" type="checkbox" name="outOfStock" value="1" <?= $outOfStock == '1' ? 'checked' : '' ?>>
-              Out of stock <span class="text-muted ms-2">(<?= count(array_filter($products, fn($p) => !$p['stock'])) ?>)</span>
-            </label>
+<label class="form-check-label d-flex align-items-center mb-1">
+  <input class="form-check-input me-2" type="checkbox" name="inStock" value="1" <?= $inStock == '1' ? 'checked' : '' ?>>
+  In stock <span class="text-muted ms-2">(<?= $stockInHand ?>)</span>
+</label>
+
+<label class="form-check-label d-flex align-items-center">
+  <input class="form-check-input me-2" type="checkbox" name="outOfStock" value="1" <?= $outOfStock == '1' ? 'checked' : '' ?>>
+  Out of stock <span class="text-muted ms-2">(<?= $stockOutOfHand ?>)</span>
+</label>
+
           </div>
           <div class="mb-3">
             <div class="d-flex align-items-center justify-content-between mb-2">

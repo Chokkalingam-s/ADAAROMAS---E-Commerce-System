@@ -226,7 +226,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           </ul>
         </li>
         <li class="nav-item"><a class="nav-link <?= $currentPage === 'attar.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/attar.php">Attar</a></li>
-        <li class="nav-item"><a class="nav-link <?= $currentPage === 'oud.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/oud.php">Oud</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentPage === 'Essenceoil.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/Essenceoil.php">Essence Oil</a></li>
+        <li class="nav-item"><a class="nav-link <?= $currentPage === 'diffuser.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/diffuser.php">Diffuser</a></li>
         <li class="nav-item"><a class="nav-link <?= $currentPage === 'contact.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/contact.php">Contact</a></li>
         <li class="nav-item position-relative">
           <a class="nav-link" href="javascript:void(0)" onclick="toggleCartSidebar()">
