@@ -4,9 +4,23 @@ session_start();
 date_default_timezone_set('Asia/Kolkata');
 if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
-function generateCouponCode() {
-  return "ADA" . str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+function generateCouponCode($conn) {
+  $letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  do {
+    $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+    $randomLetters = $letters[rand(0, 25)] . $letters[rand(0, 25)];
+    $code = "ADA{$randomNumber}{$randomLetters}";
+
+    // Check if code already exists in DB
+    $checkStmt = $conn->prepare("SELECT COUNT(*) FROM coupons WHERE couponCode = ?");
+    $checkStmt->execute([$code]);
+    $exists = $checkStmt->fetchColumn();
+
+  } while ($exists > 0);
+
+  return $code;
 }
+
 
 $inserted = false;
 $generatedCoupon = null;
@@ -29,7 +43,7 @@ $percentage = isset($_POST['percentage']) && $_POST['percentage'] !== '' ? intva
   $minutes = $minutesMap[$expiry] ?? 0;
   $expiryTime = date('Y-m-d H:i:s', strtotime("+$minutes minutes"));
 
-  $code = generateCouponCode();
+  $code = generateCouponCode($conn);
   $stmt = $conn->prepare("INSERT INTO coupons (couponCode, expiryTime, percentage, flatAmount) VALUES (?, ?, ?, ?)");
   $stmt->execute([$code, $expiryTime, $percentage, $flatAmount]);
   $generatedCoupon = $code;
