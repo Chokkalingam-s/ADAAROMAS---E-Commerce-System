@@ -53,6 +53,18 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
     </div>
 
+    <!-- Gender (visible only for Perfume) -->
+    <div class="mb-3 d-none" id="genderGroup">
+      <label for="gender" class="form-label">Gender</label>
+      <select name="gender" id="gender" class="form-select">
+        <option value="">Select Gender</option>
+        <option value="Men">Men</option>
+        <option value="Women">Women</option>
+        <option value="Both">Both</option>
+      </select>
+    </div>
+
+
     <!-- Size (dynamic) -->
     <div class="mb-3">
         <label for="size" class="form-label">Size (ml)</label>
@@ -215,6 +227,42 @@ document.getElementById("category").addEventListener("change", function () {
     }
   }
 });
+
+const genderGroup = document.getElementById("genderGroup");
+const genderSelect = document.getElementById("gender");
+
+document.getElementById("category").addEventListener("change", function () {
+  const selected = this.value;
+
+  // Toggle gender dropdown visibility
+  if (selected === "Perfume") {
+    genderGroup.classList.remove("d-none");
+    genderSelect.setAttribute("required", "required");
+  } else {
+    genderGroup.classList.add("d-none");
+    genderSelect.removeAttribute("required");
+    genderSelect.value = ""; // reset selection
+  }
+
+  // Populate sizes (already existing logic)
+  const sizeSelect = document.getElementById("size");
+  sizeSelect.innerHTML = "";
+  if (sizes[selected]) {
+    sizes[selected].forEach(sz => {
+      const opt = document.createElement("option");
+      opt.value = sz;
+      opt.textContent = `${sz} ml`;
+      sizeSelect.appendChild(opt);
+    });
+    if (selected === "Diffuser") {
+      const opt = document.createElement("option");
+      opt.value = "0";
+      opt.textContent = "N/A";
+      sizeSelect.appendChild(opt);
+    }
+  }
+});
+
 
 // Price Calculations
 function roundToNearest50(value) {
