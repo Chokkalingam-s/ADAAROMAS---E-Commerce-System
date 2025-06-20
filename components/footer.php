@@ -158,13 +158,22 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <!-- checkout.php script -->
 <script>
+let cartTotal = 0;
+let discountedTotal = 0;
+let appliedCoupon = null;
+
 function renderCheckoutOrder() {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
   const summary = document.getElementById("checkoutOrderSummary");
+  const totalPriceDisplay = document.getElementById("totalPrice");
+  const discountInfo = document.getElementById("discountInfo");
+
   if (!summary) return;
 
   if (cart.length === 0) {
     summary.innerHTML = "<p>No items in cart.</p>";
+    totalPriceDisplay.innerText = "0";
+    discountInfo.style.display = "none";
     return;
   }
 
@@ -191,7 +200,18 @@ function renderCheckoutOrder() {
       </div>`;
   }).join("");
 
-  summary.innerHTML += `<hr><div class='d-flex justify-content-between'><strong>Total:</strong><strong>₹${total}</strong></div><div class='d-flex justify-content-between text-success'><span>Total Savings:</span><span>₹${savings}</span></div>`;
+  summary.innerHTML += `
+    <hr>
+    <div class='d-flex justify-content-between'><strong>Total:</strong><strong>₹${total}</strong></div>
+    <div class='d-flex justify-content-between text-success'><span>Total Savings:</span><span>₹${savings}</span></div>
+  `;
+
+  cartTotal = total;
+  discountedTotal = total;
+
+  // If coupon is already applied, re-apply
+  if (appliedCoupon) applyDiscount(appliedCoupon);
+  else totalPriceDisplay.innerText = cartTotal;
 }
 
 function updateCheckoutQuantity(title, change) {
@@ -236,7 +256,55 @@ shipCheckbox.addEventListener("change", function () {
 });
 
 document.addEventListener("DOMContentLoaded", renderCheckoutOrder);
+
+// 🧾 Apply Coupon Logic
+document.getElementById('applyCouponBtn').addEventListener('click', () => {
+  const code = document.getElementById('couponCode').value.trim().toUpperCase();
+  const msg = document.getElementById('couponMsg');
+  const discountInfo = document.getElementById('discountInfo');
+  const totalPriceDisplay = document.getElementById('totalPrice');
+
+  msg.innerText = '';
+  discountInfo.style.display = 'none';
+
+  if (!code) {
+    msg.innerText = "Enter a coupon code.";
+    return;
+  }
+
+  fetch('apply-coupon.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.success) {
+      msg.innerText = data.message;
+      totalPriceDisplay.innerText = cartTotal;
+      return;
+    }
+
+    appliedCoupon = data; // Store for future refresh (quantity change, etc)
+    applyDiscount(data);
+  })
+  .catch(() => {
+    msg.innerText = "Something went wrong. Try again.";
+  });
+});
+
+function applyDiscount(coupon) {
+  let discount = 0;
+  if (coupon.flatAmount > 0) discount = coupon.flatAmount;
+  else if (coupon.percentage > 0) discount = (coupon.percentage / 100) * cartTotal;
+
+  discountedTotal = Math.max(0, cartTotal - discount);
+  document.getElementById('totalPrice').innerText = discountedTotal.toFixed(0);
+  document.getElementById('discountInfo').innerText = `Coupon applied! You saved ₹${discount.toFixed(0)}.`;
+  document.getElementById('discountInfo').style.display = 'block';
+}
 </script>
+
 
 </body>
 </html>

@@ -72,14 +72,18 @@
       <h4>Your Order Details</h4>
       <div id="checkoutOrderSummary" class="border p-3 rounded mb-3"></div>
 
-      <div class="input-group mb-2">
-        <input type="text" class="form-control" placeholder="Enter coupon code">
-        <button class="btn btn-outline-primary">Apply</button>
-      </div>
+    <div class="input-group mb-3">
+  <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
+  <button class="btn btn-outline-primary" id="applyCouponBtn">Apply</button>
+</div>
+<div id="couponMsg" class="text-danger small mb-2"></div>
+
       <small class="text-muted">Don’t have a coupon? <a href="#" onclick="requestCoupon(event)">Request for a coupon</a></small>
 
       <div class="text-center mt-4">
         <button class="btn btn-success w-100">Pay with Razorpay</button>
+        <p class="fw-bold mt-3">Total: ₹<span id="totalPrice">0</span></p>
+<p class="text-success" id="discountInfo" style="display: none;"></p>
       </div>
     </div>
   </div>
