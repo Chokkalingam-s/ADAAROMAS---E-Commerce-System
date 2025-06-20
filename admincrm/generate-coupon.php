@@ -1,6 +1,7 @@
 <?php
 include('../config/db.php');
 session_start();
+date_default_timezone_set('Asia/Kolkata');
 if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
 function generateCouponCode() {
@@ -51,7 +52,7 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
 </head>
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-  <a class="navbar-brand" href="#">ADA Aromas Admin</a>
+  <a class="navbar-brand" href="../admincrm">ADA Aromas Admin</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -118,17 +119,19 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
           <th>Discount (%)</th>
           <th>Expiry Time</th>
           <th>Copy</th>
+          <th>Remove</th>
         </tr>
       </thead>
       <tbody>
         <?php $i = 1; foreach ($coupons as $c): ?>
-        <tr>
+        <tr data-code="<?= $c['couponCode'] ?>">
           <td><?= $i++ ?></td>
           <td><strong><?= $c['couponCode'] ?></strong></td>
           <td><?= $c['flatAmount'] ?></td>
           <td><?= $c['percentage'] ?></td>
           <td><?= date('d-M-Y h:i A', strtotime($c['expiryTime'])) ?></td>
           <td><span class="copy-btn text-primary" onclick="copyText('<?= $c['couponCode'] ?>')">📋 Copy</span></td>
+          <td><button class="btn btn-danger btn-sm remove-coupon">Remove</button></td>
         </tr>
         <?php endforeach; ?>
       </tbody>
@@ -157,6 +160,27 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
     navigator.clipboard.writeText(text);
     alert('Coupon copied: ' + text);
   }
+
+  // Remove Coupon Handler
+document.querySelectorAll('.remove-coupon').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (!confirm("Are you sure to delete this coupon?")) return;
+    const tr = btn.closest('tr');
+    const code = tr.dataset.code;
+
+    fetch('handle-delete-coupon.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ couponCode: code })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) tr.remove();
+      else alert("Failed to delete.");
+    });
+  });
+});
+
 </script>
 </body>
 </html>
