@@ -1,16 +1,16 @@
 <?php
-// products/perfume-men.php
-$category = "Perfume-Men";
-$pageTitle = "Men's Perfume Collection";
+// products/perfume.php
+$category = "Perfume";
+$pageTitle = "Perfume Collection";
 
 require "../config/db.php";
 
-// Fetch products from DB where category is 'Perfume' and 'Men' appears in title
+// Fetch products from DB where category is 'Perfume'
 $stmt = $conn->prepare("
-  SELECT p.name AS title, p.asp AS price, p.mrp, p.image, p.rating, p.reviewCount , p.gender , ps.stockInHand
+  SELECT p.name AS title, p.asp AS price, p.mrp, p.image, p.rating,p.reviewCount, ps.stockInHand
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
-  WHERE p.category = 'Perfume' and p.gender = 'Men'
+  WHERE p.category = 'Perfume'
 ");
 $stmt->execute();
 $rawProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);

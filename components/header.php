@@ -216,12 +216,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle <?= in_array($currentPage, ['perfume-men.php', 'perfume-women.php']) ? 'active fw-bold text-primary' : '' ?>" 
-             href="#" id="perfumeDropdown" data-bs-toggle="dropdown">
+             href="/adaaromas/products/perfume.php" id="perfumeDropdown" data-bs-toggle="dropdown">
             Perfume
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/adaaromas/products/perfume-men.php">For Him</a></li>
             <li><a class="dropdown-item" href="/adaaromas/products/perfume-women.php">For Her</a></li>
+            <li><a class="dropdown-item" href="/adaaromas/products/perfume.php">All Collection</a></li>
           </ul>
         </li>
         <li class="nav-item"><a class="nav-link <?= $currentPage === 'attar.php' ? 'active fw-bold text-primary' : '' ?>" href="/adaaromas/products/attar.php">Attar</a></li>
