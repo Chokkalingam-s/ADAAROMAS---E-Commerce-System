@@ -139,6 +139,7 @@ include "../components/header.php";
         foreach ($filteredProducts as $p): 
           extract($p);
           $discount = round((($mrp - $price) / $mrp) * 100);
+          $inStock = $p['stock'];
           include "../components/product-card.php";
         endforeach;
         ?>

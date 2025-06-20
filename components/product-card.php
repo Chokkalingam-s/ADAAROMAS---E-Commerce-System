@@ -17,16 +17,25 @@
  <?php
   $absImage = "/adaaromas/assets/images/" . basename($image); 
 ?>
-<button 
-  class="add-to-cart-btn btn btn-light fw-bold"
-  onclick='addToCart({
-    title: "<?= addslashes($title) ?>",
-    price: <?= $price ?>,
-     mrp: <?= $mrp ?>,
-    image: "<?= $absImage ?>"
-  })'>
-  + Add to cart
-</button>
+<?php if ($inStock): ?>
+  <button 
+    class="add-to-cart-btn btn btn-light fw-bold"
+    onclick='addToCart({
+      title: "<?= addslashes($title) ?>",
+      price: <?= $price ?>,
+      mrp: <?= $mrp ?>,
+      image: "<?= $absImage ?>"
+    })'>
+    + Add to cart
+  </button>
+<?php else: ?>
+  <button 
+    class="btn btn-secondary fw-bold" 
+    disabled 
+    style="cursor:not-allowed;">
+    Out of stock
+  </button>
+<?php endif; ?>
 
     <!-- Card Body -->
     <div class="text-center mt-3">
