@@ -48,6 +48,21 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
   <style>
     .copy-btn { cursor: pointer; }
     .copy-btn:hover { color: green; }
+.bg-available > td {
+  background-color: #d4edda !important;  /* Light green */
+  color: #155724 !important;
+}
+.bg-used > td {
+  background-color: #f8d7da !important;  /* Light red */
+  color: #721c24 !important;
+}
+.bg-expired > td {
+  background-color: #e2e3e5 !important;  /* Light gray */
+  color: #383d41 !important;
+}
+
+  .bg-available:hover, .bg-used:hover, .bg-expired:hover { opacity: 0.8; }
+  .bg-available td, .bg-used td, .bg-expired td { vertical-align: middle; }
   </style>
 </head>
 <body class="bg-light">
@@ -110,7 +125,7 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
 
   <h4>All Generated Coupons</h4>
   <div class="table-responsive">
-    <table class="table table-bordered table-striped bg-white">
+    <table class="table table-bordered bg-white">
       <thead>
         <tr>
           <th>#</th>
@@ -124,7 +139,23 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
       </thead>
       <tbody>
         <?php $i = 1; foreach ($coupons as $c): ?>
-        <tr data-code="<?= $c['couponCode'] ?>">
+<?php
+  $isExpired = strtotime($c['expiryTime']) < time();
+  $rowClass = '';
+
+if ($c['availability'] == 1) {
+  $rowClass = 'bg-used';
+} elseif ($isExpired) {
+  $rowClass = 'bg-expired';
+} else {
+  $rowClass = 'bg-available';
+}
+
+?>
+
+
+        <tr data-code="<?= $c['couponCode'] ?>" class="<?= $rowClass ?>">
+
           <td><?= $i++ ?></td>
           <td><strong><?= $c['couponCode'] ?></strong></td>
           <td><?= $c['flatAmount'] ?></td>
