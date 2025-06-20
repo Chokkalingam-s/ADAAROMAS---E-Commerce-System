@@ -21,8 +21,8 @@ $products = array_map(function ($p) {
     "image" => "../" . $p['image'],
     "price" => (int)$p['price'],
     "mrp" => (int)$p['mrp'],
-    "rating" => $p['rating'], // random or fetch from reviews table
-    "reviews" => $p['reviewCount'],  // same here or join another table
+    "rating" => $p['rating'], 
+    "reviews" => $p['reviewCount'],  
     "stock" => $p['stockInHand'] > 0,
     "date" => $p['created_at'] ?? '2024-01-01'
   ];
