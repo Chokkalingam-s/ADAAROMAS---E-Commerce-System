@@ -120,7 +120,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
     <!-- Description -->
     <div class="mb-3">
-        <label class="form-label">Description</label>
+        <label class="form-label">Description - Notes </label>
         <textarea name="description" rows="4" class="form-control" required></textarea>
     </div>
 
