@@ -112,7 +112,7 @@ function renderRecommendations() {
       title: "The Vikings",
       price: 849,
       mrp: 1999,
-      image: "/assets/img/sample1.png",
+      image: "assets/images/image.png",
       rating: 5,
       reviews: 1
     },
@@ -120,7 +120,7 @@ function renderRecommendations() {
       title: "Savage Perfume",
       price: 1099,
       mrp: 2598,
-      image: "/assets/img/sample2.png",
+      image: "assets/images/image.png",
       rating: 0,
       reviews: 0
     },
@@ -128,7 +128,7 @@ function renderRecommendations() {
       title: "Ombre Leather",
       price: 849,
       mrp: 1999,
-      image: "/assets/img/sample3.png",
+      image: "assets/images/image.png",
       rating: 4.2,
       reviews: 12
     }

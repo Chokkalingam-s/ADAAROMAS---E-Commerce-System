@@ -21,7 +21,8 @@ $products = [
     "price" => 849,
     "mrp" => 1999,
     "rating" => "5.0",
-    "reviews" => 1
+    "reviews" => 1,
+    "inStock" => true
   ],
   [
     "title" => "Aventus",
@@ -29,7 +30,8 @@ $products = [
     "price" => 999,
     "mrp" => 2499,
     "rating" => "4.8",
-    "reviews" => 5
+    "reviews" => 5,
+    "inStock" => true
   ],
   [
     "title" => "Creed Viking",
@@ -37,7 +39,9 @@ $products = [
     "price" => 1299,
     "mrp" => 2999,
     "rating" => "4.9",
-    "reviews" => 3
+    "reviews" => 3,
+    "inStock" => false
+
   ],
   [
     "title" => "Tom Ford Noir",
@@ -45,7 +49,8 @@ $products = [
     "price" => 899,
     "mrp" => 1999,
     "rating" => "4.7",
-    "reviews" => 2
+    "reviews" => 2,
+    "inStock" => true
   ]
 ];
 
