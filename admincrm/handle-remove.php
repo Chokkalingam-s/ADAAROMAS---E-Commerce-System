@@ -18,14 +18,18 @@ if (!$product) {
 }
 
 $productId = $product['productId'];
+$productName = $product['name'];
 
 // Step 2: Delete this stockId
 $stmt = $conn->prepare("DELETE FROM product_stock WHERE stockId = ?");
 $stmt->execute([$stockId]);
 
+ $stmt = $conn->prepare("DELETE FROM products WHERE productId = ?");
+  $stmt->execute([$productId]);
+
 // Step 3: Check if other sizes exist for this product
-$stmt = $conn->prepare("SELECT COUNT(*) FROM product_stock WHERE productId = ?");
-$stmt->execute([$productId]);
+$stmt = $conn->prepare("SELECT COUNT(*) FROM products WHERE name = ?");
+$stmt->execute([$productName]);
 $remainingCount = $stmt->fetchColumn();
 
 // Step 4: If no more stock variants exist, delete from products + remove image
