@@ -170,26 +170,47 @@ let allProducts = [];
 
 fetch('assets/products.json')
   .then(res => res.json())
-  .then(data => allProducts = data);
+  .then(data => {
+    allProducts = data.map(p => p.toLowerCase()); // Store lowercase versions for matching
+  });
 
 const input = document.getElementById("productName");
 const suggestions = document.getElementById("suggestionsBox");
 
 input.addEventListener("input", () => {
-  const val = input.value.toLowerCase();
-  if (!val) return suggestions.classList.add("d-none");
+  const val = input.value.trim().toLowerCase();
 
-  const filtered = allProducts.filter(p => p.toLowerCase().includes(val)).slice(0, 8);
-
-  if (filtered.length === 0) {
+  // If empty input, hide suggestion box
+  if (!val) {
     suggestions.classList.add("d-none");
+    suggestions.innerHTML = "";
     return;
   }
 
-  suggestions.innerHTML = filtered.map(name => `<div class="p-2 suggestion-item" style="cursor:pointer;">${name}</div>`).join('');
+  // Show ALL matches (no .slice())
+  const filtered = allProducts
+    .filter(p => p.includes(val))
+    .map(p => capitalizeWords(p));
+
+  if (filtered.length === 0) {
+    suggestions.classList.add("d-none");
+    suggestions.innerHTML = "";
+    return;
+  }
+
+  suggestions.innerHTML = filtered.map(name =>
+    `<div class="p-2 suggestion-item" style="cursor:pointer;">${name}</div>`
+  ).join('');
+  
   suggestions.classList.remove("d-none");
 });
 
+// Capitalize helper
+function capitalizeWords(str) {
+  return str.replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// Click to select
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("suggestion-item")) {
     input.value = e.target.innerText;
