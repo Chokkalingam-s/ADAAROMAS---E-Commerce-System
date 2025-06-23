@@ -81,8 +81,8 @@
       <small class="text-muted">Don’t have a coupon? <a href="#" onclick="requestCoupon(event)">Request for a coupon</a></small>
 
       <div class="text-center mt-4">
-        <button class="btn btn-success w-100">Pay with Razorpay</button>
-        <p class="fw-bold mt-3">Total: ₹<span id="totalPrice">0</span></p>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<button id="rzp-button1" class="btn btn-success w-100">Pay ₹<span id="totalPrice">0</span></button>
 <p class="text-success" id="discountInfo" style="display: none;"></p>
       </div>
     </div>
