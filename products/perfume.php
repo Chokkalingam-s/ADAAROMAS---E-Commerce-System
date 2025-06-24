@@ -28,6 +28,8 @@ foreach ($rows as $row) {
   if (!isset($grouped[$key])) {
     $grouped[$key] = [
       "title" => $row['name'],
+      "productId" => (int)$row['productId'],
+      "category" => $row['category'],
       "image" => "../" . $row['image'],
       "price" => (int)$row['asp'],
       "mrp" => (int)$row['mrp'],
