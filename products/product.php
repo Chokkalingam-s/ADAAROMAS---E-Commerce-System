@@ -26,12 +26,13 @@ if (!$product) {
 
 // Process available sizes for the same product name & category
 $sizeStmt = $conn->prepare("
-  SELECT size, asp, mrp, ps.stockInHand
+  SELECT p.productId, size, asp, mrp, ps.stockInHand
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
   WHERE p.name = ? AND p.category = ?
   ORDER BY size ASC
 ");
+
 $sizeStmt->execute([$product['name'], $product['category']]);
 $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -41,11 +42,11 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Image & Title -->
     <div class="col-md-6">
       <img src="<?= '../' . $product['image'] ?>" class="img-fluid mb-3">
-      <div class="d-flex gap-2 flex-wrap">
+      <!-- <div class="d-flex gap-2 flex-wrap">
         <?php foreach (explode(',', $product['gallery'] ?? '') as $img): ?>
           <img src="<?= '../' . trim($img) ?>" class="img-thumbnail" style="width: 80px; height: 80px;">
         <?php endforeach; ?>
-      </div>
+      </div> -->
     </div>
 
     <!-- Details -->
@@ -57,20 +58,32 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="mb-3">
         <label class="form-label fw-bold">Available Sizes:</label>
         <div class="d-flex flex-column gap-1">
-          <?php foreach ($sizes as $s): ?>
-            <div class="border rounded p-2 d-flex justify-content-between align-items-center <?= $s['stockInHand'] <= 0 ? 'text-muted' : '' ?>">
-              <span><?= $s['size'] ?></span>
-              <span>
-                Rs. <?= $s['asp'] ?>
-                <small class="text-muted"><del>Rs. <?= $s['mrp'] ?></del></small>
-              </span>
-              <?php if ($s['stockInHand'] > 0): ?>
-                <button class="btn btn-sm btn-outline-success">Add to Cart</button>
-              <?php else: ?>
-                <button class="btn btn-sm btn-outline-secondary" disabled>Out of Stock</button>
-              <?php endif; ?>
-            </div>
-          <?php endforeach; ?>
+<?php foreach ($sizes as $s): ?>
+  <div class="border rounded p-2 d-flex justify-content-between align-items-center <?= $s['stockInHand'] <= 0 ? 'text-muted' : '' ?>">
+    <span><?= $s['size'] ?>ml</span>
+    <span>
+      Rs. <?= $s['asp'] ?>
+      <small class="text-muted"><del>Rs. <?= $s['mrp'] ?></del></small>
+    </span>
+
+    <?php if ($s['stockInHand'] > 0): ?>
+      <button 
+        class="add-to-cart-btn btn btn-light fw-bold btn-sm btn-outline-success"
+        onclick='addToCart({
+          productId: <?= (int)$s['productId'] ?>,
+          title: "<?= htmlspecialchars($product['name'], ENT_QUOTES) ?> (<?= $s['size'] ?>ml)",
+          price: <?= (float)$s['asp'] ?>,
+          mrp: <?= (float)$s['mrp'] ?>,
+          image: "<?= '../' . htmlspecialchars($product['image'], ENT_QUOTES) ?>"
+        })'>
+        + Add to cart
+      </button>
+    <?php else: ?>
+      <button class="btn btn-sm btn-outline-secondary" disabled>Out of Stock</button>
+    <?php endif; ?>
+  </div>
+<?php endforeach; ?>
+
         </div>
       </div>
 
