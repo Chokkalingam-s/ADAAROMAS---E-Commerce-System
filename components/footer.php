@@ -326,7 +326,16 @@ document.getElementById('rzp-button1').onclick = async function(e){
     handler: function(res){
       fetch('verify-payment.php',{
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({...res, cart, userId: resp.userId})
+body: JSON.stringify({
+  ...res,
+  cart,
+  user: {
+    id: resp.userId,
+    name: user.firstName + ' ' + user.lastName,
+    email: user.email
+  }
+})
+
       })
       .then(r=>r.json())
       .then(data=>{

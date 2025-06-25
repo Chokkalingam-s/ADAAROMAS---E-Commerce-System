@@ -36,3 +36,44 @@ foreach ($cart as $item) {
 }
 
 echo json_encode(['success'=>true, 'orderId'=>$newOrderId]);
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+$mail = new PHPMailer(true);
+
+try {
+  $mail->isSMTP();
+  $mail->Host = 'smtp.gmail.com'; // Or your mail server
+  $mail->SMTPAuth = true;
+  $mail->Username = 'your_email@gmail.com'; // Replace with your sender email
+  $mail->Password = 'your_app_password';   // Use App Password if Gmail
+  $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+  $mail->Port = 587;
+
+  $mail->setFrom('your_email@gmail.com', 'ADA Aromas');
+  $mail->addAddress($input['email'], $input['name']);  // Dynamic user email/name
+
+  $mail->isHTML(true);
+  $mail->Subject = 'Order Confirmation - ADA Aromas';
+  
+  $productList = '';
+  foreach ($cart as $item) {
+    $productList .= "<li>{$item['title']} - Qty: {$item['quantity']} - ₹{$item['price']} x {$item['quantity']}</li>";
+  }
+
+  $mail->Body = "
+    <h2>Thank you for your purchase, {$input['name']}!</h2>
+    <p>Your order (ID: <strong>#{$newOrderId}</strong>) has been successfully placed and paid.</p>
+    <h4>Order Summary:</h4>
+    <ul>{$productList}</ul>
+    <p><strong>Total Paid:</strong> ₹" . array_sum(array_map(fn($p) => $p['price'] * $p['quantity'], $cart)) . "</p>
+    <p>Transaction ID: {$paymentId}</p>
+    <br><p>You’ll receive shipping updates soon!</p>
+    <p>- Team ADA Aromas</p>
+  ";
+
+  $mail->send();
+} catch (Exception $e) {
+  error_log("Email not sent. Error: {$mail->ErrorInfo}");
+}
