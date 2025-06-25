@@ -1,7 +1,7 @@
 <?php
 // create-order.php
 require 'config/db.php';
-require 'config/razorpay_api.php'; // stores $keyId, $keySecret
+require 'config/razorpay_api.php';
 require_once __DIR__ . '/vendor/autoload.php';
 use Razorpay\Api\Api;
 header('Content-Type: application/json');

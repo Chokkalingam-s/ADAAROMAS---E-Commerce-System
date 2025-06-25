@@ -31,10 +31,8 @@ $newOrderId = $conn->lastInsertId();
 
 // For each cart item: store details & reduce stock
 $stmtOD = $conn->prepare("INSERT INTO order_details (orderId, productId, quantity, size) VALUES (?, ?, ?, ?)");
-$stmtStock = $conn->prepare("UPDATE product_stock SET stockInHand = stockInHand - ? WHERE productId = ? AND size = ?");
 foreach ($cart as $item) {
   $stmtOD->execute([$newOrderId, $item['productId'], $item['quantity'], $item['size']]);
-  $stmtStock->execute([$item['quantity'], $item['productId'], $item['size']]);
 }
 
 echo json_encode(['success'=>true, 'orderId'=>$newOrderId]);
