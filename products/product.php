@@ -65,7 +65,9 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
       Rs. <?= $s['asp'] ?>
       <small class="text-muted"><del>Rs. <?= $s['mrp'] ?></del></small>
     </span>
-
+  <?php
+        $absImage = "/adaaromas/assets/images/" . basename($product['image']); 
+      ?>
     <?php if ($s['stockInHand'] > 0): ?>
       <button 
         class="add-to-cart-btn btn btn-light fw-bold btn-sm btn-outline-success"
@@ -74,7 +76,7 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
           title: "<?= htmlspecialchars($product['name'], ENT_QUOTES) ?> (<?= $s['size'] ?>ml)",
           price: <?= (float)$s['asp'] ?>,
           mrp: <?= (float)$s['mrp'] ?>,
-          image: "<?= '../' . htmlspecialchars($product['image'], ENT_QUOTES) ?>"
+          image: "<?= $absImage ?>"
         })'>
         + Add to cart
       </button>
