@@ -310,71 +310,33 @@ document.getElementById('rzp-button1').onclick = async function(e){
   const cart = JSON.parse(localStorage.getItem('cart')||'[]');
   if (!cart.length) return alert('Cart empty');
 
+  const form = document.getElementById('billingForm');
+  const formData = new FormData(form);
+  const user = Object.fromEntries(formData);
+
   const resp = await fetch('create-order.php', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({cart})
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({cart, user})
   }).then(r=>r.json());
-  if (resp.error) return alert(resp.error);
 
-const options = {
-  key: "rzp_test_XymxxA8kk9Jv4x",
-  amount: resp.amount,
-  currency: resp.currency,
-  name: "ADA Aromas",
-  description: "Order Payment",
-  order_id: resp.id,
-  handler: function(res){
-    fetch('verify-payment.php', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        razorpay_order_id: res.razorpay_order_id,
-        razorpay_payment_id: res.razorpay_payment_id,
-        razorpay_signature: res.razorpay_signature,
-        cart
+  const options = {
+    key: "rzp_test_XymxxA8kk9Jv4x", amount: resp.amount, currency: resp.currency,
+    name: "ADA Aromas", description: "Order Payment", order_id: resp.id,
+    handler: function(res){
+      fetch('verify-payment.php',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...res, cart, userId: resp.userId})
       })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        window.location = "thankyou.php?orderId=" + data.orderId;
-      } else {
-        alert("Payment verification failed");
-      }
-    });
-  },
-  theme: { color: "#28a745" },
-
-  // ✅ Force UPI as primary option
-  config: {
-    display: {
-      blocks: {
-        upi: {
-          name: "UPI",
-          instruments: [
-            { method: "upi", flows: ["collect", "intent"] }
-          ]
-        },
-        other: {
-          name: "Other Options",
-          instruments: [
-            { method: "card" },
-            { method: "netbanking" },
-            { method: "wallet" },
-            { method: "paylater" }
-          ]
-        }
-      },
-      sequence: ["block.upi", "block.other"],
-      preferences: {
-        show_default_blocks: false
-      }
-    }
-  }
-};
-
-  const rzp = new Razorpay(options);
-  rzp.open();
+      .then(r=>r.json())
+      .then(data=>{
+        if (data.success) window.location="thankyou.php?orderId="+data.orderId;
+        else alert("Payment failed");
+      });
+    },
+    theme:{color:"#28a745"}
+  };
+  new Razorpay(options).open();
 };
 </script>
 

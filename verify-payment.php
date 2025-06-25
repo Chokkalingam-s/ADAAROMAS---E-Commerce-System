@@ -5,45 +5,36 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Razorpay\Api\Api;
 header('Content-Type: application/json');
 
-$input = json_decode(file_get_contents('php://input'), true);
-$cart = $input['cart'];
-$orderId = $input['razorpay_order_id'];
-$paymentId = $input['razorpay_payment_id'];
-$signature = $input['razorpay_signature'];
+$data = json_decode(file_get_contents('php://input'), true);
+$cart = $data['cart'];
+$userId = $data['userId'];
+$orderId = $data['razorpay_order_id'];
+$paymentId = $data['razorpay_payment_id'];
+$signature = $data['razorpay_signature'];
 
 $api = new Api($keyId, $keySecret);
 try {
   $api->utility->verifyPaymentSignature([
-    'razorpay_order_id'=>$orderId,
-    'razorpay_payment_id'=>$paymentId,
-    'razorpay_signature'=>$signature
+    'razorpay_order_id' => $orderId,
+    'razorpay_payment_id' => $paymentId,
+    'razorpay_signature' => $signature
   ]);
-} catch (\Exception $e) {
-  echo json_encode(['success'=>false]);
-  exit;
+} catch (Exception $e) {
+  echo json_encode(['success'=>false]); exit;
 }
-
-// Store user (guest simplified)
-$stmt = $conn->prepare("INSERT INTO users(name,phoneNo,email, state,district,address,city,pincode)
-VALUES (?,?,?,?,?,?,?,?)");
-$stmt->execute([
-  'Guest', '0000000000', 'guest@adaaromas.com',
-  'NA','NA','NA','NA','000000'
-]);
-$userId = $conn->lastInsertId();
 
 // Store order
-$stmt = $conn->prepare("INSERT INTO orders(userId,transactionId,billingAmount)
-VALUES(?,?,?)");
-$stmt->execute([$userId, $paymentId, array_sum(array_map(fn($p)=>$p['price']*$p['quantity'],$cart))]);
+$total = array_sum(array_map(fn($p)=>$p['price']*$p['quantity'], $cart));
+$stmt = $conn->prepare("INSERT INTO orders (userId, transactionId, billingAmount) VALUES (?, ?, ?)");
+$stmt->execute([$userId, $paymentId, $total]);
 $newOrderId = $conn->lastInsertId();
 
-// Insert order details
-$stmt = $conn->prepare("INSERT INTO order_details(orderId,productId,quantity,size)
-VALUES(?,?,?,?)");
-
-foreach($cart as $item){
-  $stmt->execute([$newOrderId, $item['productId'], $item['quantity'], $item['size']]);
+// For each cart item: store details & reduce stock
+$stmtOD = $conn->prepare("INSERT INTO order_details (orderId, productId, quantity, size) VALUES (?, ?, ?, ?)");
+$stmtStock = $conn->prepare("UPDATE product_stock SET stockInHand = stockInHand - ? WHERE productId = ? AND size = ?");
+foreach ($cart as $item) {
+  $stmtOD->execute([$newOrderId, $item['productId'], $item['quantity'], $item['size']]);
+  $stmtStock->execute([$item['quantity'], $item['productId'], $item['size']]);
 }
 
-echo json_encode(['success'=>true,'orderId'=>$newOrderId]);
+echo json_encode(['success'=>true, 'orderId'=>$newOrderId]);
