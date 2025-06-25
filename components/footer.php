@@ -316,45 +316,63 @@ document.getElementById('rzp-button1').onclick = async function(e){
   }).then(r=>r.json());
   if (resp.error) return alert(resp.error);
 
-  const options = {
-    key: "rzp_test_XymxxA8kk9Jv4x",
-    amount: resp.amount,
-    currency: resp.currency,
-    name: "ADA Aromas",
-    description: "Order Payment",
-    order_id: resp.id,
-    handler: function(res){
-      // call verify
-      fetch('verify-payment.php',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          razorpay_order_id: res.razorpay_order_id,
-          razorpay_payment_id: res.razorpay_payment_id,
-          razorpay_signature: res.razorpay_signature,
-          cart
-        })
+const options = {
+  key: "rzp_test_XymxxA8kk9Jv4x",
+  amount: resp.amount,
+  currency: resp.currency,
+  name: "ADA Aromas",
+  description: "Order Payment",
+  order_id: resp.id,
+  handler: function(res){
+    fetch('verify-payment.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        razorpay_order_id: res.razorpay_order_id,
+        razorpay_payment_id: res.razorpay_payment_id,
+        razorpay_signature: res.razorpay_signature,
+        cart
       })
-      .then(r=>r.json())
-      .then(data=>{
-        if(data.success){
-          window.location = "thankyou.php?orderId="+data.orderId;
-        } else {
-          alert("Payment verification failed");
-        }
-      });
-    },
-    theme: { color: "#28a745" },
-    config: {
-      display: {
-        blocks: {
-          upi: { name: "Pay via UPI", instruments: [ {method:"upi"} ] }
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        window.location = "thankyou.php?orderId=" + data.orderId;
+      } else {
+        alert("Payment verification failed");
+      }
+    });
+  },
+  theme: { color: "#28a745" },
+
+  // ✅ Force UPI as primary option
+  config: {
+    display: {
+      blocks: {
+        upi: {
+          name: "UPI",
+          instruments: [
+            { method: "upi", flows: ["collect", "intent"] }
+          ]
         },
-        sequence: ["block.upi"],
-        preferences: { show_default_blocks: true }
+        other: {
+          name: "Other Options",
+          instruments: [
+            { method: "card" },
+            { method: "netbanking" },
+            { method: "wallet" },
+            { method: "paylater" }
+          ]
+        }
+      },
+      sequence: ["block.upi", "block.other"],
+      preferences: {
+        show_default_blocks: false
       }
     }
-  };
+  }
+};
+
   const rzp = new Razorpay(options);
   rzp.open();
 };
