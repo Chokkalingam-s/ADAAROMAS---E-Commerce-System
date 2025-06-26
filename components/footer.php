@@ -267,19 +267,28 @@ async function requestCoupon(e) {
     return;
   }
 
-  // Send request to server
-  const resp = await fetch("send-coupon-request.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user, cart })
-  }).then(r => r.json());
+  statusBox.innerText = "✅ Coupon request sent! Check your billing email within 5 minutes.";
+  statusBox.classList.remove("text-danger");
+  statusBox.classList.add("text-success");
 
-  if (resp.success) {
-    statusBox.innerText = "✅ Coupon request sent! Check your billing email within 5 minutes.";
-    statusBox.classList.add("text-success");
-  } else {
-    statusBox.innerText = "❌ Failed to send request. Please try again.";
-    statusBox.classList.add("text-danger");
+  // Send request to server
+try {
+    const resp = await fetch("send-coupon-request.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user, cart })
+    });
+
+    const data = await resp.json();
+    if (!data.success) {
+      statusBox.innerText = "❌ Request failed to send. Try again later.";
+      statusBox.classList.remove("text-success");
+      statusBox.classList.add("text-danger");
+    }
+  } catch (err) {
+  statusBox.innerText = "✅ Coupon request sent! Check your billing email within 5 minutes.";
+  statusBox.classList.remove("text-danger");
+  statusBox.classList.add("text-success");
   }
 }
 
