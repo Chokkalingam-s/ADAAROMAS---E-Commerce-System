@@ -239,16 +239,42 @@ window.addEventListener("storage", function (e) {
   if (e.key === "cart") renderCheckoutOrder();
 });
 
-function requestCoupon(e) {
+async function requestCoupon(e) {
   e.preventDefault();
-  const email = document.getElementById("billingEmail").value.trim();
-  const phone = document.getElementById("billingPhone").value.trim();
-  if (!email || !phone) {
-    alert("Please fill in both email and phone to request a coupon.");
+
+  const form = document.getElementById("billingForm");
+  const formData = new FormData(form);
+  const user = Object.fromEntries(formData);
+
+  // Check required fields
+  const requiredFields = ["firstName", "lastName", "state", "district", "city", "addressLine1", "pincode", "email", "phone"];
+  for (let field of requiredFields) {
+    if (!user[field] || user[field].trim() === "") {
+      alert("Please fill all billing details before requesting a coupon.");
+      return;
+    }
+  }
+
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  if (!cart.length) {
+    alert("Cart is empty. Cannot request coupon.");
+    return;
+  }
+
+  const res = await fetch("send-coupon-request.php", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ user, cart })
+  });
+
+  const result = await res.json();
+  if (result.success) {
+    alert("Coupon request sent successfully.");
   } else {
-    alert("Coupon request submitted for " + email);
+    alert("Failed to send coupon request.");
   }
 }
+
 
 const shipCheckbox = document.getElementById("shipDifferent");
 shipCheckbox.addEventListener("change", function () {
