@@ -87,6 +87,7 @@
 <div id="couponMsg" class="text-danger small mb-2"></div>
 
       <small class="text-muted">Don’t have a coupon? <a href="#" onclick="requestCoupon(event)">Request for a coupon</a></small>
+      <div id="couponRequestStatus" class="mt-2 small"></div>
 
       <div class="text-center mt-4">
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

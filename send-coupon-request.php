@@ -36,15 +36,15 @@ try {
 
 
   $mail->isHTML(true);
-  $mail->Subject = '🧾 Request for Coupon - ADA Aromas';
+  $mail->Subject = 'Request for Coupon - ADA Aromas';
 
   $cartHtml = '';
   foreach ($cart as $item) {
     $cartHtml .= "<tr>
       <td style='padding:8px;border:1px solid #ccc;'>{$item['title']}</td>
       <td style='padding:8px;border:1px solid #ccc;'>{$item['quantity']}</td>
-      <td style='padding:8px;border:1px solid #ccc;'>₹{$item['price']}</td>
-      <td style='padding:8px;border:1px solid #ccc;'>₹" . ($item['price'] * $item['quantity']) . "</td>
+      <td style='padding:8px;border:1px solid #ccc;'>{$item['price']}</td>
+      <td style='padding:8px;border:1px solid #ccc;'>" . ($item['price'] * $item['quantity']) . "</td>
     </tr>";
   }
 

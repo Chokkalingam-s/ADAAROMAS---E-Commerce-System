@@ -242,6 +242,10 @@ window.addEventListener("storage", function (e) {
 async function requestCoupon(e) {
   e.preventDefault();
 
+  const statusBox = document.getElementById("couponRequestStatus");
+  statusBox.innerText = '';
+  statusBox.className = 'mt-2 small';
+
   const form = document.getElementById("billingForm");
   const formData = new FormData(form);
   const user = Object.fromEntries(formData);
@@ -250,28 +254,32 @@ async function requestCoupon(e) {
   const requiredFields = ["firstName", "lastName", "state", "district", "city", "addressLine1", "pincode", "email", "phone"];
   for (let field of requiredFields) {
     if (!user[field] || user[field].trim() === "") {
-      alert("Please fill all billing details before requesting a coupon.");
-      return;
+    statusBox.innerText = "Please fill in all billing details before requesting a coupon.";
+    statusBox.classList.add("text-danger");
+    return;
     }
   }
 
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
   if (!cart.length) {
-    alert("Cart is empty. Cannot request coupon.");
+    statusBox.innerText = "Your cart is empty. Add products before requesting a coupon.";
+    statusBox.classList.add("text-danger");
     return;
   }
 
-  const res = await fetch("send-coupon-request.php", {
+  // Send request to server
+  const resp = await fetch("send-coupon-request.php", {
     method: "POST",
-    headers: {'Content-Type': 'application/json'},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user, cart })
-  });
+  }).then(r => r.json());
 
-  const result = await res.json();
-  if (result.success) {
-    alert("Coupon request sent successfully.");
+  if (resp.success) {
+    statusBox.innerText = "✅ Coupon request sent! Check your billing email within 5 minutes.";
+    statusBox.classList.add("text-success");
   } else {
-    alert("Failed to send coupon request.");
+    statusBox.innerText = "❌ Failed to send request. Please try again.";
+    statusBox.classList.add("text-danger");
   }
 }
 
