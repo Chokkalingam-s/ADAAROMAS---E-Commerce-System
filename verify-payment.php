@@ -36,7 +36,6 @@ foreach ($cart as $item) {
 }
 
 echo json_encode(['success'=>true, 'orderId'=>$newOrderId]);
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -44,15 +43,16 @@ $mail = new PHPMailer(true);
 
 try {
   $mail->isSMTP();
-  $mail->Host = 'smtp.gmail.com'; // Or your mail server
+  $mail->Host = 'smtpout.secureserver.net';
   $mail->SMTPAuth = true;
-  $mail->Username = 'your_email@gmail.com'; // Replace with your sender email
-  $mail->Password = 'your_app_password';   // Use App Password if Gmail
-  $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+  $mail->Username = 'Adaaromas@rudraksha.org.in';
+  $mail->Password = 'ADISHAKTIi@675';
+  $mail->SMTPSecure = 'tls';
   $mail->Port = 587;
 
-  $mail->setFrom('your_email@gmail.com', 'ADA Aromas');
-  $mail->addAddress($input['email'], $input['name']);  // Dynamic user email/name
+  $mail->setFrom('Adaaromas@rudraksha.org.in', 'ADA Aromas');
+  $mail->addReplyTo('Adaaromas@rudraksha.org.in', 'ADA Aromas');
+  $mail->addAddress($data['user']['email'], $data['user']['name']);  // ✅ Correct access
 
   $mail->isHTML(true);
   $mail->Subject = 'Order Confirmation - ADA Aromas';
@@ -63,11 +63,11 @@ try {
   }
 
   $mail->Body = "
-    <h2>Thank you for your purchase, {$input['name']}!</h2>
+    <h2>Thank you for your purchase, {$data['user']['name']}!</h2>
     <p>Your order (ID: <strong>#{$newOrderId}</strong>) has been successfully placed and paid.</p>
     <h4>Order Summary:</h4>
     <ul>{$productList}</ul>
-    <p><strong>Total Paid:</strong> ₹" . array_sum(array_map(fn($p) => $p['price'] * $p['quantity'], $cart)) . "</p>
+    <p><strong>Total Paid:</strong> ₹" . number_format($total, 2) . "</p>
     <p>Transaction ID: {$paymentId}</p>
     <br><p>You’ll receive shipping updates soon!</p>
     <p>- Team ADA Aromas</p>
