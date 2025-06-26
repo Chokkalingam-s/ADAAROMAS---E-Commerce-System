@@ -36,22 +36,23 @@ foreach ($cart as $item) {
 }
 
 echo json_encode(['success'=>true, 'orderId'=>$newOrderId]);
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
+$emailConfig = require 'config/email_config.php';
 $mail = new PHPMailer(true);
 
 try {
   $mail->isSMTP();
-  $mail->Host = 'smtpout.secureserver.net';
+  $mail->Host = $emailConfig['smtp_host'];
   $mail->SMTPAuth = true;
-  $mail->Username = 'Adaaromas@rudraksha.org.in';
-  $mail->Password = 'ADISHAKTIi@675';
-  $mail->SMTPSecure = 'tls';
-  $mail->Port = 587;
+  $mail->Username = $emailConfig['smtp_username'];
+  $mail->Password = $emailConfig['smtp_password'];
+  $mail->SMTPSecure = $emailConfig['smtp_secure'];
+  $mail->Port = $emailConfig['smtp_port'];
 
-  $mail->setFrom('Adaaromas@rudraksha.org.in', 'ADA Aromas');
-  $mail->addReplyTo('Adaaromas@rudraksha.org.in', 'ADA Aromas');
+  $mail->setFrom($emailConfig['from_email'], $emailConfig['from_name']);
+  $mail->addReplyTo($emailConfig['from_email'], $emailConfig['from_name']);
   $mail->addAddress($data['user']['email'], $data['user']['name']);  // ✅ Correct access
 
   $mail->isHTML(true);
@@ -62,18 +63,70 @@ try {
     $productList .= "<li>{$item['title']} - Qty: {$item['quantity']} - ₹{$item['price']} x {$item['quantity']}</li>";
   }
 
-  $mail->Body = "
-    <h2>Thank you for your purchase, {$data['user']['name']}!</h2>
-    <p>Your order (ID: <strong>#{$newOrderId}</strong>) has been successfully placed and paid.</p>
-    <h4>Order Summary:</h4>
-    <ul>{$productList}</ul>
-    <p><strong>Total Paid:</strong> ₹" . number_format($total, 2) . "</p>
-    <p>Transaction ID: {$paymentId}</p>
-    <br><p>You’ll receive shipping updates soon!</p>
-    <p>- Team ADA Aromas</p>
-  ";
+$orderLink = "https://yourdomain.com/thankyou.php?orderId=$newOrderId";
+$totalPrice = number_format($total, 2);
+
+$mail->Body = "
+<div style='max-width:600px;margin:auto;font-family:sans-serif;border:1px solid #eee;border-radius:10px;overflow:hidden;'>
+  <div style='background:#000;color:#fff;padding:20px;text-align:center'>
+    <h1 style='margin:0;font-size:28px;'>Thank you for shopping with ADA Aromas!</h1>
+    <p style='margin:5px 0;'>Order ID: <strong>#{$newOrderId}</strong></p>
+  </div>
+
+  <div style='padding:20px;background:#fafafa;'>
+    <p style='font-size:16px;'>Hi <strong>{$data['user']['name']}</strong>,</p>
+    <p style='font-size:15px;'>We're excited to let you know that your order has been successfully placed and paid via Razorpay.</p>
+    
+    <table style='width:100%;border-collapse:collapse;margin-top:15px'>
+      <thead>
+        <tr style='background:#eee;text-align:left;'>
+          <th style='padding:10px;border:1px solid #ddd;'>Product</th>
+          <th style='padding:10px;border:1px solid #ddd;'>Qty</th>
+          <th style='padding:10px;border:1px solid #ddd;'>Size</th>
+          <th style='padding:10px;border:1px solid #ddd;'>Price</th>
+        </tr>
+      </thead>
+      <tbody>";
+
+foreach ($cart as $item) {
+  $image = $item['image'] ?? 'https://via.placeholder.com/60';
+  $mail->Body .= "
+        <tr>
+          <td style='padding:10px;border:1px solid #ddd;'>
+            <img src='{$image}' alt='{$item['title']}' style='width:60px;height:auto;vertical-align:middle;margin-right:8px;border-radius:6px;'>
+            {$item['title']}
+          </td>
+          <td style='padding:10px;border:1px solid #ddd;'>{$item['quantity']}</td>
+          <td style='padding:10px;border:1px solid #ddd;'>{$item['size']}</td>
+          <td style='padding:10px;border:1px solid #ddd;'>₹" . ($item['price'] * $item['quantity']) . "</td>
+        </tr>";
+}
+
+$mail->Body .= "
+      </tbody>
+    </table>
+
+    <div style='margin-top:20px;font-size:16px;'>
+      <p><strong>Total Paid:</strong> ₹{$totalPrice}</p>
+      <p><strong>Transaction ID:</strong> {$paymentId}</p>
+    </div>
+
+    <div style='text-align:center;margin:30px 0;'>
+      <a href='{$orderLink}' style='padding:12px 25px;background:#000;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;'>View Full Order Details</a>
+    </div>
+
+    <p style='font-size:14px;color:#888;'>If you have any questions,  email to <a href='mailto:{$emailConfig['from_email']}' style='color:#888;text-decoration:underline;'>{$emailConfig['from_email']}</a> and we’ll get back to you shortly.</p>
+    <p style='font-size:14px;color:#888;'>– Team ADA Aromas</p>
+  </div>
+
+  <div style='background:#000;color:#fff;padding:15px;text-align:center;font-size:13px'>
+    Further Order Visit :
+    <a href='#' style='color:#fff;text-decoration:underline;margin:0 5px;'>ADA AROMAS</a> 
+  </div>
+</div>";
 
   $mail->send();
+  echo json_encode(['success' => true, 'orderId' => $newOrderId]);
 } catch (Exception $e) {
   error_log("Email not sent. Error: {$mail->ErrorInfo}");
 }
