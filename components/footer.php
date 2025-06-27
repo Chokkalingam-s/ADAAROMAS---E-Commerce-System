@@ -436,7 +436,7 @@ function safeRedirect(orderId) {
 
 if (verifyResp.success && verifyResp.orderId) {
   safeRedirect(verifyResp.orderId);
-  setTimeout(() => safeRedirect(verifyResp.orderId), 2000); // retry redirect if modal was blocking
+  setTimeout(() => safeRedirect(verifyResp.orderId), 5000); // retry redirect if modal was blocking
 } else {
 
         }
