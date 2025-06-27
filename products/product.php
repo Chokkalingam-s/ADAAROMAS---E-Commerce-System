@@ -60,7 +60,10 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="d-flex flex-column gap-1">
 <?php foreach ($sizes as $s): ?>
   <div class="border rounded p-2 d-flex justify-content-between align-items-center <?= $s['stockInHand'] <= 0 ? 'text-muted' : '' ?>">
-    <span><?= $s['size'] ?>ml</span>
+    <span>
+  <?= ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'] . 'ml' ?>
+</span>
+
     <span>
       Rs. <?= $s['asp'] ?>
       <small class="text-muted"><del>Rs. <?= $s['mrp'] ?></del></small>
@@ -73,8 +76,12 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
         class="add-to-cart-btn btn btn-light fw-bold btn-sm btn-outline-success"
         onclick='addToCart({
           productId: <?= (int)$s['productId'] ?>,
-          title: "<?= htmlspecialchars($product['name'], ENT_QUOTES) ?> (<?= $s['size'] ?>ml)",
-          size: "<?= htmlspecialchars($s['size'], ENT_QUOTES) ?>",
+          <?php
+  $displaySize = ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'] . 'ml';
+  $cartSize = ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'];
+?>
+title: "<?= htmlspecialchars($product['name'], ENT_QUOTES) ?>",
+size: "<?= $cartSize ?>",
           price: <?= (float)$s['asp'] ?>,
           mrp: <?= (float)$s['mrp'] ?>,
           image: "<?= $absImage ?>"
