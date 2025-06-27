@@ -6,16 +6,20 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
 $orderId = $_POST['orderId'];
 $newStatus = $_POST['newStatus'];
+$currentStatus = $_POST['currentStatus'];
 
 $conn->prepare("UPDATE orders SET status = ? WHERE orderId = ?")->execute([$newStatus, $orderId]);
 
-// Reduce stock if status changed to Confirmed
-if ($newStatus === 'Confirmed') {
+// Only reduce stock if transitioning from Pending → Confirmed
+if ($currentStatus === 'Pending' && $newStatus === 'Confirmed') {
   $items = $conn->prepare("SELECT productId, size, quantity FROM order_details WHERE orderId = ?");
   $items->execute([$orderId]);
   foreach ($items->fetchAll() as $item) {
-    $update = $conn->prepare("UPDATE product_stock SET stockInHand = stockInHand - ? WHERE productId = ? AND size = ?");
-    $update->execute([$item['quantity'], $item['productId'], $item['size']]);
+    $conn->prepare("
+      UPDATE product_stock 
+      SET stockInHand = stockInHand - ? 
+      WHERE productId = ? 
+    ")->execute([$item['quantity'], $item['productId']]);
   }
 }
 
