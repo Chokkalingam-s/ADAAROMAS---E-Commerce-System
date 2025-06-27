@@ -36,14 +36,24 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     .bg-Confirmed { background-color: #28a745; color: #fff; }
     .bg-Delivered { background-color: #343a40; color: #fff; }
     .table td, .table th { vertical-align: middle; }
+.status-badge {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-weight: 500;
+}
+
   </style>
 </head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
   <a class="navbar-brand" href="../admincrm">ADA Aromas Admin</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
   <div class="collapse navbar-collapse" id="adminNav">
     <ul class="navbar-nav ms-auto">
-      <li class="nav-item"><a class="nav-link" href="add-product.php">Add Product</a></li>
+      <li class="nav-item"><a class="nav-link " href="add-product.php">Add Product</a></li>
       <li class="nav-item"><a class="nav-link" href="manage-stock.php">Manage Stock</a></li>
       <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
       <li class="nav-item"><a class="nav-link active" href="orders.php">Orders</a></li>
@@ -55,6 +65,24 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 
 <div class="container py-4">
   <h2 class="mb-4">All Orders</h2>
+
+  <div class="card mb-4 shadow-sm p-3">
+  <form id="filterForm" class="row g-3 align-items-center">
+    <div class="col-auto">
+      <label for="statusFilter" class="form-label fw-bold mb-0">Filter by Status:</label>
+    </div>
+    <div class="col-auto">
+      <select id="statusFilter" class="form-select">
+        <option value="All">All</option>
+        <option value="Pending">Pending</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Cancelled">Cancelled</option>
+        <option value="Delivered">Delivered</option>
+      </select>
+    </div>
+  </form>
+</div>
+
 
   <?php foreach ($orders as $orderId => $items): 
     $first = $items[0];
@@ -123,5 +151,21 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     });
   });
 </script>
+<script>
+  document.getElementById('statusFilter').addEventListener('change', function () {
+    const selected = this.value;
+    document.querySelectorAll('.card.shadow-sm').forEach(card => {
+      const badge = card.querySelector('.status-badge');
+      if (!badge) return;
+      const status = badge.textContent.trim();
+      if (selected === 'All' || status === selected) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
