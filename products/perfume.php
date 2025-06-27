@@ -29,6 +29,7 @@ foreach ($rows as $row) {
     $grouped[$key] = [
       "title" => $row['name'],
       "productId" => (int)$row['productId'],
+      "size" => $row['size'] ?? 'No size specified', // Use size if available, else default
       "category" => $row['category'],
       "image" => "../" . $row['image'],
       "price" => (int)$row['asp'],

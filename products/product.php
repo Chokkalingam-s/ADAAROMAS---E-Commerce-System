@@ -74,6 +74,7 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
         onclick='addToCart({
           productId: <?= (int)$s['productId'] ?>,
           title: "<?= htmlspecialchars($product['name'], ENT_QUOTES) ?> (<?= $s['size'] ?>ml)",
+          size: "<?= htmlspecialchars($s['size'], ENT_QUOTES) ?>",
           price: <?= (float)$s['asp'] ?>,
           mrp: <?= (float)$s['mrp'] ?>,
           image: "<?= $absImage ?>"

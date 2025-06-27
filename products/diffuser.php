@@ -27,6 +27,7 @@ foreach ($rows as $row) {
     $grouped[$key] = [
       "title" => $row['name'],
       "productId" => (int)$row['productId'],
+"size" => (empty($row['size']) || $row['size'] === '0' || $row['size'] == 0) ? '1 Nos' : $row['size'],
       "category" => $row['category'],
       "image" => "../" . $row['image'],
       "price" => (int)$row['asp'],

@@ -24,6 +24,7 @@
           onclick='addToCart({
             productId: <?= $productId ?>,
             title: "<?= addslashes($title) ?>",
+            size: "<?= $size ?>",
             price: <?= $price ?>,
             mrp: <?= $mrp ?>,
             image: "<?= $absImage ?>"
