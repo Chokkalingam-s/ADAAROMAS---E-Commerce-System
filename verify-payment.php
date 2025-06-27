@@ -24,7 +24,7 @@ try {
 }
 
 // Store order
-$total = array_sum(array_map(fn($p)=>$p['price']*$p['quantity'], $cart));
+$total = isset($data['finalAmount']) ? (float)$data['finalAmount'] : array_sum(array_map(fn($p)=>$p['price']*$p['quantity'], $cart));
 $stmt = $conn->prepare("INSERT INTO orders (userId, transactionId, billingAmount) VALUES (?, ?, ?)");
 $stmt->execute([$userId, $paymentId, $total]);
 $newOrderId = $conn->lastInsertId();

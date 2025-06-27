@@ -350,6 +350,7 @@ function applyDiscount(coupon) {
   document.getElementById('totalPrice').innerText = discountedTotal.toFixed(0);
   document.getElementById('discountInfo').innerText = `Coupon applied! You saved ₹${discount.toFixed(0)}.`;
   document.getElementById('discountInfo').style.display = 'block';
+  
 }
 </script>
 
@@ -390,40 +391,66 @@ document.getElementById('rzp-button1').onclick = async function(e){
   const form = document.getElementById('billingForm');
   const formData = new FormData(form);
   const user = Object.fromEntries(formData);
+  const finalAmount = parseFloat(document.getElementById("totalPrice").textContent);
 
-  const resp = await fetch('create-order.php', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({cart, user})
-  }).then(r=>r.json());
+const resp = await fetch('create-order.php', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ cart, user, finalAmount })
+}).then(r => r.json());
+
 
   const options = {
-    key: "rzp_test_XymxxA8kk9Jv4x", amount: resp.amount, currency: resp.currency,
-    name: "ADA Aromas", description: "Order Payment", order_id: resp.id,
-    handler: function(res){
-      fetch('verify-payment.php',{
-        method:'POST', headers:{'Content-Type':'application/json'},
-body: JSON.stringify({
-  ...res,
-  cart,
-   userId: resp.userId,
-  user: {
-    id: resp.userId,
-    name: user.firstName + ' ' + user.lastName,
-    email: user.email
-  }
-})
+    key: "rzp_test_XymxxA8kk9Jv4x",
+    amount: resp.amount,
+    currency: resp.currency,
+    name: "ADA Aromas",
+    description: "Order Payment",
+    order_id: resp.id,
+    handler: async function (res) {
+      try {
+        const verifyResp = await fetch('verify-payment.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...res,
+            cart,
+            finalAmount,
+            userId: resp.userId,
+            user: {
+              id: resp.userId,
+              name: user.firstName + ' ' + user.lastName,
+              email: user.email
+            }
+          })
+        }).then(r => r.json());
 
-      })
-      .then(r=>r.json())
-      .then(data=>{
-        if (data.success) window.location="thankyou.php?orderId="+data.orderId;
-        else alert("Payment failed");
-      });
+let redirected = false;
+function safeRedirect(orderId) {
+  if (!redirected) {
+    redirected = true;
+    localStorage.removeItem('cart');
+    window.location.href = "thankyou.php?orderId=" + orderId;
+  }
+}
+
+if (verifyResp.success && verifyResp.orderId) {
+  safeRedirect(verifyResp.orderId);
+  setTimeout(() => safeRedirect(verifyResp.orderId), 2000); // retry redirect if modal was blocking
+} else {
+
+        }
+
+      } catch (err) {
+
+        console.error(err);
+      }
     },
-    theme:{color:"#28a745"}
+    theme: { color: "#28a745" }
   };
-  new Razorpay(options).open();
+
+  const rzp = new Razorpay(options);
+  rzp.open();
 };
 </script>
 

@@ -10,7 +10,8 @@ $input = json_decode(file_get_contents('php://input'), true);
 $cart = $input['cart'];
 $userData = $input['user'];
 
-$total = array_sum(array_map(fn($p)=>$p['price']*$p['quantity'],$cart));
+$total = isset($input['finalAmount']) ? (float)$input['finalAmount'] : array_sum(array_map(fn($p)=>$p['price']*$p['quantity'],$cart));
+
 if ($total <= 0) exit(json_encode(['error'=>"Cart empty"]));
 
 $fullname = trim($userData['firstName'].' '.$userData['lastName']);
