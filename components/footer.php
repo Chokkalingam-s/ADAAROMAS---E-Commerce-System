@@ -82,6 +82,10 @@ const itemDiv = document.createElement("div");
       <div class="cart-info">
         <div class="d-flex justify-content-between">
           <div class="cart-title">${item.title}</div>
+          <div class="cart-size">
+  ${isNaN(item.size) ? item.size : item.size + "ml"}
+</div>
+
           <div class="text-end">
             <strong>₹${item.price.toLocaleString()}</strong><br>
             ${item.mrp ? `<span class="original-price">₹${item.mrp.toLocaleString()}</span>` : ""}
@@ -186,6 +190,7 @@ function renderCheckoutOrder() {
       <div class='d-flex justify-content-between align-items-center mb-2'>
         <div class="w-75">
           <strong>${p.title}</strong>
+          <div class="text-muted">${p.size || "No size specified"}</div>
           <div class="d-flex align-items-center gap-2 mt-1">
             <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateCheckoutQuantity('${p.title}', -1)">-</button>
             <span>${p.quantity}</span>
