@@ -39,40 +39,36 @@
     </div>
 
     <?php
-    // Get name & category for current productId
+// Step 1: Get name & category for the given productId
 $infoStmt = $conn->prepare("SELECT name, category FROM products WHERE productId = ?");
 $infoStmt->execute([$productId]);
 $prodInfo = $infoStmt->fetch(PDO::FETCH_ASSOC);
 
+$rating = 0;
+$reviews = 0;
+
 if ($prodInfo) {
-  // Get all productIds that share same name and category
+  // Step 2: Get all related productIds (same name and category)
   $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
   $relatedStmt->execute([$prodInfo['name'], $prodInfo['category']]);
   $relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
 
   if ($relatedIds) {
-    // Build placeholders (?, ?, ...) for IN clause
+    // Step 3: Prepare IN clause
     $placeholders = implode(',', array_fill(0, count($relatedIds), '?'));
 
-    // Average rating
-    $ratingStmt = $conn->prepare("
-      SELECT ROUND(AVG(rating), 1) as avgRating, SUM(reviewCount) as totalReviews
-      FROM products
-      WHERE productId IN ($placeholders)
-    ");
-    $ratingStmt->execute($relatedIds);
-    $ratingData = $ratingStmt->fetch(PDO::FETCH_ASSOC);
+    // Get average rating from products table
+    $avgStmt = $conn->prepare("SELECT ROUND(AVG(rating), 1) as avgRating FROM products WHERE productId IN ($placeholders)");
+    $avgStmt->execute($relatedIds);
+    $rating = $avgStmt->fetchColumn() ?: 0;
 
-    $rating = $ratingData['avgRating'] ?: 0;
-    $reviews = $ratingData['totalReviews'] ?: 0;
-  } else {
-    $rating = 0;
-    $reviews = 0;
+    // Count actual review entries from reviews table (distinct entries)
+    $revStmt = $conn->prepare("SELECT COUNT(*) FROM reviews WHERE productId IN ($placeholders)");
+    $revStmt->execute($relatedIds);
+    $reviews = $revStmt->fetchColumn() ?: 0;
   }
-} else {
-  $rating = 0;
-  $reviews = 0;
 }
+
     ?>
 
     <!-- Card Body (clickable title) -->
@@ -85,10 +81,9 @@ if ($prodInfo) {
         <span class="text-muted text-decoration-line-through fs-6">Rs. <?= $mrp ?></span>
       </p>
 <p class="text-warning mb-1">
-  ⭐ <?= number_format($rating, 1) ?>
+  ⭐ <?= number_format($rating, 1) ?> 
   <span class="text-primary">| <i class="bi bi-patch-check-fill"></i> (<?= $reviews ?> Reviews)</span>
 </p>
-
-    </div>
+   </div>
   </div>
 </div>
