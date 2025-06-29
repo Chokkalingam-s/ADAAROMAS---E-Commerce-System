@@ -114,7 +114,100 @@ size: "<?= $cartSize ?>",
         <!-- Add "Shipping & Return", "Guarantee", etc. as fixed content here -->
       </div>
     </div>
+
+    <div class="mt-5" id="reviewSection">
+  <h4 class="mb-3">Rate & Review this Product</h4>
+  <form id="reviewForm" class="border p-3 rounded bg-light">
+    <div class="mb-2">
+      <label class="form-label">Your Rating</label><br>
+      <div class="rating-stars">
+        <?php for ($i = 1; $i <= 5; $i++): ?>
+          <span class="star" data-value="<?= $i ?>">&#9733;</span>
+        <?php endfor; ?>
+      </div>
+      <input type="hidden" name="rating" id="rating" required>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label">Your Review</label>
+      <textarea name="feedback" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label">Your Name</label>
+      <input type="text" name="name" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Mobile No</label>
+      <input type="text" name="phoneNo" class="form-control" required pattern="\d{10}">
+    </div>
+
+    <input type="hidden" name="productId" value="<?= $productId ?>">
+    <button type="submit" class="btn btn-success">Submit Review</button>
+    <div id="reviewMsg" class="mt-2 fw-bold"></div>
+  </form>
+  <?php
+$reviewStmt = $conn->prepare("
+  SELECT u.name, r.feedback, r.createdAt
+  FROM reviews r
+  JOIN users u ON u.userId = r.userId
+  WHERE r.productId = ?
+  ORDER BY r.createdAt DESC
+");
+$reviewStmt->execute([$productId]);
+$reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<div class="mt-4">
+  <h4>Customer Reviews (<?= count($reviews) ?>)</h4>
+  <?php if ($reviews): ?>
+    <?php foreach ($reviews as $rev): ?>
+      <div class="border rounded p-2 mb-2 bg-white">
+        <strong><?= htmlspecialchars($rev['name']) ?></strong>
+        <p class="mb-1"><?= nl2br(htmlspecialchars($rev['feedback'])) ?></p>
+        <small class="text-muted"><?= date('d M Y, h:i A', strtotime($rev['dAt'])) ?></small>
+      </div>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <p>No reviews yet for this product.</p>
+  <?php endif; ?>
+</div>
+
+</div>
+
+
+
   </div>
 </div>
+<script>
+document.querySelectorAll('.rating-stars .star').forEach(star => {
+  star.addEventListener('click', () => {
+    const value = star.getAttribute('data-value');
+    document.getElementById('rating').value = value;
+    document.querySelectorAll('.rating-stars .star').forEach(s => {
+      s.classList.toggle('selected', s.getAttribute('data-value') <= value);
+    });
+  });
+});
+
+document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  const obj = Object.fromEntries(formData);
+
+  const res = await fetch('../products/submit-review.php', {
+    method: 'POST',
+    body: formData
+  });
+  const data = await res.json();
+
+  const msgBox = document.getElementById('reviewMsg');
+  msgBox.textContent = data.message;
+  msgBox.className = data.success ? 'text-success' : 'text-danger';
+
+  if (data.success) this.reset();
+});
+</script>
 
 <?php include('../components/footer.php'); ?>

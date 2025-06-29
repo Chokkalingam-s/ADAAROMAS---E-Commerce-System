@@ -201,6 +201,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   cursor: pointer;
 }
 
+.rating-stars .star {
+  font-size: 1.5rem;
+  color: #ccc;
+  cursor: pointer;
+}
+.rating-stars .star.selected {
+  color: #f39c12;
+}
+
+
   </style>
 </head>
 <body>
