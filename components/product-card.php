@@ -38,6 +38,43 @@
       <?php endif; ?>
     </div>
 
+    <?php
+    // Get name & category for current productId
+$infoStmt = $conn->prepare("SELECT name, category FROM products WHERE productId = ?");
+$infoStmt->execute([$productId]);
+$prodInfo = $infoStmt->fetch(PDO::FETCH_ASSOC);
+
+if ($prodInfo) {
+  // Get all productIds that share same name and category
+  $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
+  $relatedStmt->execute([$prodInfo['name'], $prodInfo['category']]);
+  $relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
+
+  if ($relatedIds) {
+    // Build placeholders (?, ?, ...) for IN clause
+    $placeholders = implode(',', array_fill(0, count($relatedIds), '?'));
+
+    // Average rating
+    $ratingStmt = $conn->prepare("
+      SELECT ROUND(AVG(rating), 1) as avgRating, SUM(reviewCount) as totalReviews
+      FROM products
+      WHERE productId IN ($placeholders)
+    ");
+    $ratingStmt->execute($relatedIds);
+    $ratingData = $ratingStmt->fetch(PDO::FETCH_ASSOC);
+
+    $rating = $ratingData['avgRating'] ?: 0;
+    $reviews = $ratingData['totalReviews'] ?: 0;
+  } else {
+    $rating = 0;
+    $reviews = 0;
+  }
+} else {
+  $rating = 0;
+  $reviews = 0;
+}
+    ?>
+
     <!-- Card Body (clickable title) -->
     <div class="text-center mt-3">
       <h5 class="mb-1">
@@ -47,10 +84,11 @@
         Rs. <?= $price ?> 
         <span class="text-muted text-decoration-line-through fs-6">Rs. <?= $mrp ?></span>
       </p>
-      <p class="text-warning mb-1">
-        ⭐ <?= $rating ?> 
-        <span class="text-primary">| <i class="bi bi-patch-check-fill"></i> (<?= $reviews ?> Reviews)</span>
-      </p>
+<p class="text-warning mb-1">
+  ⭐ <?= number_format($rating, 1) ?>
+  <span class="text-primary">| <i class="bi bi-patch-check-fill"></i> (<?= $reviews ?> Reviews)</span>
+</p>
+
     </div>
   </div>
 </div>
