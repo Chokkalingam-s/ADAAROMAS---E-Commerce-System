@@ -202,12 +202,14 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 }
 
 .rating-stars .star {
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: #ccc;
   cursor: pointer;
+  transition: color 0.3s;
 }
+.rating-stars .star:hover,
 .rating-stars .star.selected {
-  color: #f39c12;
+  color: #ffc107;
 }
 
 

@@ -115,66 +115,102 @@ size: "<?= $cartSize ?>",
       </div>
     </div>
 
-    <div class="mt-5" id="reviewSection">
-  <h4 class="mb-3">Rate & Review this Product</h4>
-  <form id="reviewForm" class="border p-3 rounded bg-light">
-    <div class="mb-2">
-      <label class="form-label">Your Rating</label><br>
-      <div class="rating-stars">
-        <?php for ($i = 1; $i <= 5; $i++): ?>
-          <span class="star" data-value="<?= $i ?>">&#9733;</span>
-        <?php endfor; ?>
-      </div>
-      <input type="hidden" name="rating" id="rating" required>
-    </div>
+<?php
+// Fetch all related productIds
+$relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
+$relatedStmt->execute([$product['name'], $product['category']]);
+$relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    <div class="mb-2">
-      <label class="form-label">Your Review</label>
-      <textarea name="feedback" class="form-control" rows="3" required></textarea>
-    </div>
+// For overall average rating
+$avgStmt = $conn->prepare("
+  SELECT ROUND(AVG(rating), 2) as avgRating
+  FROM products
+  WHERE productId IN (" . implode(',', array_fill(0, count($relatedIds), '?')) . ")
+");
+$avgStmt->execute($relatedIds);
+$avgRating = $avgStmt->fetchColumn();
 
-    <div class="mb-2">
-      <label class="form-label">Your Name</label>
-      <input type="text" name="name" class="form-control" required>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Mobile No</label>
-      <input type="text" name="phoneNo" class="form-control" required pattern="\d{10}">
-    </div>
-
-    <input type="hidden" name="productId" value="<?= $productId ?>">
-    <button type="submit" class="btn btn-success">Submit Review</button>
-    <div id="reviewMsg" class="mt-2 fw-bold"></div>
-  </form>
-  <?php
+// Fetch reviews across all sizes
+$placeholders = implode(',', array_fill(0, count($relatedIds), '?'));
 $reviewStmt = $conn->prepare("
   SELECT u.name, r.feedback, r.createdAt
   FROM reviews r
   JOIN users u ON u.userId = r.userId
-  WHERE r.productId = ?
+  WHERE r.productId IN ($placeholders)
   ORDER BY r.createdAt DESC
 ");
-$reviewStmt->execute([$productId]);
+$reviewStmt->execute($relatedIds);
 $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="mt-4">
-  <h4>Customer Reviews (<?= count($reviews) ?>)</h4>
+<div class="mt-5" id="reviewSection">
+  <div class="mb-4">
+    <h4>Customer Reviews</h4>
+    <div class="d-flex align-items-center mb-2">
+      <div class="me-2" style="font-size: 1.5rem; color: #ffc107;">
+        <?php
+        $fullStars = floor($avgRating);
+        for ($i = 1; $i <= 5; $i++) {
+          echo $i <= $fullStars ? '★' : '☆';
+        }
+        ?>
+      </div>
+      <span class="fw-bold"><?= $avgRating ?>/5</span>
+    </div>
+  </div>
+
   <?php if ($reviews): ?>
     <?php foreach ($reviews as $rev): ?>
-      <div class="border rounded p-2 mb-2 bg-white">
+      <div class="border rounded p-3 mb-3 bg-white shadow-sm">
         <strong><?= htmlspecialchars($rev['name']) ?></strong>
         <p class="mb-1"><?= nl2br(htmlspecialchars($rev['feedback'])) ?></p>
         <small class="text-muted"><?= date('d M Y, h:i A', strtotime($rev['createdAt'])) ?></small>
       </div>
     <?php endforeach; ?>
   <?php else: ?>
-    <p>No reviews yet for this product.</p>
+    <p class="text-muted">No reviews yet. Be the first to review!</p>
   <?php endif; ?>
+
+  <button class="btn btn-outline-dark mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormWrap">
+    + Write a Review
+  </button>
+
+  <div class="collapse mt-3" id="reviewFormWrap">
+    <form id="reviewForm" class="border p-4 rounded bg-light shadow-sm">
+      <h5 class="mb-3">Your Review</h5>
+
+      <div class="mb-3">
+        <label class="form-label">Rating</label><br>
+        <div class="rating-stars">
+          <?php for ($i = 1; $i <= 5; $i++): ?>
+            <span class="star" data-value="<?= $i ?>">&#9733;</span>
+          <?php endfor; ?>
+        </div>
+        <input type="hidden" name="rating" id="rating" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Review</label>
+        <textarea name="feedback" class="form-control" rows="3" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Your Name</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Mobile Number</label>
+        <input type="text" name="phoneNo" class="form-control" required pattern="\d{10}">
+      </div>
+
+      <input type="hidden" name="productId" value="<?= $productId ?>">
+      <button type="submit" class="btn btn-success">Submit Review</button>
+      <div id="reviewMsg" class="mt-2 fw-bold"></div>
+    </form>
+  </div>
 </div>
 
-</div>
 
 
 
@@ -206,7 +242,10 @@ document.getElementById('reviewForm').addEventListener('submit', async function(
   msgBox.textContent = data.message;
   msgBox.className = data.success ? 'text-success' : 'text-danger';
 
-  if (data.success) this.reset();
+  if (data.success) {
+    this.reset();
+    document.querySelectorAll('.rating-stars .star').forEach(s => s.classList.remove('selected'));
+  }
 });
 </script>
 
