@@ -166,7 +166,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="border rounded p-2 mb-2 bg-white">
         <strong><?= htmlspecialchars($rev['name']) ?></strong>
         <p class="mb-1"><?= nl2br(htmlspecialchars($rev['feedback'])) ?></p>
-        <small class="text-muted"><?= date('d M Y, h:i A', strtotime($rev['dAt'])) ?></small>
+        <small class="text-muted"><?= date('d M Y, h:i A', strtotime($rev['createdAt'])) ?></small>
       </div>
     <?php endforeach; ?>
   <?php else: ?>
