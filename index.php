@@ -8,60 +8,150 @@
   
 
   <!-- Featured Products -->
-  <section class="py-5">
-    <div class="container">
-      <h2 class="text-center mb-4">Best Sellers</h2>
-      <div class="row g-4">
+<?php
+include "config/db.php";
 
-        <?php
-$products = [
-  [
-    "title" => "Ombre Nomade",
-    "image" => "assets/images/image.png",
-    "price" => 849,
-    "mrp" => 1999,
-    "rating" => "5.0",
-    "reviews" => 1,
-    "inStock" => true
-  ],
-  [
-    "title" => "Aventus",
-    "image" => "assets/images/image.png",
-    "price" => 999,
-    "mrp" => 2499,
-    "rating" => "4.8",
-    "reviews" => 5,
-    "inStock" => true
-  ],
-  [
-    "title" => "Creed Viking",
-    "image" => "assets/images/image.png",
-    "price" => 1299,
-    "mrp" => 2999,
-    "rating" => "4.9",
-    "reviews" => 3,
-    "inStock" => false
+// Get top 8 best-selling productIds based on how many times they appear in orders
+$topStmt = $conn->prepare("
+  SELECT od.productId, COUNT(*) as saleCount
+  FROM order_details od
+  GROUP BY od.productId
+  ORDER BY saleCount DESC
+  LIMIT 8
+");
+$topStmt->execute();
+$topSellingIds = $topStmt->fetchAll(PDO::FETCH_COLUMN);
 
-  ],
-  [
-    "title" => "Tom Ford Noir",
-    "image" => "assets/images/image.png",
-    "price" => 899,
-    "mrp" => 1999,
-    "rating" => "4.7",
-    "reviews" => 2,
-    "inStock" => true
-  ]
-];
+// If fewer than 8 best-sellers, fill remaining with random products
+$productIds = $topSellingIds;
+$needed = 8 - count($productIds);
 
-foreach ($products as $p) {
-  $discount = round((($p["mrp"] - $p["price"]) / $p["mrp"]) * 100);
-  extract($p);
-  include "components/product-card.php";
+if ($needed > 0) {
+  $placeholders = $productIds ? implode(',', $productIds) : '0';
+  $randStmt = $conn->prepare("
+    SELECT p.productId
+    FROM products p
+    WHERE p.productId NOT IN ($placeholders)
+    ORDER BY RAND()
+    LIMIT $needed
+  ");
+  $randStmt->execute();
+  $randomIds = $randStmt->fetchAll(PDO::FETCH_COLUMN);
+  $productIds = array_merge($productIds, $randomIds);
+}
+
+// Fetch product details for final productId list
+if (count($productIds)) {
+  $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+  $prodStmt = $conn->prepare("
+    SELECT p.*, ps.stockInHand
+    FROM products p
+    JOIN product_stock ps ON p.productId = ps.productId
+    WHERE p.productId IN ($placeholders)
+  ");
+  $prodStmt->execute($productIds);
+  $products = $prodStmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+  $products = [];
 }
 ?>
-      </div>
+
+<!-- Best Sellers Section -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Best Sellers</h2>
+    <div class="row g-4">
+      <?php
+      foreach ($products as $p) {
+        $title = $p['name'];
+        $image = $p['image'];
+        $price = $p['asp'];
+        $mrp = $p['mrp'];
+        $productId = $p['productId'];
+        $size = $p['size'] ?? '1 Nos';
+        $inStock = $p['stockInHand'] > 0;
+
+        // Get dynamic rating and review count for the full product (same name + category)
+        $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
+        $relatedStmt->execute([$p['name'], $p['category']]);
+        $relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $rating = 0;
+        $reviews = 0;
+        if ($relatedIds) {
+          $placeholders = implode(',', array_fill(0, count($relatedIds), '?'));
+          $avgStmt = $conn->prepare("SELECT ROUND(AVG(rating),1) FROM products WHERE productId IN ($placeholders)");
+          $avgStmt->execute($relatedIds);
+          $rating = $avgStmt->fetchColumn() ?: 0;
+
+          $revStmt = $conn->prepare("SELECT COUNT(*) FROM reviews WHERE productId IN ($placeholders)");
+          $revStmt->execute($relatedIds);
+          $reviews = $revStmt->fetchColumn() ?: 0;
+        }
+
+        $discount = round((($mrp - $price) / $mrp) * 100);
+        include "components/product-card.php";
+      }
+      ?>
     </div>
-  </section>
+  </div>
+</section>
+
+
+
+  <!-- Gifting Section -->
+<?php
+$giftStmt = $conn->prepare("
+  SELECT p.*, ps.stockInHand 
+  FROM products p
+  JOIN product_stock ps ON p.productId = ps.productId
+  ORDER BY RAND()
+  LIMIT 8
+");
+$giftStmt->execute();
+$giftProducts = $giftStmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<!-- Gifting Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-4">Perfect for Gifting</h2>
+    <div class="row g-4">
+      <?php
+      foreach ($giftProducts as $p) {
+        $title = $p['name'];
+        $image = $p['image'];
+        $price = $p['asp'];
+        $mrp = $p['mrp'];
+        $productId = $p['productId'];
+        $size = $p['size'] ?? '1 Nos';
+        $inStock = $p['stockInHand'] > 0;
+
+        $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
+        $relatedStmt->execute([$p['name'], $p['category']]);
+        $relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $rating = 0;
+        $reviews = 0;
+        if ($relatedIds) {
+          $placeholders = implode(',', array_fill(0, count($relatedIds), '?'));
+          $avgStmt = $conn->prepare("SELECT ROUND(AVG(rating),1) FROM products WHERE productId IN ($placeholders)");
+          $avgStmt->execute($relatedIds);
+          $rating = $avgStmt->fetchColumn() ?: 0;
+
+          $revStmt = $conn->prepare("SELECT COUNT(*) FROM reviews WHERE productId IN ($placeholders)");
+          $revStmt->execute($relatedIds);
+          $reviews = $revStmt->fetchColumn() ?: 0;
+        }
+
+        $discount = round((($mrp - $price) / $mrp) * 100);
+        include "components/product-card.php";
+      }
+      ?>
+    </div>
+  </div>
+</section>
+
+
 
 <?php include "components/footer.php"; ?>
