@@ -175,7 +175,13 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
     elseif ($isExpired) $rowClass = 'bg-expired';
     else $rowClass = 'bg-available';
   ?>
-  <div class="border rounded shadow-sm p-3 mb-3 <?= $rowClass ?>">
+  <div class="border rounded shadow-sm p-3 mb-3 <?= $rowClass ?>" 
+     data-status="<?php
+      if ($c['availability'] == 1) echo 'used';
+      elseif ($isExpired) echo 'expired';
+      else echo 'active';
+     ?>">
+
     <div class="d-flex justify-content-between">
       <span class="fw-bold">#<?= $i++ ?> - <?= $c['couponCode'] ?></span><button 
   class="btn btn-outline-primary btn-sm px-2 py-1" 
@@ -316,7 +322,8 @@ document.querySelectorAll('.remove-coupon').forEach(btn => {
 
 <script>
   const filterButtons = document.querySelectorAll('.filter-btn');
-  const rows = document.querySelectorAll('tbody tr');
+  const desktopRows = document.querySelectorAll('tbody tr');
+  const mobileCards = document.querySelectorAll('.d-block.d-md-none > .border');
 
   filterButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -325,17 +332,19 @@ document.querySelectorAll('.remove-coupon').forEach(btn => {
 
       const filter = btn.dataset.filter;
 
-      rows.forEach(row => {
+      // Desktop rows
+      desktopRows.forEach(row => {
         const status = row.dataset.status;
-        if (filter === 'all' || filter === status) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
+        row.style.display = (filter === 'all' || filter === status) ? '' : 'none';
+      });
+
+      // Mobile cards
+      mobileCards.forEach(card => {
+        const status = card.dataset.status;
+        card.style.display = (filter === 'all' || filter === status) ? '' : 'none';
       });
     });
   });
 </script>
-
 </body>
 </html>
