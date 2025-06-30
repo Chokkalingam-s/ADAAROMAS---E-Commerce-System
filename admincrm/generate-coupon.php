@@ -58,6 +58,8 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
 <html>
 <head>
   <title>Generate Coupon</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     .copy-btn { cursor: pointer; }
@@ -80,7 +82,7 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
   </style>
 </head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
   <a class="navbar-brand" href="../admincrm">ADA Aromas Admin</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
     <span class="navbar-toggler-icon"></span>
@@ -183,6 +185,8 @@ if ($c['availability'] == 1) {
     </table>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
   const flat = document.getElementById('flatAmount');

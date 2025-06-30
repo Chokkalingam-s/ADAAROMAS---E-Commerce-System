@@ -9,6 +9,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 <head>
   <meta charset="UTF-8">
   <title>Sales Report - ADA Aromas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -160,7 +161,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
     </div>
   </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 async function fetchReportData(year = new Date().getFullYear()) {
@@ -229,6 +230,6 @@ document.getElementById('yearFilter').addEventListener('change', e => {
 
 fetchReportData();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

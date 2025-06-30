@@ -25,6 +25,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 <head>
   <meta charset="UTF-8" />
   <title>All Orders - Admin CRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     .card-header:hover { cursor: pointer; background: #f8f9fa; }
@@ -144,6 +145,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   <?php endforeach; ?>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   document.querySelectorAll('.toggle-card').forEach(header => {
     header.addEventListener('click', () => {
