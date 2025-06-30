@@ -6,15 +6,64 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 <head>
   <meta charset="UTF-8" />
   <title>Add Product</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .form-section { max-width: 800px; margin: auto; padding: 2rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    .form-section h4 { margin-bottom: 1.5rem; }
-    .readonly-box { background: #f8f9fa; padding: 0.5rem 1rem; border-radius: 5px; }
+    body {
+      background-color: #f2f2f2;
+    }
+
+    .form-section {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-label {
+      font-weight: 600;
+    }
+
+    .readonly-box {
+      background: #f8f9fa;
+      padding: 0.65rem 1rem;
+      border-radius: 5px;
+      font-weight: 500;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .form-control, .form-select {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+      }
+
+      .form-section {
+        padding: 1.5rem 1rem;
+      }
+
+      .readonly-box {
+        font-size: 1rem;
+        padding: 0.75rem;
+      }
+
+      .btn {
+        font-size: 1rem;
+        padding: 0.75rem;
+      }
+
+      .row > .col-md-6, .row > .col-md-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
   <a class="navbar-brand" href="../admincrm">ADA Aromas Admin</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
     <span class="navbar-toggler-icon"></span>
@@ -31,114 +80,119 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
   </div>
 </nav>
 
-<div class="form-section mt-5">
-  <h4>Add Product to Inventory</h4>
-<form action="handle-add-product.php" method="POST" id="addProductForm" enctype="multipart/form-data" novalidate>
-    <!-- Product Name -->
-    <div class="mb-3 position-relative" style="z-index:999;">
-        <label for="productName" class="form-label">Product Name</label>
-        <input type="text" name="productName" id="productName" class="form-control" placeholder="Start typing product name..." autocomplete="off" required>
-        <div id="suggestionsBox" class="border rounded bg-white shadow-sm mt-1 position-absolute w-100 d-none" style="z-index:1000;"></div>
-    </div>
+<div class="form-section">
+  <h4 class="mb-4">Add Product to Inventory</h4>
 
-    <!-- Category -->
-    <div class="mb-3">
+  <form action="handle-add-product.php" method="POST" enctype="multipart/form-data" id="addProductForm">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="productName" class="form-label">Product Name</label>
+        <input type="text" name="productName" id="productName" class="form-control" placeholder="Start typing..." autocomplete="off" required>
+      </div>
+      <div class="col-md-6">
         <label for="category" class="form-label">Category</label>
         <select name="category" id="category" class="form-select" required>
-            <option value="">Select Category</option>
-            <option value="Perfume">Perfume</option>
-            <option value="Attar">Attar</option>
-            <option value="Essence Oil">Essence Oil</option>
-            <option value="Diffuser">Diffuser</option>
+          <option value="">Select Category</option>
+          <option>Perfume</option>
+          <option>Attar</option>
+          <option>Essence Oil</option>
+          <option>Diffuser</option>
         </select>
-    </div>
+      </div>
 
-    <!-- Gender (visible only for Perfume) -->
-    <div class="mb-3 d-none" id="genderGroup">
-      <label for="gender" class="form-label">Gender</label>
-      <select name="gender" id="gender" class="form-select">
-        <option value="">Select Gender</option>
-        <option value="Men">Men</option>
-        <option value="Women">Women</option>
-        <option value="Both">Both</option>
-      </select>
-    </div>
+      <div class="col-md-6">
+        <label for="gender" class="form-label">Gender (for Perfume)</label>
+        <select name="gender" id="gender" class="form-select">
+          <option value="">Select Gender</option>
+          <option>Men</option>
+          <option>Women</option>
+          <option>Both</option>
+        </select>
+      </div>
 
-
-    <!-- Size (dynamic) -->
-    <div class="mb-3">
+      <div class="col-md-3">
         <label for="size" class="form-label">Size (ml)</label>
         <select name="size" id="size" class="form-select" required></select>
-    </div>
+      </div>
 
-       <div class="mb-3">
-      <label for="stock" class="form-label">Initial Stock</label>
-      <input type="number" name="stock" id="stock" class="form-control" required>
-    </div>
+      <div class="col-md-3">
+        <label for="stock" class="form-label">Initial Stock</label>
+        <input type="number" name="stock" id="stock" class="form-control" required>
+      </div>
 
-    <div class="mb-3">
-        <label class="form-label">Upload Product Image (jpg/png)</label>
+      <div class="col-md-6">
+        <label class="form-label">Upload Product Image</label>
         <input type="file" name="productImage" accept="image/png, image/jpeg" class="form-control" required>
-    </div>
-    <!-- Cost Price -->
-    <div class="mb-3">
-        <label for="costPrice" class="form-label">₹ Cost Price</label>
+      </div>
+
+      <!-- Price Section -->
+      <div class="col-md-3">
+        <label class="form-label">Cost Price (₹)</label>
         <input type="number" name="costPrice" id="costPrice" class="form-control" required>
-    </div>
-
-    <!-- Fixed Charges -->
-    <div class="row mb-3">
-        <div class="col"><label class="form-label">Courier (₹)</label><div class="readonly-box">60</div></div>
-        <div class="col"><label class="form-label">Box (₹)</label><div class="readonly-box">100</div></div>
-        <div class="col"><label class="form-label">Packing (₹)</label><div class="readonly-box">10</div></div>
-        <div class="col"><label class="form-label">Shelf (₹)</label><div class="readonly-box">30</div></div>
-    </div>
-
-    <!-- MSP -->
-    <div class="mb-3">
-        <label class="form-label">₹ Minimum Selling Price (MSP)</label>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Minimum Selling Price (₹)</label>
         <input type="text" name="msp" id="msp" class="form-control" readonly required>
-    </div>
-
-    <!-- Margin -->
-    <div class="mb-3">
+      </div>
+      <div class="col-md-3">
         <label class="form-label">Margin (%)</label>
         <select name="margin" id="margin" class="form-select" required>
-            <option value="">Select Margin</option>
-            <option>200</option><option>300</option><option>400</option><option>500</option>
+          <option value="">Select</option>
+          <option>200</option>
+          <option>300</option>
+          <option>400</option>
         </select>
-    </div>
-
-    <!-- ASP -->
-    <div class="mb-3">
-        <label class="form-label">₹ Actual Selling Price (ASP)</label>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">ASP (₹)</label>
         <input type="text" name="asp" id="asp" class="form-control" readonly required>
-    </div>
-
-    <!-- Display Price Margin -->
-    <div class="mb-3">
-        <label class="form-label">Display Price Margin (%)</label>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Display Margin (%)</label>
         <select name="displayMargin" id="displayMargin" class="form-select" required>
-            <option value="">Select Margin</option>
-            <option>40</option><option>45</option><option>50</option><option>55</option><option>60</option><option>65</option><option>70</option><option>75</option>
+          <option value="">Select</option>
+          <option>40</option>
+          <option>45</option>
+          <option>50</option>
         </select>
-    </div>
-
-    <!-- MRP -->
-    <div class="mb-3">
-        <label class="form-label">₹ MRP</label>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">MRP (₹)</label>
         <input type="text" name="mrp" id="mrp" class="form-control" readonly required>
+      </div>
+
+      <!-- Charges -->
+      <div class="col-md-3">
+        <label class="form-label">Courier (₹)</label>
+        <div class="readonly-box">60</div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Box (₹)</label>
+        <div class="readonly-box">100</div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Packing (₹)</label>
+        <div class="readonly-box">10</div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Shelf (₹)</label>
+        <div class="readonly-box">30</div>
+      </div>
+
+      <!-- Description -->
+      <div class="col-12">
+        <label class="form-label">Description / Notes</label>
+        <textarea name="description" rows="3" class="form-control" required></textarea>
+      </div>
     </div>
 
-    <!-- Description -->
-    <div class="mb-3">
-        <label class="form-label">Description - Notes </label>
-        <textarea name="description" rows="4" class="form-control" required></textarea>
+    <div class="mt-4 text-end">
+      <button type="submit" class="btn btn-primary px-4 py-2" id="submitBtn" disabled>Add Product</button>
     </div>
-
-    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Add Product</button>
-</form>
+  </form>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Enable submit only if all required fields are filled
     const form = document.getElementById('addProductForm');
