@@ -217,7 +217,16 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
         elseif ($isExpired) $rowClass = 'bg-expired';
         else $rowClass = 'bg-available';
       ?>
-      <tr class="<?= $rowClass ?>" data-code="<?= $c['couponCode'] ?>">
+              <tr data-code="<?= $c['couponCode'] ?>" class="<?= $rowClass ?>" data-status="<?php
+  if ($c['availability'] == 1) {
+    echo 'used';
+  } else if ($isExpired) {
+    echo 'expired';
+  } else {
+    echo 'active';
+  }
+?>"
+>
         <td><?= $i++ ?></td>
         <td><strong><?= $c['couponCode'] ?></strong></td>
         <td><?= $c['flatAmount'] ?></td>
@@ -225,11 +234,7 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
         <td><?= date('d-M-Y h:i A', strtotime($c['expiryTime'])) ?></td>
         <td><span class="copy-btn text-primary" onclick="copyText('<?= $c['couponCode'] ?>')">📋 Copy</span></td>
         <td><button class="btn btn-danger btn-sm remove-coupon">Remove</button></td>
-        <tr data-code="<?= $c['couponCode'] ?>" class="<?= $rowClass ?>" data-status="<?php
-  echo $isExpired ? 'expired' : ($c['availability'] == 1 ? 'used' : 'active');
-?>">
-
-      </tr>
+   </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
