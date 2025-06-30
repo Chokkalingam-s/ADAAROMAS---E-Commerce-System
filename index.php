@@ -121,7 +121,7 @@ $giftStmt = $conn->prepare("
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
   ORDER BY RAND()
-  LIMIT 8
+  LIMIT 4
 ");
 $giftStmt->execute();
 $giftProducts = $giftStmt->fetchAll(PDO::FETCH_ASSOC);
