@@ -76,6 +76,25 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
   background-color: #e2e3e5 !important;  /* Light gray */
   color: #383d41 !important;
 }
+  .filter-btn.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+/* Apply color themes even in mobile view (card divs) */
+.bg-used {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+.bg-available {
+  background-color: #d4edda !important;
+  color: #155724 !important;
+}
+.bg-expired {
+  background-color: #e2e3e5 !important;
+  color: #383d41 !important;
+}
+
 
   .bg-available:hover, .bg-used:hover, .bg-expired:hover { opacity: 0.8; }
   .bg-available td, .bg-used td, .bg-expired td { vertical-align: middle; }
@@ -140,50 +159,82 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
   <hr class="my-5">
 
   <h4>All Generated Coupons</h4>
-  <div class="table-responsive">
-    <table class="table table-bordered bg-white">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Coupon Code</th>
-          <th>Flat Amount (₹)</th>
-          <th>Discount (%)</th>
-          <th>Expiry Time</th>
-          <th>Copy</th>
-          <th>Remove</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php $i = 1; foreach ($coupons as $c): ?>
-<?php
-  $isExpired = strtotime($c['expiryTime']) < time();
-  $rowClass = '';
+  <div class="d-flex flex-wrap gap-2 my-3 justify-content-center">
+  <button class="btn btn-outline-primary filter-btn active" data-filter="all">All</button>
+  <button class="btn btn-outline-success filter-btn" data-filter="active">Active</button>
+  <button class="btn btn-outline-danger filter-btn" data-filter="used">Used</button>
+  <button class="btn btn-outline-secondary filter-btn" data-filter="expired">Expired</button>
+</div>
 
-if ($c['availability'] == 1) {
-  $rowClass = 'bg-used';
-} elseif ($isExpired) {
-  $rowClass = 'bg-expired';
-} else {
-  $rowClass = 'bg-available';
-}
+<!-- Mobile Optimized Table View -->
+<div class="d-block d-md-none">
+  <?php $i = 1; foreach ($coupons as $c): 
+    $isExpired = strtotime($c['expiryTime']) < time();
+    $rowClass = '';
+    if ($c['availability'] == 1) $rowClass = 'bg-used';
+    elseif ($isExpired) $rowClass = 'bg-expired';
+    else $rowClass = 'bg-available';
+  ?>
+  <div class="border rounded shadow-sm p-3 mb-3 <?= $rowClass ?>">
+    <div class="d-flex justify-content-between">
+      <span class="fw-bold">#<?= $i++ ?> - <?= $c['couponCode'] ?></span><button 
+  class="btn btn-outline-primary btn-sm px-2 py-1" 
+  onclick="copyText('<?= $c['couponCode'] ?>')">
+  📋 Copy
+</button>
 
-?>
-
-
-        <tr data-code="<?= $c['couponCode'] ?>" class="<?= $rowClass ?>">
-
-          <td><?= $i++ ?></td>
-          <td><strong><?= $c['couponCode'] ?></strong></td>
-          <td><?= $c['flatAmount'] ?></td>
-          <td><?= $c['percentage'] ?></td>
-          <td><?= date('d-M-Y h:i A', strtotime($c['expiryTime'])) ?></td>
-          <td><span class="copy-btn text-primary" onclick="copyText('<?= $c['couponCode'] ?>')">📋 Copy</span></td>
-          <td><button class="btn btn-danger btn-sm remove-coupon">Remove</button></td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
+    </div>
+    <div class="small mt-2">
+      <div><strong>Flat:</strong> ₹<?= $c['flatAmount'] ?> | <strong>Discount:</strong> <?= $c['percentage'] ?>%</div>
+      <div><strong>Expires:</strong> <?= date('d-M-Y h:i A', strtotime($c['expiryTime'])) ?></div>
+    </div>
+    <div class="mt-2 text-end">
+      <button class="btn btn-danger btn-sm remove-coupon">Remove</button>
+    </div>
   </div>
+  <?php endforeach; ?>
+</div>
+
+<!-- Desktop Table View -->
+<div class="table-responsive d-none d-md-block">
+  <table class="table table-bordered bg-white">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Coupon Code</th>
+        <th>Flat Amount (₹)</th>
+        <th>Discount (%)</th>
+        <th>Expiry Time</th>
+        <th>Copy</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php $i = 1; foreach ($coupons as $c): 
+        $isExpired = strtotime($c['expiryTime']) < time();
+        $rowClass = '';
+        if ($c['availability'] == 1) $rowClass = 'bg-used';
+        elseif ($isExpired) $rowClass = 'bg-expired';
+        else $rowClass = 'bg-available';
+      ?>
+      <tr class="<?= $rowClass ?>" data-code="<?= $c['couponCode'] ?>">
+        <td><?= $i++ ?></td>
+        <td><strong><?= $c['couponCode'] ?></strong></td>
+        <td><?= $c['flatAmount'] ?></td>
+        <td><?= $c['percentage'] ?></td>
+        <td><?= date('d-M-Y h:i A', strtotime($c['expiryTime'])) ?></td>
+        <td><span class="copy-btn text-primary" onclick="copyText('<?= $c['couponCode'] ?>')">📋 Copy</span></td>
+        <td><button class="btn btn-danger btn-sm remove-coupon">Remove</button></td>
+        <tr data-code="<?= $c['couponCode'] ?>" class="<?= $rowClass ?>" data-status="<?php
+  echo $isExpired ? 'expired' : ($c['availability'] == 1 ? 'used' : 'active');
+?>">
+
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -231,5 +282,55 @@ document.querySelectorAll('.remove-coupon').forEach(btn => {
 });
 
 </script>
+<script>
+  function copyText(text) {
+    const tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999); // For iOS
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+
+    // Show temporary feedback (optional)
+    const copied = document.createElement('div');
+    copied.textContent = 'Copied!';
+    copied.style.position = 'fixed';
+    copied.style.bottom = '20px';
+    copied.style.left = '50%';
+    copied.style.transform = 'translateX(-50%)';
+    copied.style.background = '#28a745';
+    copied.style.color = 'white';
+    copied.style.padding = '5px 12px';
+    copied.style.borderRadius = '6px';
+    copied.style.zIndex = 9999;
+    document.body.appendChild(copied);
+    setTimeout(() => copied.remove(), 1500);
+  }
+</script>
+
+<script>
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const rows = document.querySelectorAll('tbody tr');
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      rows.forEach(row => {
+        const status = row.dataset.status;
+        if (filter === 'all' || filter === status) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
 </body>
 </html>
