@@ -10,7 +10,12 @@
       <?php endif; ?>
 
       <!-- Product Image (clickable) -->
-      <a href="product.php?id=<?= $productId ?>">
+      <?php
+// Detect if current page is inside products/ folder or not
+$prefix = (strpos($_SERVER['PHP_SELF'], '/products/') !== false) ? '' : 'products/';
+?>
+<a href="<?= $prefix ?>product.php?id=<?= $productId ?>">
+
         <img src="<?= $image ?>" class="img-fluid w-100 product-img" alt="<?= $title ?>">
       </a>
 
