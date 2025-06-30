@@ -51,6 +51,19 @@ if (count($productIds)) {
   ");
   $prodStmt->execute($productIds);
   $products = $prodStmt->fetchAll(PDO::FETCH_ASSOC);
+  // Filter only one product per name + category
+$uniqueProducts = [];
+$seen = [];
+
+foreach ($products as $p) {
+  $key = $p['name'] . '|' . $p['category'];
+  if (!in_array($key, $seen)) {
+    $uniqueProducts[] = $p;
+    $seen[] = $key;
+  }
+}
+$products = $uniqueProducts;
+
 } else {
   $products = [];
 }
@@ -90,6 +103,8 @@ if (count($productIds)) {
         }
 
         $discount = round((($mrp - $price) / $mrp) * 100);
+
+        
         include "components/product-card.php";
       }
       ?>
@@ -110,6 +125,20 @@ $giftStmt = $conn->prepare("
 ");
 $giftStmt->execute();
 $giftProducts = $giftStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Filter only one product per name + category
+$uniqueProducts = [];
+$seen = [];
+
+foreach ($giftProducts as $p) {
+  $key = $p['name'] . '|' . $p['category'];
+  if (!in_array($key, $seen)) {
+    $uniqueProducts[] = $p;
+    $seen[] = $key;
+  }
+}
+$giftProducts = $uniqueProducts;
+
 ?>
 
 <!-- Gifting Section -->
