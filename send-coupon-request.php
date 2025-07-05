@@ -29,12 +29,6 @@ try {
   $mail->addAddress('Adaaromas@rudraksha.org.in'); // Can also add BCC for backup copy
    $mail->addBCC('chokka7878@gmail.com');
     $mail->addReplyTo($user['email'], "{$user['firstName']} {$user['lastName']}");
-    // ✅ Correct access to user data
-
-        // Optional BCC for backup
-
-
-
   $mail->isHTML(true);
   $mail->Subject = 'Request for Coupon - ADA Aromas';
 
