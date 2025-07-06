@@ -88,6 +88,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       <div class="col-md-6">
         <label for="productName" class="form-label">Product Name</label>
         <input type="text" name="productName" id="productName" class="form-control" placeholder="Start typing..." autocomplete="off" required>
+        <div id="suggestionsBox" class="border rounded bg-white shadow-sm mt-1 position-absolute  d-none" style="z-index:1000;"></div>
       </div>
       <div class="col-md-6">
         <label for="category" class="form-label">Category</label>
