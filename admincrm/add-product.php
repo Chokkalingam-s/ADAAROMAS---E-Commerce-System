@@ -135,9 +135,12 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         <input type="text" name="msp" id="msp" class="form-control" readonly required>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Margin (%)</label>
+        <label class="form-label">Profit Margin (%)</label>
         <select name="margin" id="margin" class="form-select" required>
           <option value="">Select</option>
+          <option>50</option>
+          <option>75</option>
+          <option>100</option>
           <option>200</option>
           <option>300</option>
           <option>400</option>
@@ -157,7 +160,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
       <div class="col-md-3">
-        <label class="form-label">MRP (₹)</label>
+        <label class="form-label">Display Price (₹)</label>
         <input type="text" name="mrp" id="mrp" class="form-control" readonly required>
       </div>
 
