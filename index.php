@@ -115,9 +115,6 @@ $products = $uniqueProducts;
     </div>
   </div>
 </section>
-
-
-
   <!-- Gifting Section -->
 <?php
 $giftStmt = $conn->prepare("
@@ -149,7 +146,6 @@ $giftProducts = $uniqueProducts;
 }
 
 ?>
-
 <!-- Gifting Section -->
 <section class="py-5 bg-light">
   <div class="container">
@@ -176,12 +172,11 @@ $giftProducts = $uniqueProducts;
           $avgStmt = $conn->prepare("SELECT ROUND(AVG(rating),1) FROM products WHERE productId IN ($placeholders)");
           $avgStmt->execute($relatedIds);
           $rating = $avgStmt->fetchColumn() ?: 0;
-
+          
           $revStmt = $conn->prepare("SELECT COUNT(*) FROM reviews WHERE productId IN ($placeholders)");
           $revStmt->execute($relatedIds);
           $reviews = $revStmt->fetchColumn() ?: 0;
         }
-
         $discount = round((($mrp - $price) / $mrp) * 100);
         include "components/product-card.php";
       }

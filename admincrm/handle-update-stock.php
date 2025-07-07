@@ -8,12 +8,12 @@ $stmt = $conn->prepare("
   JOIN products p ON ps.productId = p.productId
   SET
     p.costPrice = ?, p.margin = ?, p.msp=?, p.asp = ?, p.mrp = ?,
-    ps.stockInHand = ?
+    ps.stockInHand = ?, p.revenue = ?
   WHERE ps.stockId = ?
 ");
 $stmt->execute([
   $data['costPrice'], $data['margin'], $data['msp'], $data['asp'], $data['mrp'],
-  $data['stockInHand'], $data['stockId']
+  $data['stockInHand'], $data['revenue'], $data['stockId']
 ]);
 
 echo json_encode(['success'=>true]);

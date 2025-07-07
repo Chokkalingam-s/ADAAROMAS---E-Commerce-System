@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 // Fetch inventory data joined from products + product_stock
 $stmt = $conn->query("
   SELECT p.productId, p.name, p.category, p.costPrice, p.margin, p.asp, p.msp, p.mrp, p.image,
-         ps.stockId, ps.size, ps.stockInHand
+         ps.stockId, ps.size, ps.stockInHand , p.revenue
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
 ");
@@ -17,6 +17,7 @@ foreach ($rows as &$row) {
     $row['asp'] = intval($row['asp']);
     $row['msp'] = intval($row['msp']);
     $row['mrp'] = intval($row['mrp']);
+    $row['revenue'] = intval($row['revenue']);
 }
 
 ?>
@@ -100,7 +101,7 @@ foreach ($rows as &$row) {
         <thead class="table-light">
           <tr>
             <th>Image</th><th>Name</th><th>Size</th><th>Category</th>
-            <th style="color:red;">Purchase Cost ₹</th><th style="color:blue;">MSP ₹</th><th>% Margin</th><th style="color:orange;">ASP ₹</th><th>% Disp. Mgn</th><th>Display Price ₹</th><th>Stock</th><th>Actions</th>
+            <th style="color:red;">Purchase Cost ₹</th><th style="color:blue;">MSP ₹</th><th>% Margin</th><th style="color:orange;">ASP ₹</th><th>% Disp. Mgn</th><th>Display Price ₹</th><th style="color:green;">Revenue</th><th>Stock</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="stockTableBody">
@@ -135,6 +136,7 @@ foreach ($rows as &$row) {
   </div>
 </td>
 <td><input type="text" class="form-control form-control-sm mrp" value="<?= $r['mrp'] ?>" readonly></td>
+            <td><input type="text" class="form-control form-control-sm revenue" value="<?= $r['revenue'] ?>" readonly></td>
             <td><input type="number" class="form-control form-control-sm stockInHand" value="<?= $r['stockInHand'] ?>"></td>
             <td class="text-nowrap">
               <button class="btn btn-sm btn-secondary apply-btn" disabled>Apply</button>
@@ -187,6 +189,7 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
   const aspField = row.querySelector('.asp');
   const mrpField = row.querySelector('.mrp');
   const applyBtn = row.querySelector('.apply-btn');
+  const revenueField = row.querySelector('.revenue');
 
   const initialValues = {
     cost: costInput.value,
@@ -220,6 +223,8 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
       const disp = parseFloat(displayMarginInput.value) || 0;
       mrpField.value = calculateMRP(asp, disp);
 
+      revenueField.value = asp-msp;
+
       enableApply();
     });
   });
@@ -233,7 +238,8 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
       asp: aspField.value,
       displayMargin: displayMarginInput.value,
       mrp: mrpField.value,
-      stockInHand: stockInput.value
+      stockInHand: stockInput.value,
+      revenue: revenueField.value
     };
     fetch('handle-update-stock.php', {
       method: 'POST',
@@ -246,6 +252,8 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
         initialValues.margin = marginInput.value;
         initialValues.displayMargin = displayMarginInput.value;
         initialValues.stock = stockInput.value;
+        initialValues.revenue = revenueField.value;
+
         enableApply();
       }
     });
