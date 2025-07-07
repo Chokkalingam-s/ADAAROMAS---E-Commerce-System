@@ -107,7 +107,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
           <option value="">Select Gender</option>
           <option>Men</option>
           <option>Women</option>
-          <option>Both</option>
+          <option>Unisex</option>
         </select>
       </div>
 
