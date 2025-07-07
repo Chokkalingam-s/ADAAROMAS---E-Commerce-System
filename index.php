@@ -51,6 +51,10 @@ if (count($productIds)) {
   ");
   $prodStmt->execute($productIds);
   $products = $prodStmt->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($products as &$row) {
+    $row['asp'] = intval($row['asp']);
+    $row['mrp'] = intval($row['mrp']);
+}
   // Filter only one product per name + category
 $uniqueProducts = [];
 $seen = [];
@@ -138,6 +142,11 @@ foreach ($giftProducts as $p) {
   }
 }
 $giftProducts = $uniqueProducts;
+
+  foreach ($giftProducts as &$row) {
+    $row['asp'] = intval($row['asp']);
+    $row['mrp'] = intval($row['mrp']);
+}
 
 ?>
 

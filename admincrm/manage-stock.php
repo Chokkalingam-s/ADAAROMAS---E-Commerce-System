@@ -11,6 +11,14 @@ $stmt = $conn->query("
   JOIN product_stock ps ON p.productId = ps.productId
 ");
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+foreach ($rows as &$row) {
+    $row['costPrice'] = intval($row['costPrice']);
+    $row['margin'] = intval($row['margin']);
+    $row['asp'] = intval($row['asp']);
+    $row['msp'] = intval($row['msp']);
+    $row['mrp'] = intval($row['mrp']);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
