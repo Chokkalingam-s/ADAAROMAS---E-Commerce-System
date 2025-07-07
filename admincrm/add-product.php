@@ -172,7 +172,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
       <div class="col-md-3">
         <label class="form-label">Box (₹)</label>
-        <div class="readonly-box">100</div>
+        <div class="readonly-box">200</div>
       </div>
       <div class="col-md-3">
         <label class="form-label">Packing (₹)</label>
@@ -357,7 +357,7 @@ function calculatePrices() {
   const margin = parseFloat(document.getElementById("margin").value || 0);
   const dispMargin = parseFloat(document.getElementById("displayMargin").value || 0);
 
-  const msp = cost + 200;
+  const msp = cost + 300;
   const asp = roundToNearest50(msp + margin/100*msp);
   const mrp = roundToNearest50(asp + (asp * dispMargin / 100));
 

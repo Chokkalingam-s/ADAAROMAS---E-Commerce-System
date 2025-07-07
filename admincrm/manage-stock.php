@@ -160,7 +160,7 @@ function calculateASP(msp, margin) {
 
 function calculateMSP(cost) {
   // Fixed charges
-  const courier = 60, box = 100, packing = 10, shelf = 30;
+  const courier = 60, box = 200, packing = 10, shelf = 30;
   return Math.round(cost + courier + box + packing + shelf);
 }
 
