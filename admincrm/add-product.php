@@ -86,12 +86,12 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
   <form action="handle-add-product.php" method="POST" enctype="multipart/form-data" id="addProductForm">
     <div class="row g-3">
       <div class="col-md-6">
-        <label for="productName" class="form-label">Product Name</label>
+        <label for="productName" class="form-label">PPRODUCT NAME</label>
         <input type="text" name="productName" id="productName" class="form-control" placeholder="Start typing..." autocomplete="off" required>
         <div id="suggestionsBox" class="border rounded bg-white shadow-sm mt-1 position-absolute  d-none" style="z-index:1000;"></div>
       </div>
       <div class="col-md-6">
-        <label for="category" class="form-label">Category</label>
+        <label for="category" class="form-label">CATEGORY</label>
         <select name="category" id="category" class="form-select" required>
           <option value="">Select Category</option>
           <option>Perfume</option>
@@ -102,7 +102,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <div class="col-md-6">
-        <label for="gender" class="form-label">Gender (for Perfume)</label>
+        <label for="gender" class="form-label">GENDER (for Perfume)</label>
         <select name="gender" id="gender" class="form-select">
           <option value="">Select Gender</option>
           <option>Men</option>
@@ -112,31 +112,31 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <div class="col-md-3">
-        <label for="size" class="form-label">Size (ml)</label>
+        <label for="size" class="form-label">SIZE (ml)</label>
         <select name="size" id="size" class="form-select" required></select>
       </div>
 
       <div class="col-md-3">
-        <label for="stock" class="form-label">Initial Stock</label>
+        <label for="stock" class="form-label">INITIAL STOCK</label>
         <input type="number" name="stock" id="stock" class="form-control" required>
       </div>
 
       <div class="col-md-6">
-        <label class="form-label">Upload Product Image</label>
+        <label class="form-label">UPLOAD PRODUCT IMAGE</label>
         <input type="file" name="productImage" accept="image/png, image/jpeg" class="form-control" required>
       </div>
 
       <!-- Price Section -->
       <div class="col-md-3">
-        <label class="form-label" style="color:red;">Purchase Cost (₹)</label>
+        <label class="form-label" style="color:red;">PURCHASE COST (₹)</label>
         <input type="number" name="costPrice" id="costPrice" class="form-control" required>
       </div>
       <div class="col-md-3">
-        <label class="form-label" style="color:Blue;">Minimum Selling Price (₹)</label>
+        <label class="form-label" style="color:Blue;">MINIMUM SELLING PRICE (₹)</label>
         <input type="text" name="msp" id="msp" class="form-control" readonly required>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Profit Margin (%)</label>
+        <label class="form-label">PROFIT MARGIN (%)</label>
         <select name="margin" id="margin" class="form-select" required>
           <option value="">Select</option>
           <option>50</option>
@@ -154,7 +154,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         <input type="text" name="asp" id="asp" class="form-control" readonly required>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Display Margin (%)</label>
+        <label class="form-label">DISPLAY MARGIN (%)</label>
         <select name="displayMargin" id="displayMargin" class="form-select" required>
           <option value="">Select</option>
           <option>40</option>
@@ -169,42 +169,42 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Display Price (₹)</label>
+        <label class="form-label">DISPLAY PRICE (₹)</label>
         <input type="text" name="mrp" id="mrp" class="form-control" readonly required>
       </div>
 
       <!-- Charges -->
       <div class="col-md-3">
-        <label class="form-label">Courier (₹)</label>
+        <label class="form-label">COURIER (₹)</label>
         <div class="readonly-box">60</div>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Box (₹)</label>
+        <label class="form-label">BOX (₹)</label>
         <div class="readonly-box">200</div>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Packing (₹)</label>
+        <label class="form-label">PACKING (₹)</label>
         <div class="readonly-box">10</div>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Shelf (₹)</label>
+        <label class="form-label">SHELF (₹)</label>
         <div class="readonly-box">30</div>
       </div>
 
       <div class="col-md-3">
-        <label class="form-label" style="color:green;">Revenue(₹)</label>
+        <label class="form-label" style="color:green;">REVENUE (₹)</label>
         <input type="text" name="revenue" id="revenue" class="form-control" readonly required>
       </div>
 
       <!-- Description -->
       <div class="col-12">
-        <label class="form-label">Description / Notes</label>
+        <label class="form-label">DESCRIPTION / NOTES</label>
         <textarea name="description" rows="3" class="form-control" required></textarea>
       </div>
     </div>
 
     <div class="mt-4 text-end">
-      <button type="submit" class="btn btn-primary px-4 py-2" id="submitBtn" disabled>Add Product</button>
+      <button type="submit" class="btn btn-primary px-4 py-2" id="submitBtn" disabled>ADD PRODUCT</button>
     </div>
   </form>
 </div>
