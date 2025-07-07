@@ -81,9 +81,9 @@ if ($prodInfo) {
       <h5 class="mb-1">
         <a href="product.php?id=<?= $productId ?>" class="text-decoration-none text-dark"><?= $title ?></a>
       </h5>
-      <p class="mb-1 fs-6">
+      <p class="mb-1 fs-6" >
         Rs. <?= $price ?> 
-        <span class="text-muted text-decoration-line-through fs-6">Rs. <?= $mrp ?></span>
+        <span class="text-danger text-decoration-line-through fs-6" >Rs. <?= $mrp ?></span>
       </p>
 <p class="text-warning mb-1">
   ⭐ <?= number_format($rating, 1) ?> 

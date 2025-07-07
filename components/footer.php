@@ -88,7 +88,7 @@ const itemDiv = document.createElement("div");
 
           <div class="text-end">
             <strong>₹${item.price.toLocaleString()}</strong><br>
-            ${item.mrp ? `<span class="original-price">₹${item.mrp.toLocaleString()}</span>` : ""}
+            ${item.mrp ? `<span class="text-danger original-price">₹${item.mrp.toLocaleString()}</span>` : ""}
           </div>
         </div>
 
@@ -196,7 +196,7 @@ function renderCheckoutOrder() {
             <span>${p.quantity}</span>
             <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateCheckoutQuantity('${p.title}', 1)">+</button>
           </div>
-          <small class="text-muted"><s>₹${p.mrp}</s> → ₹${p.price}</small>
+          <small class="text-muted"><s class="text-danger">₹${p.mrp}</s> → ₹${p.price}</small>
         </div>
         <div class="text-end">
           <button class="btn btn-sm text-danger mb-1" onclick="removeFromCheckout('${p.title}')"><i class="bi bi-x-lg"></i></button>
