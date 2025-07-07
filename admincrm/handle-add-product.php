@@ -18,6 +18,7 @@ $asp = $_POST['asp'];
 $mrp = $_POST['mrp'];
 $desc = $_POST['description'];
 $gender = ($_POST['category'] === 'Perfume') ? $_POST['gender'] : null;
+$revenue = $_POST['revenue'];
 
 $imagePath = '';
 
@@ -48,10 +49,10 @@ if ($check->rowCount() > 0) {
 
 // Create a new product entry (even if same name & category) for new size and price
 $insertProduct = $conn->prepare("
-  INSERT INTO products (name, category, gender, costPrice, margin, msp, asp, mrp, description, image)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO products (name, category, gender, costPrice, margin, msp, asp, mrp, description, image , revenue)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
-$insertProduct->execute([$name, $category, $gender, $cost, $margin, $msp, $asp, $mrp, $desc, $imagePath]);
+$insertProduct->execute([$name, $category, $gender, $cost, $margin, $msp, $asp, $mrp, $desc, $imagePath, $revenue]);
 
 $productId = $conn->lastInsertId();
 

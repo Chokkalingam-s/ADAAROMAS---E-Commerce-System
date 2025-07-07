@@ -128,11 +128,11 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
       <!-- Price Section -->
       <div class="col-md-3">
-        <label class="form-label">Purchase Cost (₹)</label>
+        <label class="form-label" style="color:red;">Purchase Cost (₹)</label>
         <input type="number" name="costPrice" id="costPrice" class="form-control" required>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Minimum Selling Price (₹)</label>
+        <label class="form-label" style="color:Blue;">Minimum Selling Price (₹)</label>
         <input type="text" name="msp" id="msp" class="form-control" readonly required>
       </div>
       <div class="col-md-3">
@@ -150,7 +150,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
       <div class="col-md-3">
-        <label class="form-label">ASP (₹)</label>
+        <label class="form-label" style="color:orange;">ASP (₹)</label>
         <input type="text" name="asp" id="asp" class="form-control" readonly required>
       </div>
       <div class="col-md-3">
@@ -189,6 +189,11 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       <div class="col-md-3">
         <label class="form-label">Shelf (₹)</label>
         <div class="readonly-box">30</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label" style="color:green;">Revenue(₹)</label>
+        <input type="text" name="revenue" id="revenue" class="form-control" readonly required>
       </div>
 
       <!-- Description -->
@@ -364,14 +369,17 @@ function calculatePrices() {
   const cost = parseFloat(document.getElementById("costPrice").value || 0);
   const margin = parseFloat(document.getElementById("margin").value || 0);
   const dispMargin = parseFloat(document.getElementById("displayMargin").value || 0);
+  const revenue = parseFloat(document.getElementById("revenue").value || 0);
 
   const msp = cost + 300;
   const asp = roundToNearest50(msp + margin/100*msp);
   const mrp = roundToNearest50(asp + (asp * dispMargin / 100));
+  const totalRevenue = asp - msp
 
   document.getElementById("msp").value = msp;
   document.getElementById("asp").value = asp;
   document.getElementById("mrp").value = mrp;
+  document.getElementById("revenue").value = totalRevenue;
 }
 </script>
 
