@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-light d-flex justify-content-center align-items-center" style="height: 100vh;">
   <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
-    <h4 class="mb-3">Admin Login</h4>
+    <h4 class="mb-3">ADA AROMAS Admin Login</h4>
     <?php if ($error): ?>
       <div class="alert alert-danger"><?= $error ?></div>
     <?php endif; ?>

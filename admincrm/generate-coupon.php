@@ -102,7 +102,7 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
 </head>
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-  <a class="navbar-brand" href="../admincrm">ADA Aromas Admin</a>
+  <a class="navbar-brand" href="../admincrm">ADA AROMAS Admin</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
     <span class="navbar-toggler-icon"></span>
   </button>
