@@ -11,7 +11,7 @@ $stmt = $conn->prepare("
     ps.size, ps.stockInHand
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
-  WHERE p.category = ?  AND p.gender = ?
+  WHERE p.category = ?  AND p.gender = ? or p.gender = 'Unisex'
   ORDER BY p.name ASC, ps.size ASC
 ");
 $stmt->execute([$category, $gender]);
