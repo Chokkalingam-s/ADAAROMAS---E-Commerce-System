@@ -92,7 +92,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <thead class="table-light">
           <tr>
             <th>Image</th><th>Name</th><th>Size</th><th>Category</th>
-            <th>Cost ₹</th><th>MSP ₹</th><th>% Margin</th><th>ASP ₹</th><th>% Disp. Mgn</th><th>MRP ₹</th><th>Stock</th><th>Actions</th>
+            <th>Purchase Cost ₹</th><th>MSP ₹</th><th>% Margin</th><th>ASP ₹</th><th>% Disp. Mgn</th><th>Display Price ₹</th><th>Stock</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="stockTableBody">

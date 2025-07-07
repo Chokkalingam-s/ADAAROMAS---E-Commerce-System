@@ -128,7 +128,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
       <!-- Price Section -->
       <div class="col-md-3">
-        <label class="form-label">Cost Price (₹)</label>
+        <label class="form-label">Purchase Cost (₹)</label>
         <input type="number" name="costPrice" id="costPrice" class="form-control" required>
       </div>
       <div class="col-md-3">
@@ -142,9 +142,11 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
           <option>50</option>
           <option>75</option>
           <option>100</option>
+          <option>125</option>
+          <option>150</option>
+          <option>175</option>
           <option>200</option>
           <option>300</option>
-          <option>400</option>
         </select>
       </div>
       <div class="col-md-3">
@@ -158,6 +160,12 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
           <option>40</option>
           <option>45</option>
           <option>50</option>
+          <option>55</option>
+          <option>60</option>
+          <option>65</option>
+          <option>70</option>
+          <option>75</option>
+          <option>80</option>
         </select>
       </div>
       <div class="col-md-3">
