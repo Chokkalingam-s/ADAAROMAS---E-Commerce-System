@@ -103,7 +103,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 </nav>
 
 <div class="form-section">
-  <h4 class="mb-4">PRODUCT MASTER</h4>
+  <h4 class="mb-4"><u> PRODUCT MASTER </u></h4>
 
   <form action="handle-add-product.php" method="POST" enctype="multipart/form-data" id="addProductForm">
     <div class="row g-3">
