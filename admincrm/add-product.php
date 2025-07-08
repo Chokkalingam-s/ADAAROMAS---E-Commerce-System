@@ -26,6 +26,13 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       font-weight: 600;
     }
 
+
+    .form-control,
+  .form-select {
+    text-align: center;
+    font-weight: 500;
+  }
+
     .readonly-box {
       background: #f8f9fa;
       padding: 0.65rem 1rem;
@@ -55,11 +62,24 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         padding: 0.75rem;
       }
 
-      .row > .col-md-6, .row > .col-md-3 {
-        flex: 0 0 100%;
-        max-width: 100%;
-      }
+    /* Mobile: Stack in 2-column rows for tighter layout */
+    .row .col-md-6, .row .col-md-3 {
+      flex: 0 0 50%;
+      max-width: 50%;
     }
+
+    .row .col-12 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+    }
+
+      @media (min-width: 769px) {
+    /* Laptop layout specific override if needed */
+    .form-control, .form-select {
+      padding: 0.75rem 1rem;
+    }
+  }
   </style>
 </head>
 <body>
@@ -85,14 +105,18 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
   <form action="handle-add-product.php" method="POST" enctype="multipart/form-data" id="addProductForm">
     <div class="row g-3">
-      <div class="col-md-6">
-        <label for="productName" class="form-label">PPRODUCT NAME</label>
+      
+      <!-- Row 1: Product Name -->
+      <div class="col-12 col-md-3">
+        <label for="productName" class="form-label">PRODUCT NAME</label>
         <input type="text" name="productName" id="productName" class="form-control" placeholder="Start typing..." autocomplete="off" required>
-        <div id="suggestionsBox" class="border rounded bg-white shadow-sm mt-1 position-absolute  d-none" style="z-index:1000;"></div>
+        <div id="suggestionsBox" class="border rounded bg-white shadow-sm mt-1 position-absolute d-none" style="z-index:1000;"></div>
       </div>
-      <div class="col-md-6">
+
+      <!-- Row 2: Category + Gender -->
+      <div class="col-6 col-md-3">
         <label for="category" class="form-label">CATEGORY</label>
-        <select name="category" id="category" class="form-select" required>
+        <select name="category" id="category" class="form-select" style="text-align: left;" required>
           <option value="">Select Category</option>
           <option>Perfume</option>
           <option>Attar</option>
@@ -101,9 +125,9 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-6 col-md-3">
         <label for="gender" class="form-label">GENDER (for Perfume)</label>
-        <select name="gender" id="gender" class="form-select">
+        <select name="gender" id="gender" class="form-select" style="text-align: left;" >
           <option value="">Select Gender</option>
           <option>Men</option>
           <option>Women</option>
@@ -111,51 +135,57 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
 
-      <div class="col-md-3">
-        <label for="size" class="form-label">SIZE (ml)</label>
-        <select name="size" id="size" class="form-select" required></select>
-      </div>
-
-      <div class="col-md-3">
-        <label for="stock" class="form-label">INITIAL STOCK</label>
-        <input type="number" name="stock" id="stock" class="form-control" required>
-      </div>
-
-      <div class="col-md-6">
+      <!-- Row 3: Image Upload -->
+      <div class="col-12 col-md-3">
         <label class="form-label">UPLOAD PRODUCT IMAGE</label>
         <input type="file" name="productImage" accept="image/png, image/jpeg" class="form-control" required>
       </div>
 
-      <!-- Price Section -->
-      <div class="col-md-3">
-        <label class="form-label" style="color:red;">PURCHASE COST (₹)</label>
-        <input type="number" name="costPrice" id="costPrice" class="form-control" required>
+      <!-- Row 4: Size | Purchase Cost | Initial Stock -->
+      <div class="col-4 col-md-2">
+        <label for="size" class="form-label">SIZE (ml)</label>
+        <select name="size" id="size" class="form-select" required></select>
       </div>
-            <!-- Charges -->
-      <div class="col-md-3">
-        <label class="form-label">COURIER (₹)</label>
-        <div class="readonly-box">60</div>
+
+      <div class="col-4 col-md-2">
+        <label class="form-label" style="color:red;">PURCHASE (₹)</label>
+        <input type="number" name="costPrice" id="costPrice" class="form-control" style="color:red;"required>
       </div>
-      <div class="col-md-3">
+
+      <div class="col-4 col-md-2">
+        <label for="stock" class="form-label">INITIAL STOCK</label>
+        <input type="number" name="stock" id="stock" class="form-control" required>
+      </div>
+
+      <!-- Row 5: Bottle | Box | Packing -->
+      <div class="col-4 col-md-2">
+        <label class="form-label">BOTTLE (₹)</label>
+        <div class="readonly-box" id="bottlePrice">0</div>
+      </div>
+
+      <div class="col-4 col-md-2">
         <label class="form-label">BOX (₹)</label>
         <div class="readonly-box">200</div>
       </div>
-      <div class="col-md-3">
+
+      <div class="col-4 col-md-2">
         <label class="form-label">PACKING (₹)</label>
         <div class="readonly-box">10</div>
       </div>
-      <div class="col-md-3">
+
+      <!-- Row 6: Shelf | Courier | Marketing -->
+      <div class="col-4 col-md-2">
         <label class="form-label">SHELF (₹)</label>
         <div class="readonly-box">30</div>
       </div>
 
-      <div class="col-md-3">
-        <label class="form-label">BOTTLE PRICE (₹)</label>
-        <div class="readonly-box" id="bottlePrice">0</div>
+      <div class="col-4 col-md-2">
+        <label class="form-label">COURIER (₹)</label>
+        <div class="readonly-box">60</div>
       </div>
 
-      <div class="col-md-3">
-        <label class="form-label">DIGITAL MARKETING (₹)</label>
+      <div class="col-4 col-md-2">
+        <label class="form-label">MARKETING (₹)</label>
         <select id="marketingCost" class="form-select">
           <option>50</option>
           <option>100</option>
@@ -165,11 +195,13 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
 
-      <div class="col-md-3">
-        <label class="form-label" style="color:Blue;">MINIMUM SELLING PRICE (₹)</label>
-        <input type="text" name="msp" id="msp" class="form-control" readonly required>
+      <!-- Row 7: MSP | Margin | ASP | Revenue -->
+      <div class="col-3 col-md-3">
+        <label class="form-label" style="color:Blue;">MSP (₹)</label>
+        <input type="text" name="msp" id="msp" class="form-control" style="color:Blue;" readonly required>
       </div>
-      <div class="col-md-3">
+
+      <div class="col-3 col-md-3">
         <label class="form-label">PROFIT MARGIN (%)</label>
         <select name="margin" id="margin" class="form-select" required>
           <option value="">Select</option>
@@ -183,11 +215,19 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
           <option>300</option>
         </select>
       </div>
-      <div class="col-md-3">
+
+      <div class="col-3 col-md-3">
         <label class="form-label" style="color:orange;">ASP (₹)</label>
-        <input type="text" name="asp" id="asp" class="form-control" readonly required>
+        <input type="text" name="asp" id="asp" class="form-control" style="color:orange;" readonly required>
       </div>
-      <div class="col-md-3">
+
+      <div class="col-3 col-md-3">
+        <label class="form-label" style="color:green;">REVENUE (₹)</label>
+        <input type="text" name="revenue" id="revenue" class="form-control" style="color:green;" readonly required>
+      </div>
+
+      <!-- Row 8: Display Margin | Display Price -->
+      <div class="col-6 col-md-3">
         <label class="form-label">DISPLAY MARGIN (%)</label>
         <select name="displayMargin" id="displayMargin" class="form-select" required>
           <option value="">Select</option>
@@ -202,23 +242,18 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
           <option>80</option>
         </select>
       </div>
-      <div class="col-md-3">
+
+      <div class="col-6 col-md-3">
         <label class="form-label">DISPLAY PRICE (₹)</label>
         <input type="text" name="mrp" id="mrp" class="form-control" readonly required>
       </div>
 
-
-
-      <div class="col-md-3">
-        <label class="form-label" style="color:green;">REVENUE (₹)</label>
-        <input type="text" name="revenue" id="revenue" class="form-control" readonly required>
-      </div>
-
-      <!-- Description -->
+      <!-- Row 9: Description -->
       <div class="col-12">
         <label class="form-label">DESCRIPTION / NOTES</label>
         <textarea name="description" rows="3" class="form-control" required></textarea>
       </div>
+
     </div>
 
     <div class="mt-4 text-end">
@@ -226,6 +261,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
     </div>
   </form>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
