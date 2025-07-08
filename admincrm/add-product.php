@@ -103,7 +103,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 </nav>
 
 <div class="form-section">
-  <h4 class="mb-4">Add Product to Inventory</h4>
+  <h4 class="mb-4">PRODUCT MASTER</h4>
 
   <form action="handle-add-product.php" method="POST" enctype="multipart/form-data" id="addProductForm">
     <div class="row g-3">
@@ -192,8 +192,8 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       <div class="col-4 col-md-2">
         <label class="form-label">MARKETING(₹)</label>
         <select id="marketingCost" class="form-select">
-          <option>50</option>
           <option>100</option>
+          <option>50</option>
           <option>150</option>
           <option>200</option>
           <option>250</option>
@@ -202,7 +202,10 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
       <!-- Row 7: MSP | Margin | ASP | Revenue -->
       <div class="col-3 col-md-3">
-        <label class="form-label" style="color:Blue;">MSP (₹)</label>
+        <label class="form-label" style="color:Blue;">
+          <span class="d-none d-md-inline">Minimum Selling Price (₹)</span>
+          <span class="d-inline d-md-none">Minimum SP (₹)</span>
+        </label>
         <input type="text" name="msp" id="msp" class="form-control" style="color:Blue;" readonly required>
       </div>
 
@@ -222,7 +225,10 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <div class="col-3 col-md-3">
-        <label class="form-label" style="color:orange;">ASP (₹)</label>
+        <label class="form-label" style="color:orange;">
+          <span class="d-none d-md-inline">Actual Sales Price (₹)</span>
+          <span class="d-inline d-md-none">Actual SP (₹)</span>
+        </label>
         <input type="text" name="asp" id="asp" class="form-control" style="color:orange;" readonly required>
       </div>
 
