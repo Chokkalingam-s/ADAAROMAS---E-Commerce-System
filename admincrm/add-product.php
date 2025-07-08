@@ -131,6 +131,40 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         <label class="form-label" style="color:red;">PURCHASE COST (₹)</label>
         <input type="number" name="costPrice" id="costPrice" class="form-control" required>
       </div>
+            <!-- Charges -->
+      <div class="col-md-3">
+        <label class="form-label">COURIER (₹)</label>
+        <div class="readonly-box">60</div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">BOX (₹)</label>
+        <div class="readonly-box">200</div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">PACKING (₹)</label>
+        <div class="readonly-box">10</div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">SHELF (₹)</label>
+        <div class="readonly-box">30</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">BOTTLE PRICE (₹)</label>
+        <div class="readonly-box" id="bottlePrice">0</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">DIGITAL MARKETING (₹)</label>
+        <select id="marketingCost" class="form-select">
+          <option>50</option>
+          <option>100</option>
+          <option>150</option>
+          <option>200</option>
+          <option>250</option>
+        </select>
+      </div>
+
       <div class="col-md-3">
         <label class="form-label" style="color:Blue;">MINIMUM SELLING PRICE (₹)</label>
         <input type="text" name="msp" id="msp" class="form-control" readonly required>
@@ -173,23 +207,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         <input type="text" name="mrp" id="mrp" class="form-control" readonly required>
       </div>
 
-      <!-- Charges -->
-      <div class="col-md-3">
-        <label class="form-label">COURIER (₹)</label>
-        <div class="readonly-box">60</div>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">BOX (₹)</label>
-        <div class="readonly-box">200</div>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">PACKING (₹)</label>
-        <div class="readonly-box">10</div>
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">SHELF (₹)</label>
-        <div class="readonly-box">30</div>
-      </div>
+
 
       <div class="col-md-3">
         <label class="form-label" style="color:green;">REVENUE (₹)</label>
@@ -295,8 +313,8 @@ document.addEventListener("click", (e) => {
 // Category to sizes
 const sizes = {
   "Perfume": [30, 50, 100],
-  "Attar": [6, 12, 20, 30, 50],
-  "Essence Oil": [30, 60, 90, 120],
+  "Attar": [6, 12, 18, 24, 36],
+  "Essence Oil": [30, 60, 90],
   "Diffuser": []
 };
 
@@ -365,13 +383,41 @@ document.getElementById("costPrice").addEventListener("input", calculatePrices);
 document.getElementById("margin").addEventListener("change", calculatePrices);
 document.getElementById("displayMargin").addEventListener("change", calculatePrices);
 
+["costPrice", "margin", "displayMargin", "category", "size", "marketingCost"].forEach(id => {
+  document.getElementById(id).addEventListener("change", calculatePrices);
+  document.getElementById(id).addEventListener("input", calculatePrices);
+});
+
+
 function calculatePrices() {
   const cost = parseFloat(document.getElementById("costPrice").value || 0);
   const margin = parseFloat(document.getElementById("margin").value || 0);
   const dispMargin = parseFloat(document.getElementById("displayMargin").value || 0);
   const revenue = parseFloat(document.getElementById("revenue").value || 0);
+    const marketing = parseFloat(document.getElementById("marketingCost").value || 0);
 
-  const msp = cost + 300;
+  const category = document.getElementById("category").value;
+  const size = parseInt(document.getElementById("size").value || 0);
+
+  let bottle = 0;
+  if (category === "Perfume") {
+    if (size === 30) bottle = 30;
+    else if (size === 50) bottle = 50;
+    else if (size === 100) bottle = 60;
+  } else if (category === "Attar") {
+    bottle = 20;
+  } else if (category === "Essence Oil") {
+    bottle = 30;
+  }
+  document.getElementById("bottlePrice").innerText = bottle;
+    // Fixed charges
+  const courier = 60;
+  const box = 200;
+  const packing = 10;
+  const shelf = 30;
+
+  const totalCost = cost + courier + box + packing + shelf + bottle + marketing;
+  const msp = totalCost;
   const asp = roundToNearest50(msp + margin/100*msp);
   const mrp = roundToNearest50(asp + (asp * dispMargin / 100));
   const totalRevenue = asp - msp
