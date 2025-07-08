@@ -3,7 +3,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/vendor/autoload.php';
 
-$config = require 'config/email_config.php'; // ✅ Load your email config
+$config = require 'config/email_config.php'; 
 
 header('Content-Type: application/json');
 $input = json_decode(file_get_contents('php://input'), true);

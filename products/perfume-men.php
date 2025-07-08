@@ -3,7 +3,7 @@ include('../config/db.php');
 
 // Set your desired category, e.g. Perfume, Attar, Essence Oil, etc.
 $category = 'Perfume'; // Or 'Perfume'/'Perfume-Men'/'Perfume-Women'/...
-$pageTitle = "Men'S Perfume Collection";
+$pageTitle = "Men's Perfume Collection";
 $gender = 'Men';
 $stmt = $conn->prepare("
   SELECT 
