@@ -20,10 +20,12 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       background: #fff;
       border-radius: 10px;
       box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+      text-align:center;
     }
 
     .form-label {
       font-weight: 600;
+      text-align:center;
     }
 
 
@@ -126,7 +128,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <div class="col-6 col-md-3">
-        <label for="gender" class="form-label">GENDER (for Perfume)</label>
+        <label for="gender" class="form-label">GENDER</label>
         <select name="gender" id="gender" class="form-select" style="text-align: left;" >
           <option value="">Select Gender</option>
           <option>Men</option>
@@ -148,12 +150,15 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <div class="col-4 col-md-2">
-        <label class="form-label" style="color:red;">PURCHASE (₹)</label>
+        <label class="form-label" style="color:red;">PURCHASE(₹)</label>
         <input type="number" name="costPrice" id="costPrice" class="form-control" style="color:red;"required>
       </div>
 
       <div class="col-4 col-md-2">
-        <label for="stock" class="form-label">INITIAL STOCK</label>
+        <label for="stock" class="form-label">
+          <span class="d-none d-md-inline">INITIAL STOCK</span>
+          <span class="d-inline d-md-none">STOCK</span>
+        </label>
         <input type="number" name="stock" id="stock" class="form-control" required>
       </div>
 
@@ -185,7 +190,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <div class="col-4 col-md-2">
-        <label class="form-label">MARKETING (₹)</label>
+        <label class="form-label">MARKETING(₹)</label>
         <select id="marketingCost" class="form-select">
           <option>50</option>
           <option>100</option>
@@ -228,7 +233,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
       <!-- Row 8: Display Margin | Display Price -->
       <div class="col-6 col-md-3">
-        <label class="form-label">DISPLAY MARGIN (%)</label>
+        <label class="form-label">DISP MARGIN (%)</label>
         <select name="displayMargin" id="displayMargin" class="form-select" required>
           <option value="">Select</option>
           <option>40</option>
