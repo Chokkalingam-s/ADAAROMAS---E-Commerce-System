@@ -128,7 +128,7 @@
     max-height: 450px;
     background: var(--light-gray);
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 0.75rem;
     margin-bottom: 1.5rem;
   }
 
@@ -218,7 +218,7 @@
   .coupon-section {
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(232, 180, 184, 0.1) 100%);
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 1rem;
     margin-bottom: 1.5rem;
     border: 1px solid rgba(212, 175, 55, 0.3);
   }
@@ -352,7 +352,7 @@
   /* Enhanced mobile responsiveness */
   @media (max-width: 576px) {
     .section-card {
-      padding: 1.5rem;
+      padding: 1rem;
       border-radius: 12px;
     }
     

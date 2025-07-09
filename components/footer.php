@@ -226,10 +226,10 @@ function renderCheckoutOrder() {
                 </div>
               </div>
               <div class="text-end">
+                <div class="fw-bold" style="color: var(--deep-purple);">₹${p.price * p.quantity}</div>
                 <button class="remove-btn" onclick="removeFromCheckout('${p.title}')" title="Remove item">
                   ×
                 </button>
-                <div class="fw-bold" style="color: var(--deep-purple);">₹${p.price * p.quantity}</div>
               </div>
             </div>
           </div>
