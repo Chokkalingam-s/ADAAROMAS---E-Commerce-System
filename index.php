@@ -44,7 +44,7 @@ if ($needed > 0) {
 if (count($productIds)) {
   $placeholders = implode(',', array_fill(0, count($productIds), '?'));
   $prodStmt = $conn->prepare("
-    SELECT p.*, ps.stockInHand
+    SELECT p.*, ps.stockInHand, ps.size
     FROM products p
     JOIN product_stock ps ON p.productId = ps.productId
     WHERE p.productId IN ($placeholders)
@@ -118,7 +118,7 @@ $products = $uniqueProducts;
   <!-- Gifting Section -->
 <?php
 $giftStmt = $conn->prepare("
-  SELECT p.*, ps.stockInHand 
+  SELECT p.*, ps.stockInHand, ps.size
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
   ORDER BY RAND()
