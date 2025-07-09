@@ -7,6 +7,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/js/main.js"></script>
+<!-- cart.php script -->
 <script>
 function toggleCartSidebar() {
   document.getElementById("cartSidebar").classList.toggle("open");
@@ -160,7 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRecommendations();
 });
 </script>
+
 <!-- checkout.php script -->
+
 <script>
 let cartTotal = 0;
 let discountedTotal = 0;
@@ -171,11 +174,16 @@ function renderCheckoutOrder() {
   const summary = document.getElementById("checkoutOrderSummary");
   const totalPriceDisplay = document.getElementById("totalPrice");
   const discountInfo = document.getElementById("discountInfo");
-
+  
   if (!summary) return;
 
   if (cart.length === 0) {
-    summary.innerHTML = "<p>No items in cart.</p>";
+    summary.innerHTML = `
+      <div class="text-center py-4">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🛍️</div>
+        <p class="text-muted">No items in cart.</p>
+        <small>Add some beautiful fragrances to continue</small>
+      </div>`;
     totalPriceDisplay.innerText = "0";
     discountInfo.style.display = "none";
     return;
@@ -183,37 +191,72 @@ function renderCheckoutOrder() {
 
   let total = 0;
   let savings = 0;
-  summary.innerHTML = cart.map(p => {
+  
+  const itemsHtml = cart.map(p => {
     total += p.price * p.quantity;
     savings += (p.mrp - p.price) * p.quantity;
+    
     return `
-      <div class='d-flex justify-content-between align-items-center mb-2'>
-        <div class="w-75">
-          <strong>${p.title}</strong>
-          <div class="text-muted">${p.size || "No size specified"}</div>
-          <div class="d-flex align-items-center gap-2 mt-1">
-            <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateCheckoutQuantity('${p.title}', -1)">-</button>
-            <span>${p.quantity}</span>
-            <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="updateCheckoutQuantity('${p.title}', 1)">+</button>
+      <div class='order-item'>
+        <div class="d-flex align-items-start">
+          <div class="product-image-placeholder">
+            <img src="${p.image}" alt="${p.title}">
           </div>
-          <small class="text-muted"><s class="text-danger">₹${p.mrp}</s> → ₹${p.price}</small>
-        </div>
-        <div class="text-end">
-          <button class="btn btn-sm text-danger mb-1" onclick="removeFromCheckout('${p.title}')"><i class="bi bi-x-lg"></i></button>
-          <div><strong>₹${p.price * p.quantity}</strong></div>
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <strong style="color: var(--deep-purple);">
+  ${p.title}
+  ${
+    (p.size > 1)
+      ? `<span class="ms-2 text-muted small">${p.size} ml</span>`
+      : (p.size ? `<span class="ms-2 text-muted small">${p.size}</span>` : "")
+  }
+</strong>
+                <div class="quantity-controls">
+                  <button class="quantity-btn" onclick="updateCheckoutQuantity('${p.title}', -1)">-</button>
+                  <span class="mx-2 fw-bold">${p.quantity}</span>
+                  <button class="quantity-btn" onclick="updateCheckoutQuantity('${p.title}', 1)">+</button>
+                </div>
+                <div class="mt-1">
+                  <small class="text-muted">
+                    <s class="text-danger">₹${p.mrp}</s> 
+                    <span class="text-success fw-bold">₹${p.price}</span>
+                  </small>
+                </div>
+              </div>
+              <div class="text-end">
+                <button class="remove-btn" onclick="removeFromCheckout('${p.title}')" title="Remove item">
+                  ×
+                </button>
+                <div class="fw-bold" style="color: var(--deep-purple);">₹${p.price * p.quantity}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>`;
   }).join("");
 
-  summary.innerHTML += `
-    <hr>
-    <div class='d-flex justify-content-between'><strong>Total:</strong><strong>₹${total}</strong></div>
-    <div class='d-flex justify-content-between text-success'><span>Total Savings:</span><span>₹${savings}</span></div>
+  summary.innerHTML = itemsHtml + `
+    <div class="order-total mt-3">
+      <div class="total-row">
+        <span>Subtotal:</span>
+        <span>₹${total}</span>
+      </div>
+      <div class="total-row savings-text">
+        <span>Total Savings:</span>
+        <span>₹${savings}</span>
+      </div>
+      <div class="total-row">
+        <span>Total:</span>
+        <span>₹${total}</span>
+      </div>
+    </div>
   `;
 
   cartTotal = total;
   discountedTotal = total;
-
+  
   // If coupon is already applied, re-apply
   if (appliedCoupon) applyDiscount(appliedCoupon);
   else totalPriceDisplay.innerText = cartTotal;
@@ -223,8 +266,10 @@ function updateCheckoutQuantity(title, change) {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
   const item = cart.find(p => p.title === title);
   if (!item) return;
+
   item.quantity += change;
   if (item.quantity < 1) item.quantity = 1;
+
   localStorage.setItem("cart", JSON.stringify(cart));
   renderCheckoutOrder();
   if (typeof renderCart === 'function') renderCart();
@@ -246,10 +291,9 @@ window.addEventListener("storage", function (e) {
 
 async function requestCoupon(e) {
   e.preventDefault();
-
   const statusBox = document.getElementById("couponRequestStatus");
   statusBox.innerText = '';
-  statusBox.className = 'mt-2 small';
+  statusBox.className = 'status-message';
 
   const form = document.getElementById("billingForm");
   const formData = new FormData(form);
@@ -259,61 +303,66 @@ async function requestCoupon(e) {
   const requiredFields = ["firstName", "lastName", "state", "district", "city", "addressLine1", "pincode", "email", "phone"];
   for (let field of requiredFields) {
     if (!user[field] || user[field].trim() === "") {
-    statusBox.innerText = "Please fill in all billing details before requesting a coupon.";
-    statusBox.classList.add("text-danger");
-    return;
+      statusBox.innerText = "Please fill in all billing details before requesting a coupon.";
+      statusBox.classList.add("status-error");
+      statusBox.style.display = "block";
+      return;
     }
   }
 
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
   if (!cart.length) {
     statusBox.innerText = "Your cart is empty. Add products before requesting a coupon.";
-    statusBox.classList.add("text-danger");
+    statusBox.classList.add("status-error");
+    statusBox.style.display = "block";
     return;
   }
 
   statusBox.innerText = "✅ Coupon request sent! Check your billing email within 5 minutes.";
-  statusBox.classList.remove("text-danger");
-  statusBox.classList.add("text-success");
+  statusBox.classList.add("status-success");
+  statusBox.style.display = "block";
 
   // Send request to server
-try {
+  try {
     const resp = await fetch("send-coupon-request.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user, cart })
     });
-
     const data = await resp.json();
     if (!data.success) {
       statusBox.innerText = "❌ Request failed to send. Try again later.";
-      statusBox.classList.remove("text-success");
-      statusBox.classList.add("text-danger");
+      statusBox.classList.remove("status-success");
+      statusBox.classList.add("status-error");
     }
   } catch (err) {
-  statusBox.innerText = "✅ Coupon request sent! Check your billing email within 5 minutes.";
-  statusBox.classList.remove("text-danger");
-  statusBox.classList.add("text-success");
+    statusBox.innerText = "✅ Coupon request sent! Check your billing email within 5 minutes.";
+    statusBox.classList.remove("status-error");
+    statusBox.classList.add("status-success");
   }
 }
 
-
 document.addEventListener("DOMContentLoaded", renderCheckoutOrder);
 
-// 🧾 Apply Coupon Logic
+// Apply Coupon Logic
 document.getElementById('applyCouponBtn').addEventListener('click', () => {
   const code = document.getElementById('couponCode').value.trim().toUpperCase();
   const msg = document.getElementById('couponMsg');
   const discountInfo = document.getElementById('discountInfo');
   const totalPriceDisplay = document.getElementById('totalPrice');
-
-  msg.innerText = '';
+  const applyBtn = document.getElementById('applyCouponBtn');
+  
+  msg.style.display = 'none';
   discountInfo.style.display = 'none';
 
   if (!code) {
     msg.innerText = "Enter a coupon code.";
+    msg.style.display = 'block';
     return;
   }
+
+  applyBtn.classList.add('loading');
+  applyBtn.disabled = true;
 
   fetch('apply-coupon.php', {
     method: 'POST',
@@ -322,17 +371,24 @@ document.getElementById('applyCouponBtn').addEventListener('click', () => {
   })
   .then(res => res.json())
   .then(data => {
+    applyBtn.classList.remove('loading');
+    applyBtn.disabled = false;
+    
     if (!data.success) {
       msg.innerText = data.message;
+      msg.style.display = 'block';
       totalPriceDisplay.innerText = cartTotal;
       return;
     }
 
-    appliedCoupon = data; // Store for future refresh (quantity change, etc)
+    appliedCoupon = data;
     applyDiscount(data);
   })
   .catch(() => {
+    applyBtn.classList.remove('loading');
+    applyBtn.disabled = false;
     msg.innerText = "Something went wrong. Try again.";
+    msg.style.display = 'block';
   });
 });
 
@@ -345,7 +401,6 @@ function applyDiscount(coupon) {
   document.getElementById('totalPrice').innerText = discountedTotal.toFixed(0);
   document.getElementById('discountInfo').innerText = `Coupon applied! You saved ₹${discount.toFixed(0)}.`;
   document.getElementById('discountInfo').style.display = 'block';
-  
 }
 </script>
 
