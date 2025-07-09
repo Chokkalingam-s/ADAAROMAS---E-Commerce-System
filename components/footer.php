@@ -298,11 +298,6 @@ try {
 }
 
 
-const shipCheckbox = document.getElementById("shipDifferent");
-shipCheckbox.addEventListener("change", function () {
-  document.getElementById("shippingAddressBox").classList.toggle("d-none", !this.checked);
-});
-
 document.addEventListener("DOMContentLoaded", renderCheckoutOrder);
 
 // 🧾 Apply Coupon Logic

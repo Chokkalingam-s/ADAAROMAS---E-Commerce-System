@@ -119,15 +119,6 @@
         <input type="email" id="billingEmail" name="email" class="form-control" required>
       </div>
 
-      <div class="form-check mt-3">
-        <input class="form-check-input" type="checkbox" id="shipDifferent">
-        <label class="form-check-label" for="shipDifferent">Ship to different address?</label>
-      </div>
-
-      <div class="mt-2 d-none" id="shippingAddressBox">
-        <label class="form-label">Shipping Address</label>
-        <textarea class="form-control" name="shippingAddress" rows="2"></textarea>
-      </div>
     </form>
   </div>
 
