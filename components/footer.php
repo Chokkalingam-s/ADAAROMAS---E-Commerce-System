@@ -436,7 +436,7 @@ function safeRedirect(orderId) {
 
 if (verifyResp.success && verifyResp.orderId) {
   safeRedirect(verifyResp.orderId);
-  setTimeout(() => safeRedirect(verifyResp.orderId), 5000); // retry redirect if modal was blocking
+  setTimeout(() => safeRedirect(verifyResp.orderId), 6000); // retry redirect if modal was blocking
 } else {
 
         }
@@ -451,6 +451,17 @@ if (verifyResp.success && verifyResp.orderId) {
 
   const rzp = new Razorpay(options);
   rzp.open();
+  rzp.on('payment.failed', function (response){
+  alert('Payment Failed. Please try again.');
+});
+  rzp.on('payment.success', function (response) {
+    console.log('Payment Success:', response);
+  });
+
+  // Close the modal if it was open
+  if (document.querySelector('.razorpay-modal')) {
+    document.querySelector('.razorpay-modal').remove();
+  }
 };
 </script>
 

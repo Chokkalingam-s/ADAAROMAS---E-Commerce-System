@@ -36,7 +36,10 @@ foreach ($cart as $item) {
 }
 
 echo json_encode(['success'=>true, 'orderId'=>$newOrderId]);
-
+flush(); // ✅ Push output to client
+if (function_exists('fastcgi_finish_request')) {
+    fastcgi_finish_request(); // ✅ Let PHP continue mailing in background
+}
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 $emailConfig = require 'config/email_config.php';
@@ -125,8 +128,6 @@ $mail->Body .= "
   </div>
 </div>";
 
-  $mail->send();
-  echo json_encode(['success' => true, 'orderId' => $newOrderId]);
-} catch (Exception $e) {
+  $mail->send();} catch (Exception $e) {
   error_log("Email not sent. Error: {$mail->ErrorInfo}");
 }
