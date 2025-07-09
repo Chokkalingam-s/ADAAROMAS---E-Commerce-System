@@ -361,8 +361,8 @@
     }
     
     .product-image-placeholder {
-      width: 50px;
-      height: 10px;
+      width: 40px;
+      height: 40px;
       font-size: 1.2rem;
     }
     
@@ -397,12 +397,6 @@
   }
 </style>
 
-<!-- <div class="checkout-hero">
-  <div class="container">
-    <h1 class="text-center mb-0">✨ Complete Your Perfume Purchase</h1>
-    <p class="text-center mb-0 mt-2 opacity-75">Secure checkout for your luxury fragrance collection</p>
-  </div>
-</div> -->
 
 <div class="container mt-2 checkout-container">
   <!-- Billing Details -->
@@ -411,28 +405,28 @@
       <h4 class="section-title">Billing Details</h4>
       <form id="billingForm">
         <div class="row g-3">
-          <div class="col-md-6">
+          <div class="col-6 col-md-6">
             <label class="form-label required-field">First Name</label>
-            <input type="text" name="firstName" class="form-control" required placeholder="Enter your first name">
+            <input type="text" name="firstName" class="form-control" required placeholder="First name">
           </div>
-          <div class="col-md-6">
+          <div class="col-6 col-md-6">
             <label class="form-label required-field">Last Name</label>
-            <input type="text" name="lastName" class="form-control" required placeholder="Enter your last name">
+            <input type="text" name="lastName" class="form-control" required placeholder="Last name">
           </div>
         </div>
       
         <div class="row g-3 mt-2">
-         <div class="col-md-4">
+         <div class="col-4 col-md-4">
           <label class="form-label required-field">Country</label>
-          <input type="text" name="country" class="form-control" required placeholder="Enter your country">
+          <input type="text" name="country" class="form-control" required placeholder="Country">
         </div>
-          <div class="col-md-4">
+          <div class="col-4 col-md-4">
             <label class="form-label required-field">State</label>
-            <input type="text" name="state" class="form-control" required placeholder="Enter your state">
+            <input type="text" name="state" class="form-control" required placeholder="State">
           </div>
-          <div class="col-md-4">
+          <div class="col-4 col-md-4">
             <label class="form-label required-field">District</label>
-            <input type="text" name="district" class="form-control" required placeholder="Enter your district">
+            <input type="text" name="district" class="form-control" required placeholder="District">
           </div>
         </div>
         
@@ -447,11 +441,11 @@
         </div>
         
         <div class="row g-3 mt-2">
-          <div class="col-md-6">
+          <div class="col-6 col-md-6">
             <label class="form-label required-field">Town/City</label>
             <input type="text" name="city" class="form-control" required placeholder="Enter your city">
           </div>
-          <div class="col-md-6">
+          <div class="col-6 col-md-6">
             <label class="form-label required-field">Pincode</label>
             <input type="text" name="pincode" class="form-control" required placeholder="Enter pincode">
           </div>
@@ -461,7 +455,7 @@
           <label class="form-label required-field">Phone Number</label>
           <input type="tel" id="billingPhone" name="phone" class="form-control" required placeholder="+91 XXXXX XXXXX">
         </div>
-        
+
         <div class="col-md-6">
           <label class="form-label required-field">Email</label>
           <input type="email" id="billingEmail" name="email" class="form-control" required placeholder="your.email@example.com">
