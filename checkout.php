@@ -167,7 +167,8 @@
   .product-image-placeholder img {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  border-radius: 5px;
+  object-fit: fill;
   display: block;
 }
 
@@ -395,6 +396,38 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+   .autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-top: 2px;
+  }
+
+  .autocomplete-suggestions div {
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .autocomplete-suggestions div:hover {
+    background-color: #f8f9fa;
+  }
+
+  .form-control:focus + .autocomplete-suggestions {
+    display: block;
+  }
+
+  .position-relative {
+    position: relative;
+  }
 </style>
 
 
@@ -416,18 +449,21 @@
         </div>
       
         <div class="row g-3 mt-2">
-         <div class="col-4 col-md-4">
-          <label class="form-label required-field">Country</label>
-          <input type="text" name="country" class="form-control" required placeholder="Country">
+  
+          <input type="hidden" name="country" value="India">
+  
+        <div class="col-6 col-md-6 position-relative">
+          <label class="form-label required-field">State</label>
+          <input type="text" id="stateInput" class="form-control" placeholder="Select state" autocomplete="off" required>
+          <div id="stateSuggestions" class="autocomplete-suggestions" style="display:none;"></div>
         </div>
-          <div class="col-4 col-md-4">
-            <label class="form-label required-field">State</label>
-            <input type="text" name="state" class="form-control" required placeholder="State">
-          </div>
-          <div class="col-4 col-md-4">
-            <label class="form-label required-field">District</label>
-            <input type="text" name="district" class="form-control" required placeholder="District">
-          </div>
+
+        <div class="col-6 col-md-6 position-relative">
+          <label class="form-label required-field">District</label>
+          <input type="text" id="districtInput" class="form-control" placeholder="Select district" autocomplete="off" required>
+          <div id="districtSuggestions" class="autocomplete-suggestions" style="display:none;"></div>
+        </div>
+
         </div>
         
         <div class="mt-3">
@@ -495,3 +531,82 @@
 </div>
 
 <?php include "components/footer.php"; ?>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const stateInput = document.getElementById("stateInput");
+    const stateSuggestions = document.getElementById("stateSuggestions");
+    const districtInput = document.getElementById("districtInput");
+    const districtSuggestions = document.getElementById("districtSuggestions");
+
+    let statesData = [];
+    let selectedState = null;
+
+    // Fetch state and district JSON
+    fetch("state.json")
+      .then(res => res.json())
+      .then(data => {
+        statesData = data.states;
+        attachStateListeners();
+      });
+
+    function attachStateListeners() {
+      const stateNames = statesData.map(s => s.state);
+
+      // On focus, show all states
+      stateInput.addEventListener("focus", () => {
+        showSuggestions(stateInput, stateSuggestions, stateNames, selectState);
+      });
+
+      // On typing, filter states
+      stateInput.addEventListener("input", () => {
+        const filtered = filterList(stateInput.value, stateNames);
+        showSuggestions(stateInput, stateSuggestions, filtered, selectState);
+      });
+
+      // District input setup
+      districtInput.addEventListener("focus", () => {
+        if (!selectedState) return;
+        showSuggestions(districtInput, districtSuggestions, selectedState.districts, () => {});
+      });
+
+      districtInput.addEventListener("input", () => {
+        if (!selectedState) return;
+        const filtered = filterList(districtInput.value, selectedState.districts);
+        showSuggestions(districtInput, districtSuggestions, filtered, () => {});
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function (e) {
+        if (!stateInput.contains(e.target)) stateSuggestions.style.display = "none";
+        if (!districtInput.contains(e.target)) districtSuggestions.style.display = "none";
+      });
+    }
+
+    function filterList(input, list) {
+      return list.filter(item => item.toLowerCase().includes(input.toLowerCase()));
+    }
+
+    function showSuggestions(inputEl, suggestionBox, options, onSelect) {
+      suggestionBox.innerHTML = "";
+      suggestionBox.style.display = "block";
+      options.slice(0, 10).forEach(item => {
+        const div = document.createElement("div");
+        div.textContent = item;
+        div.addEventListener("click", () => {
+          inputEl.value = item;
+          suggestionBox.style.display = "none";
+          onSelect(item);
+        });
+        suggestionBox.appendChild(div);
+      });
+    }
+
+    function selectState(stateName) {
+      selectedState = statesData.find(s => s.state === stateName);
+      districtInput.value = "";
+      districtSuggestions.innerHTML = "";
+    }
+  });
+</script>
+
