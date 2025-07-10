@@ -1,8 +1,4 @@
 <style>
-  .product-card-wrapper {
-    margin-bottom: 2rem;
-  }
-
   .product-card {
     background: #fff;
     border-radius: 12px;
