@@ -212,8 +212,21 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   color: #ffc107;
 }
 
+html, body {
+  height: 100%;
+}
 
-  </style>
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-wrapper {
+  flex: 1;
+}
+</style>
+
 </head>
 <body>
 
@@ -272,5 +285,5 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     </a>
   </div>
 </div>
-
+<div class="page-wrapper">
 
