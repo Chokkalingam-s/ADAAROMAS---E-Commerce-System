@@ -372,6 +372,171 @@
       max-height: 120px;
     }
   }
+
+  /* PROFESSIONAL Price Slider Styles */
+#priceSlider, #mobilePriceSlider {
+  margin: 1.5rem 0;
+  height: 6px;
+}
+
+/* Slider Container */
+.noUi-target {
+  background: #e8e9ea;
+  border-radius: 10px;
+  border: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  height: 6px;
+  position: relative;
+}
+
+/* Active Range */
+.noUi-connect {
+  background: linear-gradient(90deg, #2c2c2c 0%, #404040 100%);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Professional Handles */
+.noUi-handle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #2c2c2c;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.8);
+  cursor: grab;
+  outline: none;
+  top: -8px;
+  right: -11px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Remove default handle styling */
+.noUi-handle:before,
+.noUi-handle:after {
+  display: none;
+}
+
+/* Handle Hover State */
+.noUi-handle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2), 0 0 0 2px rgba(44,44,44,0.1);
+  border-color: #1a1a1a;
+}
+
+/* Handle Active State */
+.noUi-handle:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25), 0 0 0 3px rgba(44,44,44,0.15);
+}
+
+/* Handle Focus State */
+.noUi-handle:focus {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 0 3px rgba(44,44,44,0.2);
+}
+
+/* Professional Price Display */
+.price-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.25rem;
+  gap: 1rem;
+}
+
+.price-box {
+  background: #ffffff;
+  border: 2px solid #e8e9ea;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #2c2c2c;
+  min-width: 85px;
+  text-align: center;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.price-box:hover {
+  border-color: #2c2c2c;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.price-box:focus-within {
+  border-color: #2c2c2c;
+  box-shadow: 0 0 0 3px rgba(44,44,44,0.1);
+}
+
+/* "to" text styling */
+.price-display > span {
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  #mobilePriceSlider {
+    margin: 1rem 0;
+  }
+  
+  .price-display {
+    margin-top: 1rem;
+    gap: 0.75rem;
+  }
+  
+  .price-box {
+    min-width: 75px;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+  
+  /* Mobile handle adjustments */
+  #mobilePriceSlider .noUi-handle {
+    width: 24px;
+    height: 24px;
+    top: -9px;
+    right: -12px;
+  }
+}
+
+/* Additional Polish */
+.noUi-target * {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+/* Smooth animations */
+.noUi-state-tap .noUi-connect,
+.noUi-state-tap .noUi-origin {
+  transition: transform 0.3s;
+}
+
+/* Handle positioning fix for different states */
+.noUi-horizontal .noUi-handle {
+  width: 22px;
+  height: 22px;
+  right: -11px;
+  top: -8px;
+}
+
+/* Ensure handles don't overlap */
+.noUi-handle.noUi-handle-lower {
+  z-index: 2;
+}
+
+.noUi-handle.noUi-handle-upper {
+  z-index: 2;
+}
 </style>
 
 <div class="product-listing-container">
@@ -401,10 +566,7 @@
     </button>
   </div>
 
-  <!-- Products Count -->
-  <div class="products-count">
-    <?= count($filteredProducts) ?> products
-  </div>
+
   
   <div class="row">
     <!-- Desktop Sidebar -->
