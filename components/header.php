@@ -370,6 +370,48 @@ body {
   <div id="recommendationBox" class="scroll-row"></div>
 </div>
 
+<div id="hiddenRecommendations" style="display: none;">
+<?php include('../config/db.php');
+try {
+  $stmt = $conn->prepare("
+    SELECT 
+      p.productId, p.name, p.asp, p.mrp, p.rating, p.reviewCount, 
+      p.image, p.createdAt,
+      MIN(ps.size) as size,
+      MIN(ps.stockInHand) as stockInHand
+    FROM products p
+    INNER JOIN product_stock ps ON p.productId = ps.productId
+    WHERE ps.stockInHand > 0
+    GROUP BY p.productId, p.name, p.asp, p.mrp, p.rating, p.reviewCount, p.image, p.createdAt
+    ORDER BY p.rating DESC, p.reviewCount DESC
+    LIMIT 10
+  ");
+  $stmt->execute();
+  $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  foreach ($products as $product) {
+    $productId = $product['productId'];
+    $title = $product['name'];
+    $price = $product['asp'];
+    $mrp = $product['mrp'];
+    $image = "../" . $product['image'];
+    $size = $product['size'];
+    $inStock = $product['stockInHand'] > 0;
+    $createdAt = $product['createdAt'];
+
+    $discount = ($mrp > $price) ? round((($mrp - $price) / $mrp) * 100) : 0;
+
+   include "../components/product-card.php";
+  }
+
+} catch (Exception $e) {
+  echo "<div style='color:red;'>Error: " . $e->getMessage() . "</div>";
+}
+?>
+</div>
+
+
+
   <div class="cart-footer">
     <a href="/adaaromas/checkout.php" class="btn btn-dark w-100">
       <i class="bi bi-lock"></i> Checkout • <span id="cartTotal">₹0</span>
