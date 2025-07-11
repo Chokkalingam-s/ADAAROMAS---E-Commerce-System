@@ -77,28 +77,29 @@ function renderCart() {
   cart.forEach(item => {
     const itemTotal = item.price * item.quantity;
     total += itemTotal;
-const itemDiv = document.createElement("div");
+
+    const itemDiv = document.createElement("div");
     itemDiv.className = "cart-item";
     itemDiv.innerHTML = `
       <img src="${item.image}" alt="${item.title}">
       <div class="cart-info">
-        <div class="d-flex justify-content-between">
-          <div class="cart-title">${item.title}</div>
-          <div class="cart-size">
-  ${isNaN(item.size) ? item.size : item.size + "ml"}
-</div>
-
-          <div class="text-end">
-            <strong>₹${item.price.toLocaleString()}</strong><br>
-            ${item.mrp ? `<span class="text-danger original-price">₹${item.mrp.toLocaleString()}</span>` : ""}
+        <div class="cart-item-header">
+          <div class="cart-item-left">
+            <div class="cart-title">${item.title}</div>
+            <div class="cart-size">${isNaN(item.size) ? item.size : item.size + "ml"}</div>
+          </div>
+          <div class="cart-item-right">
+            <div class="cart-current-price">₹${item.price.toLocaleString()}</div>
+            ${item.mrp ? `<div class="cart-original-price">₹${item.mrp.toLocaleString()}</div>` : ""}
           </div>
         </div>
-
-        <div class="d-flex align-items-center gap-2 qty-controls mt-2">
-          <button class="btn btn-sm btn-outline-secondary px-2 py-0" onclick="updateQuantity('${item.title}', -1)">−</button>
-          <span>${item.quantity}</span>
-          <button class="btn btn-sm btn-outline-secondary px-2 py-0" onclick="updateQuantity('${item.title}', 1)">+</button>
-          <button class="remove-btn ms-3" onclick="removeFromCart('${item.title}')">Remove</button>
+        <div class="cart-item-controls">
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="updateQuantity('${item.title}', -1)">−</button>
+            <span class="qty-display">${item.quantity}</span>
+            <button class="qty-btn" onclick="updateQuantity('${item.title}', 1)">+</button>
+          </div>
+          <button class="remove-btn" onclick="removeFromCart('${item.title}')">Remove</button>
         </div>
       </div>
     `;

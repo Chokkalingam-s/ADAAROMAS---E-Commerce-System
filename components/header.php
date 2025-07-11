@@ -11,160 +11,256 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css"/>
-  <style>
-    .cart-sidebar {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 380px;
-      height: 100vh;
-      background: #fff;
-      box-shadow: -4px 0 10px rgba(0,0,0,0.2);
-      z-index: 1055;
-      transition: right 0.35s ease-in-out;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-    .cart-sidebar.open {
-      right: 0;
-    }
-    .cart-header {
-      padding: 1rem;
-      font-size: 16px;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .cart-body {
-      flex-grow: 1;
-      padding: 1rem;
-    }
-    .cart-item {
-     display: flex;
-  align-items: flex-start;
-  gap: 10px;
+<style>
+/* Keep all your existing CSS and add these updates for cart items */
+.cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 380px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -4px 0 10px rgba(0,0,0,0.2);
+  z-index: 1055;
+  transition: right 0.35s ease-in-out;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-sidebar.open {
+  right: 0;
+}
+
+.cart-header {
+  padding: 1rem;
+  font-size: 16px;
   border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-    }
-    .cart-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
-    .cart-info {
-      flex-grow: 1;
-    }
-    .cart-title {
-      font-weight: 500;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-    .cart-price {
-      font-size: 14px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .original-price {
-      text-decoration: line-through;
-      color: #999;
-      font-size: 13px;
-    }
-    .qty-controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .qty-controls button {
-      padding: 2px 6px;
-      font-size: 12px;
-    }
-    .remove-btn {
-      font-size: 14px;
-      color: #dc3545;
-      background: none;
-      border: none;
-      margin-top: 4px;
-      padding: 0;
-    }
-    .cart-footer {
-      padding: 1rem;
-      border-top: 1px solid #eee;
-    }
-    .recommendations {
-      border-top: 1px solid #eee;
-      padding: 1rem;
-    }
-    .recommend-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-    .rec-item {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-      align-items: center;
-    }
-    .rec-item img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-    }
-    .rec-item .title {
-      font-size: 13px;
-      font-weight: 500;
-      margin: 0;
-    }
-    .rec-item .price {
-      font-size: 13px;
-    }
-    .rec-item .old {
-      text-decoration: line-through;
-      font-size: 12px;
-      color: gray;
-    }
-    .rec-item .star {
-      color: #ffc107;
-      font-size: 12px;
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .cart-count-badge {
-      position: absolute;
-      top: -2px;
-      right: -6px;
-      background: #dc3545;
-      color: white;
-      font-size: 12px;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-    }
+.cart-body {
+  flex-grow: 1;
+  padding: 1rem;
+}
 
-    @media(max-width: 420px){
-      .cart-sidebar {
-        width: 100%;
-      }
-    }
+/* Updated cart item styles to match reference */
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 0;
+  margin-bottom: 8px;
+}
 
-    .scroll-row {
+.cart-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.cart-item img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cart-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cart-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.cart-item-left {
+  flex-grow: 1;
+}
+
+.cart-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.cart-size {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.cart-item-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cart-current-price {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.cart-original-price {
+  font-size: 13px;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.cart-item-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.qty-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.qty-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.qty-btn:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.qty-btn:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.qty-display {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 0 8px;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-btn {
+  font-size: 13px;
+  color: #dc3545;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.remove-btn:hover {
+  background: #ffeaea;
+  color: #c82333;
+}
+
+/* Keep all your existing styles for other elements */
+.cart-footer {
+  padding: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.recommendations {
+  border-top: 1px solid #eee;
+  padding: 1rem;
+}
+
+.recommend-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.cart-count-badge {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  background: #dc3545;
+  color: white;
+  font-size: 12px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+@media(max-width: 420px){
+  .cart-sidebar {
+    width: 100%;
+  }
+  
+  .cart-item {
+    gap: 10px;
+  }
+  
+  .cart-item img {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .cart-title {
+    font-size: 14px;
+  }
+  
+  .cart-current-price {
+    font-size: 15px;
+  }
+}
+
+.scroll-row {
   display: flex;
   overflow-x: auto;
   gap: 12px;
   padding-bottom: 8px;
   scrollbar-width: none;
 }
+
 .scroll-row::-webkit-scrollbar {
   display: none;
 }
+
 .rec-card {
   flex: 0 0 160px;
   border: 1px solid #eee;
@@ -172,44 +268,39 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   padding: 8px;
   background: #f9f9f9;
 }
+
 .rec-card img {
   width: 100%;
   height: 100px;
   object-fit: cover;
   border-radius: 5px;
 }
+
 .rec-title {
   font-size: 13px;
   font-weight: 600;
   margin: 6px 0 4px;
 }
+
 .rec-price {
   font-size: 13px;
 }
+
 .rec-old {
   text-decoration: line-through;
   color: gray;
   font-size: 12px;
 }
+
 .rec-star {
   font-size: 12px;
   color: #ffc107;
 }
+
 .rec-add {
   font-size: 12px;
   color: #007bff;
   cursor: pointer;
-}
-
-.rating-stars .star {
-  font-size: 2rem;
-  color: #ccc;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-.rating-stars .star:hover,
-.rating-stars .star.selected {
-  color: #ffc107;
 }
 
 html, body {
