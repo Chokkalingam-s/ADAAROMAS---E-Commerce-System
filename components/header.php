@@ -316,6 +316,16 @@ body {
 .page-wrapper {
   flex: 1;
 }
+
+.custom-scroll-wrap .product-card-wrapper {
+  flex: 0 0 auto;
+  width: 155px; /* or 180px, adjust as needed */
+  margin-right: -1px;
+}
+
+.custom-scroll-wrap .product-card {
+  height: auto; /* optional if height restriction causes cutoff */
+}
 </style>
 
 </head>
@@ -365,7 +375,7 @@ body {
 
   <div class="cart-body" id="cartItems"><p class="text-muted">No items in cart.</p></div>
 
-<div class="recommendations">
+<div class="recommendations custom-scroll-wrap">
   <div class="recommend-title">You May Also Like</div>
   <div id="recommendationBox" class="scroll-row"></div>
 </div>
