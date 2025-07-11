@@ -381,7 +381,9 @@ body {
 </div>
 
 <div id="hiddenRecommendations" style="display: none;">
-<?php include('../config/db.php');
+<?php 
+include __DIR__ . '/../config/db.php';
+
 try {
   $stmt = $conn->prepare("
     SELECT 
@@ -397,21 +399,24 @@ try {
     LIMIT 10
   ");
   $stmt->execute();
-  $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $cartProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  foreach ($products as $product) {
+  foreach ($cartProducts as $product) {
     $productId = $product['productId'];
     $title = $product['name'];
     $price = $product['asp'];
     $mrp = $product['mrp'];
-    $image = "../" . $product['image'];
+  $basePath = (substr_count($_SERVER['PHP_SELF'], '/') > 2) ? "../" : "";
+$image = $basePath . $product['image'];
+
     $size = $product['size'];
     $inStock = $product['stockInHand'] > 0;
     $createdAt = $product['createdAt'];
 
     $discount = ($mrp > $price) ? round((($mrp - $price) / $mrp) * 100) : 0;
 
-   include "../components/product-card.php";
+include __DIR__ . '/../components/product-card.php';
+
   }
 
 } catch (Exception $e) {
