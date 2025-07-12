@@ -261,47 +261,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   display: none;
 }
 
-.rec-card {
-  flex: 0 0 160px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 8px;
-  background: #f9f9f9;
-}
 
-.rec-card img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.rec-title {
-  font-size: 13px;
-  font-weight: 600;
-  margin: 6px 0 4px;
-}
-
-.rec-price {
-  font-size: 13px;
-}
-
-.rec-old {
-  text-decoration: line-through;
-  color: gray;
-  font-size: 12px;
-}
-
-.rec-star {
-  font-size: 12px;
-  color: #ffc107;
-}
-
-.rec-add {
-  font-size: 12px;
-  color: #007bff;
-  cursor: pointer;
-}
 
 html, body {
   height: 100%;
