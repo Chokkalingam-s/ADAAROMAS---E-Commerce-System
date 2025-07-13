@@ -7,10 +7,18 @@ use Razorpay\Api\Api;
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
+if (!$input || !isset($input['cart']) || !isset($input['user'])) {
+  http_response_code(400);
+  echo json_encode(['error' => 'Invalid input received']);
+  exit;
+}
+
 $cart = $input['cart'];
 $userData = $input['user'];
+$total = (isset($input['finalAmount']) && is_numeric($input['finalAmount']) && $input['finalAmount'] > 0)
+    ? (float)$input['finalAmount']
+    : array_sum(array_map(fn($p)=>$p['asp']*$p['quantity'],$cart));
 
-$total = isset($input['finalAmount']) ? (float)$input['finalAmount'] : array_sum(array_map(fn($p)=>$p['price']*$p['quantity'],$cart));
 
 if ($total <= 0) exit(json_encode(['error'=>"Cart empty"]));
 

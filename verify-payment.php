@@ -24,9 +24,28 @@ try {
 }
 
 // Store order
-$total = isset($data['finalAmount']) ? (float)$data['finalAmount'] : array_sum(array_map(fn($p)=>$p['price']*$p['quantity'], $cart));
-$stmt = $conn->prepare("INSERT INTO orders (userId, transactionId, billingAmount) VALUES (?, ?, ?)");
-$stmt->execute([$userId, $paymentId, $total]);
+$total = isset($data['finalAmount']) ? (float)$data['finalAmount'] : array_sum(array_map(fn($p) => $p['price'] * $p['quantity'], $cart));
+
+$totalASP = 0;
+$totalProfit = 0;
+foreach ($cart as $item) {
+    $productId = $item['productId'];
+    $quantity = $item['quantity'];
+
+    $stmtP = $conn->prepare("SELECT asp, revenue FROM products WHERE productId = ?");
+    $stmtP->execute([$productId]);
+    $product = $stmtP->fetch(PDO::FETCH_ASSOC);
+
+    if ($product) {
+        $totalASP += $product['asp'] * $quantity;
+        $totalProfit += $product['revenue'] * $quantity;
+    }
+}
+
+$gst = round($total * 0.18);  // 18% GST
+$loss = 0;
+$stmt = $conn->prepare("INSERT INTO orders (userId, transactionId, billingAmount, TotalASP, GST, PROFIT, LOSS) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->execute([$userId, $paymentId, $total, $totalASP, $gst, $totalProfit, $loss]);
 $newOrderId = $conn->lastInsertId();
 
 // For each cart item: store details & reduce stock
@@ -40,6 +59,9 @@ flush(); // ✅ Push output to client
 if (function_exists('fastcgi_finish_request')) {
     fastcgi_finish_request(); // ✅ Let PHP continue mailing in background
 }
+
+
+// Send confirmation email
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 $emailConfig = require 'config/email_config.php';

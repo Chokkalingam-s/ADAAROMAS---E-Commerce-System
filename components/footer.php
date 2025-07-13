@@ -7,7 +7,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/main.js"></script>
+<script src="assets/js/main.js"></script>
+
 <!-- cart.php script -->
 <script>
 function toggleCartSidebar() {
@@ -228,25 +229,35 @@ function renderCheckoutOrder() {
       </div>`;
   }).join("");
 
-  summary.innerHTML = itemsHtml + `
-    <div class="order-total mt-3">
-      <div class="total-row">
-        <span>Subtotal:</span>
-        <span>₹${total}</span>
-      </div>
-      <div class="total-row savings-text">
-        <span>Total Savings:</span>
-        <span>₹${savings}</span>
-      </div>
-      <div class="total-row">
-        <span>Total:</span>
-        <span>₹${total}</span>
-      </div>
-    </div>
-  `;
+  let gst = Math.round(total * 0.18);
+let grandTotal = total + gst;
 
-  cartTotal = total;
-  discountedTotal = total;
+
+summary.innerHTML = itemsHtml + `
+  <div class="order-total mt-3">
+    <div class="total-row">
+      <span>Subtotal:</span>
+      <span>₹${total}</span>
+    </div>
+    <div class="total-row savings-text">
+      <span>Total Savings:</span>
+      <span>₹${savings}</span>
+    </div>
+    <div class="total-row">
+      <span>GST (18%):</span>
+      <span>₹${gst}</span>
+    </div>
+    <div class="total-row final-amount">
+      <strong>Total:</strong>
+      <strong>₹${grandTotal}</strong>
+    </div>
+  </div>
+`;
+
+
+cartTotal = grandTotal;
+discountedTotal = grandTotal;
+
   
   // If coupon is already applied, re-apply
   if (appliedCoupon) applyDiscount(appliedCoupon);
@@ -397,6 +408,10 @@ function applyDiscount(coupon) {
 
 <!-- razorpay script -->
 <script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+
+
 document.getElementById('rzp-button1').onclick = async function(e){
   e.preventDefault();
   const cart = JSON.parse(localStorage.getItem('cart')||'[]');
@@ -407,11 +422,19 @@ document.getElementById('rzp-button1').onclick = async function(e){
   const user = Object.fromEntries(formData);
   const finalAmount = parseFloat(document.getElementById("totalPrice").textContent);
 
+  console.log("🛒 Cart:", cart);
+console.log("👤 User:", user);
+console.log("💰 Final Amount:", finalAmount);
+
+
 const resp = await fetch('create-order.php', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ cart, user, finalAmount })
 }).then(r => r.json());
+
+console.log("Create Order Response:", resp);
+
 
 
   const options = {
@@ -477,6 +500,8 @@ if (verifyResp.success && verifyResp.orderId) {
     document.querySelector('.razorpay-modal').remove();
   }
 };
+
+});
 </script>
 
 
