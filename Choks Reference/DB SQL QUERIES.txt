@@ -1,0 +1,101 @@
+CREATE DATABASE Adaaromas;
+USE Adaaromas;
+
+CREATE TABLE users (
+  userId INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  phoneNo VARCHAR(15),
+  email VARCHAR(100) UNIQUE,
+  password VARCHAR(255),
+  state VARCHAR(50),
+  district VARCHAR(50),
+  address TEXT,
+  city VARCHAR(50),
+  pincode VARCHAR(10),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE products (
+  productId INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150),
+  category ENUM('Perfume', 'Attar', 'Essence Oil', 'Diffuser'),
+  costPrice DECIMAL(10,2),
+  margin DECIMAL(5,2),
+  msp DECIMAL(10,2), -- Minimum Selling Price
+  asp DECIMAL(10,2), -- Average Selling Price
+  mrp DECIMAL(10,2), -- Maximum Retail Price
+  description TEXT,
+  rating DECIMAL(3,2) DEFAULT 0.0,
+  noOfRatings INT DEFAULT 0,
+  reviewCount INT DEFAULT 0,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE products ADD COLUMN image VARCHAR(255);
+
+
+CREATE TABLE product_stock (
+  stockId INT AUTO_INCREMENT PRIMARY KEY,
+  productId INT,
+  size VARCHAR(10), -- like 30ml, 50ml, etc.
+  stockInHand INT DEFAULT 0,
+  FOREIGN KEY (productId) REFERENCES products(productId) ON DELETE CASCADE
+);
+
+CREATE TABLE reviews (
+  reviewId INT AUTO_INCREMENT PRIMARY KEY,
+  productId INT,
+  userId INT,
+  feedback TEXT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (productId) REFERENCES products(productId) ON DELETE CASCADE,
+  FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
+);
+
+CREATE TABLE orders (
+  orderId INT AUTO_INCREMENT PRIMARY KEY,
+  userId INT,
+  status ENUM('Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled') DEFAULT 'Pending',
+  transactionId VARCHAR(100),
+  orderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  billingAmount DECIMAL(10,2),
+  FOREIGN KEY (userId) REFERENCES users(userId)
+);
+
+CREATE TABLE order_details (
+  detailId INT AUTO_INCREMENT PRIMARY KEY,
+  orderId INT,
+  productId INT,
+  quantity INT,
+  size VARCHAR(10),
+  FOREIGN KEY (orderId) REFERENCES orders(orderId) ON DELETE CASCADE,
+  FOREIGN KEY (productId) REFERENCES products(productId)
+);
+
+CREATE TABLE coupons (
+  couponId INT AUTO_INCREMENT PRIMARY KEY,
+  couponCode VARCHAR(50) UNIQUE,
+  expiryTime DATETIME,
+  percentage INT DEFAULT 0,
+  flatAmount DECIMAL(10,2) DEFAULT 0.0
+);
+
+CREATE INDEX idx_product_category ON products(category);
+CREATE INDEX idx_stock_product_size ON product_stock(productId, size);
+
+ALTER TABLE coupons ADD COLUMN availability TINYINT DEFAULT 0;
+
+ALTER TABLE products ADD COLUMN gender ENUM('Men', 'Women', 'Both') DEFAULT NULL;
+
+ALTER TABLE products 
+MODIFY COLUMN gender ENUM('Men', 'Women', 'Unisex') DEFAULT NULL;
+
+ALTER TABLE products ADD COLUMN revenue int;
+
+ALTER TABLE orders
+ADD COLUMN TotalASP INT,
+ADD COLUMN GST INT,
+ADD COLUMN PROFIT INT,
+ADD COLUMN LOSS INT DEFAULT 0;
+
+
