@@ -532,6 +532,7 @@
 
 <?php include "components/footer.php"; ?>
 
+<!-- Load state and district data -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const stateInput = document.getElementById("stateInput");

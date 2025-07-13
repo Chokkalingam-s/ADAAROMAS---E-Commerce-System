@@ -125,8 +125,35 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- checkout.php script -->
+<!--Enable Payment button script -->
+<script>
+const payButton = document.getElementById('rzp-button1');
+const billingForm = document.getElementById('billingForm');
 
+// Disable button initially
+payButton.disabled = true;
+payButton.style.opacity = 0.6;
+
+// Monitor changes on form
+billingForm.addEventListener('input', checkFormValidity);
+
+function checkFormValidity() {
+  const form = billingForm;
+  const requiredFields = form.querySelectorAll('[required]');
+  let allFilled = true;
+
+  requiredFields.forEach(field => {
+    if (!field.value.trim()) {
+      allFilled = false;
+    }
+  });
+
+  payButton.disabled = !allFilled;
+  payButton.style.opacity = allFilled ? 1 : 0.6;
+}
+</script>
+
+<!-- checkout.php script -->
 <script>
 let cartTotal = 0;
 let discountedTotal = 0;
@@ -368,33 +395,6 @@ function applyDiscount(coupon) {
 }
 </script>
 
-<!--Enable Payment button script -->
-<script>
-const payButton = document.getElementById('rzp-button1');
-const billingForm = document.getElementById('billingForm');
-
-// Disable button initially
-payButton.disabled = true;
-payButton.style.opacity = 0.6;
-
-// Monitor changes on form
-billingForm.addEventListener('input', checkFormValidity);
-
-function checkFormValidity() {
-  const form = billingForm;
-  const requiredFields = form.querySelectorAll('[required]');
-  let allFilled = true;
-
-  requiredFields.forEach(field => {
-    if (!field.value.trim()) {
-      allFilled = false;
-    }
-  });
-
-  payButton.disabled = !allFilled;
-  payButton.style.opacity = allFilled ? 1 : 0.6;
-}
-</script>
 <!-- razorpay script -->
 <script>
 document.getElementById('rzp-button1').onclick = async function(e){
