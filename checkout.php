@@ -454,13 +454,13 @@
   
         <div class="col-6 col-md-6 position-relative">
           <label class="form-label required-field">State</label>
-          <input type="text" id="stateInput" class="form-control" placeholder="Select state" autocomplete="off" required>
+          <input type="text" id="stateInput" name="state" class="form-control" placeholder="Select state" autocomplete="off" required>
           <div id="stateSuggestions" class="autocomplete-suggestions" style="display:none;"></div>
         </div>
 
         <div class="col-6 col-md-6 position-relative">
           <label class="form-label required-field">District</label>
-          <input type="text" id="districtInput" class="form-control" placeholder="Select district" autocomplete="off" required>
+          <input type="text" id="districtInput" name="district" class="form-control" placeholder="Select district" autocomplete="off" required>
           <div id="districtSuggestions" class="autocomplete-suggestions" style="display:none;"></div>
         </div>
 
