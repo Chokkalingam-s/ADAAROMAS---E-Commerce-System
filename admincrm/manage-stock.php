@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 // Fetch inventory data joined from products + product_stock
 $stmt = $conn->query("
   SELECT p.productId, p.name, p.category, p.costPrice, p.margin, p.asp, p.msp, p.mrp, p.image,
-         ps.stockId, ps.size, ps.stockInHand , p.revenue
+         ps.stockId, ps.size, ps.stockInHand , p.revenue , ps.damagestock
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
 ");
@@ -18,6 +18,8 @@ foreach ($rows as &$row) {
     $row['msp'] = intval($row['msp']);
     $row['mrp'] = intval($row['mrp']);
     $row['revenue'] = intval($row['revenue']);
+    $row['stockInHand'] = intval($row['stockInHand']);
+    $row['damagestock'] = intval($row['damagestock']);
 }
 
 ?>
@@ -101,7 +103,7 @@ foreach ($rows as &$row) {
         <thead class="table-light">
           <tr>
             <th>Image</th><th>Name</th><th>Size</th><th>Category</th>
-            <th style="color:red;">Purchase Cost ₹</th><th style="color:blue;">MSP ₹</th><th>% Margin</th><th style="color:orange;">ASP ₹</th><th>% Disp. Mgn</th><th>Display Price ₹</th><th style="color:green;">Revenue</th><th>Stock</th><th>Actions</th>
+            <th style="color:red;">Purchase Cost ₹</th><th style="color:blue;">MSP ₹</th><th>% Margin</th><th style="color:orange;">ASP ₹</th><th>% Disp. Mgn</th><th>Display Price ₹</th><th style="color:green;">Revenue</th><th>Stock</th><th>Damage</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="stockTableBody">
@@ -138,6 +140,7 @@ foreach ($rows as &$row) {
 <td><input type="text" class="form-control form-control-sm mrp" value="<?= $r['mrp'] ?>" readonly></td>
             <td><input type="text" class="form-control form-control-sm revenue" value="<?= $r['revenue'] ?>" readonly></td>
             <td><input type="number" class="form-control form-control-sm stockInHand" value="<?= $r['stockInHand'] ?>"></td>
+            <td><input type="number" class="form-control form-control-sm damagestock" value="<?= $r['damagestock'] ?>"></td>
             <td class="text-nowrap">
               <button class="btn btn-sm btn-secondary apply-btn" disabled>Apply</button>
               <button class="btn btn-sm btn-danger remove-btn" data-id="<?= $r['stockId'] ?>">Remove</button>
@@ -185,6 +188,7 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
   const marginInput = row.querySelector('.margin');
   const displayMarginInput = row.querySelector('.displayMargin');
   const stockInput = row.querySelector('.stockInHand');
+  const damageInput = row.querySelector('.damagestock');
   const mspField = row.querySelector('.msp');
   const aspField = row.querySelector('.asp');
   const mrpField = row.querySelector('.mrp');
@@ -195,7 +199,8 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
     cost: costInput.value,
     margin: marginInput.value,
     displayMargin: displayMarginInput.value,
-    stock: stockInput.value
+    stock: stockInput.value,
+    damage: damageInput.value
   };
 
   const enableApply = () => {
@@ -203,7 +208,8 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
       costInput.value != initialValues.cost ||
       marginInput.value != initialValues.margin ||
       displayMarginInput.value != initialValues.displayMargin ||
-      stockInput.value != initialValues.stock;
+      stockInput.value != initialValues.stock ||
+      damageInput.value != initialValues.damage;
 
     applyBtn.disabled = !changed;
     applyBtn.classList.toggle('btn-success', changed);
@@ -211,7 +217,7 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
   };
 
   // Bind change events
-  [costInput, marginInput, displayMarginInput, stockInput].forEach(input => {
+  [costInput, marginInput, displayMarginInput, stockInput, damageInput].forEach(input => {
     input.addEventListener('input', () => {
       const cost = parseFloat(costInput.value) || 0;
       const msp = calculateMSP(cost);
@@ -239,6 +245,7 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
       displayMargin: displayMarginInput.value,
       mrp: mrpField.value,
       stockInHand: stockInput.value,
+      damagestock: damageInput.value,
       revenue: revenueField.value
     };
     fetch('handle-update-stock.php', {
@@ -252,6 +259,7 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
         initialValues.margin = marginInput.value;
         initialValues.displayMargin = displayMarginInput.value;
         initialValues.stock = stockInput.value;
+        initialValues.damagestock = damageInput.value;
         initialValues.revenue = revenueField.value;
 
         enableApply();
