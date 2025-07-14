@@ -254,15 +254,23 @@ document.querySelectorAll('#stockTableBody tr').forEach(row => {
       body: JSON.stringify(data)
     }).then(res => res.json()).then(res => {
       if (res.success) {
-        alert('Updated successfully');
-        initialValues.cost = costInput.value;
-        initialValues.margin = marginInput.value;
-        initialValues.displayMargin = displayMarginInput.value;
-        initialValues.stock = stockInput.value;
-        initialValues.damagestock = damageInput.value;
-        initialValues.revenue = revenueField.value;
+ if (typeof res.stockInHand !== "undefined") {
+      stockInput.value = res.stockInHand;
+      initialValues.stock = res.stockInHand;
+    }
+    if (typeof res.damagestock !== "undefined") {
+      damageInput.value = res.damagestock;
+      initialValues.damagestock = res.damagestock;
+    }
+    initialValues.cost = costInput.value;
+    initialValues.margin = marginInput.value;
+    initialValues.displayMargin = displayMarginInput.value;
+    initialValues.revenue = revenueField.value;   
 
         enableApply();
+            applyBtn.disabled = true;
+    applyBtn.classList.remove('btn-success');
+    applyBtn.classList.add('btn-secondary');
       }
     });
   });
