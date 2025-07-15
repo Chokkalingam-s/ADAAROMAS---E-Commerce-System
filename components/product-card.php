@@ -205,7 +205,7 @@
       
       <a href="<?= $prefix ?>product.php?id=<?= $productId ?>">
         <img src="<?= $image ?>" class="product-image" alt="<?= $title ?>">
-      </a>
+
 
       <div class="add-to-cart-overlay">
         <?php
@@ -230,6 +230,8 @@
           </button>
         <?php endif; ?>
       </div>
+
+            </a>
     </div>
 
     <?php
@@ -268,7 +270,7 @@
       <h5 class="product-title">
         <a href="<?= $prefix ?>product.php?id=<?= $productId ?>" class="product-title">
           <?= $title ?>
-        </a>
+        
       </h5>
       
       <div class="product-pricing">
@@ -279,12 +281,13 @@
       </div>
 
       <div class="product-rating">
-        <span class="rating-stars">
+        <span class="rating-stars">Onwards
           ⭐ <?= number_format($rating, 1) ?>
         </span>
         <span class="verified-badge">✓</span>
         <span class="rating-count">(<?= $reviews ?> Reviews)</span>
       </div>
+      </a>
     </div>
   </div>
 </div>
