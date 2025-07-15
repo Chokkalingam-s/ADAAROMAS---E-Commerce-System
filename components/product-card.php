@@ -205,7 +205,7 @@
       
       <a href="<?= $prefix ?>product.php?id=<?= $productId ?>">
         <img src="<?= $image ?>" class="product-image" alt="<?= $title ?>">
-
+      </a>
 
       <div class="add-to-cart-overlay">
         <?php
@@ -231,7 +231,7 @@
         <?php endif; ?>
       </div>
 
-            </a>
+            
     </div>
 
     <?php
