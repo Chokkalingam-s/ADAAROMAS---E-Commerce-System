@@ -86,7 +86,43 @@ $products = $uniqueProducts;
         $mrp = $p['mrp'];
         $productId = $p['productId'];
         $size = $p['size'] ?? '1 Nos';
-        $inStock = $p['stockInHand'] > 0;
+        // Step 1: Get all same name + category product variants
+$variantStmt = $conn->prepare("
+  SELECT p.productId, ps.size, ps.stockInHand, p.asp, p.mrp
+  FROM products p
+  JOIN product_stock ps ON p.productId = ps.productId
+  WHERE p.name = ? AND p.category = ?
+  ORDER BY ps.size * 1 ASC
+");
+$variantStmt->execute([$p['name'], $p['category']]);
+$variants = $variantStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Step 2: Find first available variant (lowest size with stock > 0)
+$available = null;
+foreach ($variants as $v) {
+  if ($v['stockInHand'] > 0) {
+    $available = $v;
+    break;
+  }
+}
+
+if ($available) {
+  // Use the available variant details
+  $productId = $available['productId'];
+  $size = $available['size'];
+  $price = $available['asp'];
+  $mrp = $available['mrp'];
+  $inStock = true;
+} else {
+  // fallback - still render with lowest size but disable cart
+  $fallback = $variants[0];
+  $productId = $fallback['productId'];
+  $size = $fallback['size'];
+  $price = $fallback['asp'];
+  $mrp = $fallback['mrp'];
+  $inStock = false;
+}
+
 
         // Get dynamic rating and review count for the full product (same name + category)
         $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
