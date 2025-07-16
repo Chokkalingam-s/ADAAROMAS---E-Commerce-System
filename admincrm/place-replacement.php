@@ -1,4 +1,4 @@
-<?php
+<?php 
 include('../config/db.php');
 session_start();
 date_default_timezone_set('Asia/Kolkata');
@@ -6,12 +6,10 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
 $orderId = $_POST['orderId'];
 $replaceQty = $_POST['replaceQty'];
-$replacementId = (int)('0780' . $orderId); // e.g., 07803
-
 
 // Check if already replaced
-$check = $conn->prepare("SELECT COUNT(*) FROM orders WHERE orderId = ?");
-$check->execute([$replacementId]);
+$check = $conn->prepare("SELECT COUNT(*) FROM orders WHERE isReplacement = 1 AND originalOrderId = ?");
+$check->execute([$orderId]);
 if ($check->fetchColumn() > 0) {
   die("Replacement already exists for Order #$orderId");
 }
@@ -21,17 +19,19 @@ $order = $conn->prepare("SELECT * FROM orders WHERE orderId = ?");
 $order->execute([$orderId]);
 $orderData = $order->fetch(PDO::FETCH_ASSOC);
 
-// Clone order into new replacement
+// Create new replacement order (auto-increment ID)
 $conn->prepare("
-  INSERT INTO orders (orderId, userId, status, transactionId, orderDate, billingAmount, TotalASP, GST, PROFIT, LOSS)
-  VALUES (?, ?, 'Replaced', ?, NOW(), 0, 0, 0, 0, 0)
+  INSERT INTO orders (userId, status, transactionId, orderDate, billingAmount, TotalASP, GST, PROFIT, LOSS, isReplacement, originalOrderId)
+  VALUES (?, 'Replaced', ?, NOW(), 0, 0, 0, 0, 0, 1, ?)
 ")->execute([
-  $replacementId,
   $orderData['userId'],
-  $orderData['transactionId']
+  $orderData['transactionId'],
+  $orderId
 ]);
 
-$totalASP = $gst = $profit = $loss = 0;
+$replacementId = $conn->lastInsertId(); // Actual auto-incremented ID
+
+$totalASP = $gst = $loss = 0;
 
 foreach ($replaceQty as $productId => $sizes) {
   foreach ($sizes as $size => $qty) {
@@ -61,14 +61,16 @@ foreach ($replaceQty as $productId => $sizes) {
   }
 }
 
-// Update replacement order totals
+$gst = round($totalASP * 0.18);
+
+// Update totals for replacement order
 $conn->prepare("
   UPDATE orders 
-  SET TotalASP = ?, GST = ?, billingAmount = 0, LOSS = ?, PROFIT = 0 
+  SET TotalASP = ?, GST = ?, billingAmount = 0, LOSS = ?, PROFIT = 0
   WHERE orderId = ?
 ")->execute([$totalASP, $gst, $loss, $replacementId]);
 
-// Reduce PROFIT from original order and update LOSS
+// Adjust original order's profit/loss
 $conn->prepare("UPDATE orders SET PROFIT = PROFIT - ?, LOSS = LOSS + ? WHERE orderId = ?")
      ->execute([$loss, $loss, $orderId]);
 

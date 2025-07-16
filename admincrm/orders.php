@@ -90,9 +90,9 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   <?php foreach ($orders as $orderId => $items): 
     $first = $items[0];
     $totalAmount = array_sum(array_map(fn($x) => $x['asp'] * $x['quantity'], $items));
-    $displayId = str_starts_with((string)$orderId, '780')
-             ? substr((string)$orderId, 3) . 'R'
-             : $orderId;
+    $displayId = $first['isReplacement']
+      ? $first['originalOrderId'] . 'R'
+      : $orderId;
   ?>
   
     <div class="card mb-4 shadow-sm border-light">
