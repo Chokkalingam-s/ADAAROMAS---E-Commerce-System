@@ -101,5 +101,9 @@ ADD COLUMN LOSS INT DEFAULT 0;
 ALTER TABLE product_stock
 ADD COLUMN DamageStock INT DEFAULT 0;
 
+ALTER TABLE orders
+MODIFY status ENUM('Pending', 'Confirmed', 'Replaced', 'Delivered', 'Cancelled') NOT NULL;
+
+
 
 
