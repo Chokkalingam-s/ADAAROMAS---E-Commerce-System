@@ -79,6 +79,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
           <option value="Confirmed">Confirmed</option>
           <option value="Cancelled">Cancelled</option>
           <option value="Delivered">Delivered</option>
+          <option value="Returned">Replaced</option>
         </select>
       </div>
     </form>
