@@ -192,12 +192,6 @@
         </div>
       <?php endif; ?>
       
-      <?php if (isset($isNewArrival) && $isNewArrival): ?>
-        <div class="new-arrival-badge">
-          New Arrival
-        </div>
-      <?php endif; ?>
-
       <?php
       // Detect if current page is inside products/ folder or not
       $prefix = (strpos($_SERVER['PHP_SELF'], '/products/') !== false) ? '' : 'products/';
