@@ -5,7 +5,7 @@ date_default_timezone_set('Asia/Kolkata');
 if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
 $stmt = $conn->query("
-  SELECT o.orderId, o.status, o.transactionId, o.orderDate, o.billingAmount,
+  SELECT o.orderId, o.*, o.transactionId, o.orderDate, o.billingAmount,
          u.name, u.phoneNo, u.email, u.state, u.district, u.city, u.address, u.pincode,
          od.productId, od.quantity, od.size,
          p.name AS productName, p.*
@@ -68,21 +68,21 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   <h2 class="mb-4">All Orders</h2>
 
   <div class="card mb-4 shadow-sm p-3">
-  <form id="filterForm" class="row g-3 align-items-center">
-    <div class="col-auto">
-      <label for="statusFilter" class="form-label fw-bold mb-0">Filter by Status:</label>
-    </div>
-    <div class="col-auto">
-      <select id="statusFilter" class="form-select">
-        <option value="All">All</option>
-        <option value="Pending">Pending</option>
-        <option value="Confirmed">Confirmed</option>
-        <option value="Cancelled">Cancelled</option>
-        <option value="Delivered">Delivered</option>
-      </select>
-    </div>
-  </form>
-</div>
+    <form id="filterForm" class="row g-3 align-items-center">
+      <div class="col-auto">
+        <label for="statusFilter" class="form-label fw-bold mb-0">Filter by Status:</label>
+      </div>
+      <div class="col-auto">
+        <select id="statusFilter" class="form-select">
+          <option value="All">All</option>
+          <option value="Pending">Pending</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+      </div>
+    </form>
+  </div>
 
 
   <?php foreach ($orders as $orderId => $items): 
@@ -139,7 +139,38 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
             </tbody>
           </table>
         </div>
-        <p class="text-end mb-0"><strong>Total Paid:</strong> ₹<?= number_format($totalAmount, 2) ?></p>
+        <?php
+  $gst = $first['GST']; // Assuming you’ve already fetched it
+  $estimatedPayable = $first['TotalASP'] + $gst;
+  $discount = $estimatedPayable - $first['billingAmount'];
+?>
+<div class="row justify-content-end">
+  <div class="col-md-6">
+    <div class="border rounded p-3 bg-light">
+      <h6 class="text-muted fw-semibold mb-3">Order Summary</h6>
+      <div class="d-flex justify-content-between mb-2">
+        <span>Total Product Value</span>
+        <span>₹<?= number_format($totalAmount, 2) ?></span>
+      </div>
+      <div class="d-flex justify-content-between mb-2">
+        <span>GST (18%)</span>
+        <span>₹<?= number_format($gst, 2) ?></span>
+      </div>
+      <div class="d-flex justify-content-between mb-2">
+        <span><strong>Estimated Total</strong></span>
+        <span><strong>₹<?= number_format($estimatedPayable, 2) ?></strong></span>
+      </div>
+      <div class="d-flex justify-content-between mb-2 text-success">
+        <span>Discount</span>
+        <span>− ₹<?= number_format($discount, 2) ?></span>
+      </div>
+      <div class="d-flex justify-content-between border-top pt-2 mt-2">
+        <span><strong>Total Paid</strong></span>
+        <span><strong class="text-primary">₹<?= number_format($first['billingAmount'], 2) ?></strong></span>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
     </div>
   <?php endforeach; ?>
