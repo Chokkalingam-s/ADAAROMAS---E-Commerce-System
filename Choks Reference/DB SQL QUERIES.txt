@@ -105,5 +105,7 @@ ALTER TABLE orders
 MODIFY status ENUM('Pending', 'Confirmed', 'Replaced', 'Delivered', 'Cancelled') NOT NULL;
 
 
-
+ALTER TABLE orders 
+  ADD COLUMN isReplacement BOOLEAN DEFAULT 0,
+  ADD COLUMN originalOrderId INT DEFAULT NULL;
 
