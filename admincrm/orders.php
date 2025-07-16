@@ -36,6 +36,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     .bg-Cancelled { background-color: #dc3545; color: #fff; }
     .bg-Confirmed { background-color: #28a745; color: #fff; }
     .bg-Delivered { background-color: #343a40; color: #fff; }
+    .bg-Replaced { background-color: #17a2b8; color: #fff; }
     .table td, .table th { vertical-align: middle; }
 .status-badge {
   font-size: 0.8rem;
@@ -79,7 +80,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
           <option value="Confirmed">Confirmed</option>
           <option value="Cancelled">Cancelled</option>
           <option value="Delivered">Delivered</option>
-          <option value="Returned">Replaced</option>
+          <option value="Replaced">Replaced</option>
         </select>
       </div>
     </form>
@@ -89,12 +90,19 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   <?php foreach ($orders as $orderId => $items): 
     $first = $items[0];
     $totalAmount = array_sum(array_map(fn($x) => $x['asp'] * $x['quantity'], $items));
+    $displayId = str_starts_with((string)$orderId, '780')
+             ? substr((string)$orderId, 3) . 'R'
+             : $orderId;
   ?>
+  
     <div class="card mb-4 shadow-sm border-light">
       <div class="card-header d-flex justify-content-between align-items-center toggle-card">
-        <div>
-          <strong>Order #<?= $orderId ?></strong> |
+        <div> 
+          <strong>Order #<?= $displayId ?></strong>
+|
           <span class="status-badge bg-<?= $first['status'] ?>"><?= $first['status'] ?></span> |
+
+
           <small><?= date('d M Y, h:i A', strtotime($first['orderDate'])) ?></small>
         </div>
         <form method="POST" action="update-status.php" class="d-flex gap-2">
@@ -172,6 +180,48 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     </div>
   </div>
 </div>
+
+<?php if (!str_contains($orderId, 'R')): ?>
+<div class="text-end mt-3">
+  <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#replaceModal<?= $orderId ?>">Replace Order</button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="replaceModal<?= $orderId ?>" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="POST" action="place-replacement.php">
+        <input type="hidden" name="orderId" value="<?= $orderId ?>">
+        <div class="modal-header">
+          <h5 class="modal-title">Place Replacement for Order #<?= $orderId ?></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <thead><tr><th>Product</th><th>Size</th><th>Original Qty</th><th>Replace Qty</th></tr></thead>
+            <tbody>
+              <?php foreach ($items as $item): ?>
+                <tr>
+                  <td><?= $item['productName'] ?></td>
+                  <td><?= $item['size'] ?></td>
+                  <td><?= $item['quantity'] ?></td>
+                  <td>
+                    <input type="number" class="form-control" name="replaceQty[<?= $item['productId'] ?>][<?= $item['size'] ?>]" min="0" max="<?= $item['quantity'] ?>" value="0">
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Confirm Replacement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+
       </div>
     </div>
   <?php endforeach; ?>
