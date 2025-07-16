@@ -8,7 +8,7 @@ $stmt = $conn->query("
   SELECT o.orderId, o.status, o.transactionId, o.orderDate, o.billingAmount,
          u.name, u.phoneNo, u.email, u.state, u.district, u.city, u.address, u.pincode,
          od.productId, od.quantity, od.size,
-         p.name AS productName, p.image, p.mrp
+         p.name AS productName, p.*
   FROM orders o
   JOIN users u ON o.userId = u.userId
   JOIN order_details od ON o.orderId = od.orderId
@@ -87,7 +87,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 
   <?php foreach ($orders as $orderId => $items): 
     $first = $items[0];
-    $totalAmount = array_sum(array_map(fn($x) => $x['mrp'] * $x['quantity'], $items));
+    $totalAmount = array_sum(array_map(fn($x) => $x['asp'] * $x['quantity'], $items));
   ?>
     <div class="card mb-4 shadow-sm border-light">
       <div class="card-header d-flex justify-content-between align-items-center toggle-card">
@@ -133,7 +133,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
                   <td><?= $item['productName'] ?></td>
                   <td><?= $item['size'] ?></td>
                   <td><?= $item['quantity'] ?></td>
-                  <td><strong>₹<?= number_format($item['mrp'] * $item['quantity'], 2) ?></strong></td>
+                  <td><strong>₹<?= number_format($item['asp'] * $item['quantity'], 2) ?></strong></td>
                 </tr>
               <?php endforeach; ?>
             </tbody>
