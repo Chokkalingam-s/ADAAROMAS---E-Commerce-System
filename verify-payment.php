@@ -34,7 +34,7 @@ if (!empty($data['couponCode'])) {
 }
 
 // Store order
-$total = isset($data['finalAmount']) ? (float)$data['finalAmount'] : array_sum(array_map(fn($p) => $p['price'] * $p['quantity'], $cart));
+$total = $data['finalAmount'];
 
 $totalASP = 0;
 $totalProfit = 0;
