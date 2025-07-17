@@ -31,27 +31,68 @@ $sizeStmt = $conn->prepare("
   ORDER BY size ASC");
 $sizeStmt->execute([$product['name'], $product['category']]);
 $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch all related productIds for reviews
+$relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
+$relatedStmt->execute([$product['name'], $product['category']]);
+$relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
+
+// For overall average rating
+$avgStmt = $conn->prepare("
+  SELECT ROUND(AVG(rating), 2) as avgRating
+  FROM products
+  WHERE productId IN (" . implode(',', array_fill(0, count($relatedIds), '?')) . ")");
+$avgStmt->execute($relatedIds);
+$avgRating = $avgStmt->fetchColumn();
+
+// Pagination for reviews
+$reviewsPerPage = 5;
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($currentPage - 1) * $reviewsPerPage;
+
+// Count total reviews
+$placeholders = implode(',', array_fill(0, count($relatedIds), '?'));
+$countStmt = $conn->prepare("
+  SELECT COUNT(*) as total
+  FROM reviews r
+  WHERE r.productId IN ($placeholders)");
+$countStmt->execute($relatedIds);
+$totalReviews = $countStmt->fetchColumn();
+$totalPages = ceil($totalReviews / $reviewsPerPage);
+
+// Fetch reviews with pagination
+$reviewStmt = $conn->prepare("
+  SELECT u.name, r.feedback, r.createdAt
+  FROM reviews r
+  JOIN users u ON u.userId = r.userId
+  WHERE r.productId IN ($placeholders)
+  ORDER BY r.createdAt DESC
+  LIMIT $reviewsPerPage OFFSET $offset");
+$reviewStmt->execute($relatedIds);
+$reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 ?>
 
 <style>
 .product-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 1rem;
 }
 
 .product-image-section {
   position: sticky;
-  top: 2rem;
+  top: 1rem;
   height: fit-content;
 }
 
 .product-main-image {
   width: 100%;
-  height: 500px;
+  height: 475px;
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -59,72 +100,108 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
   transform: scale(1.02);
 }
 
-.product-details-section {
-  padding-left: 2rem;
+.image-rating-section {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
-.product-title1 {
-  font-size: 2.5rem;
+.image-rating-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+}
+
+.image-rating-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.image-stars {
+  font-size: 1.2rem;
+  color: #ffd700;
+}
+
+.image-rating-score {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.product-details-section {
+  padding-left: 1.5rem;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.product-title {
+  font-size: 1.8rem;
   font-weight: 700;
   color: #2d3748;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   line-height: 1.2;
 }
 
 .product-description {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: #718096;
-  margin-bottom: 2rem;
-  line-height: 1.6;
+  margin-bottom: 1rem;
+  line-height: 1.4;
 }
 
 .price-section {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
   background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-  border-radius: 12px;
-  border-left: 4px solid #48bb78;
+  border-radius: 8px;
+  border-left: 3px solid #48bb78;
 }
 
 .current-price1 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #48bb78;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
 }
 
-.original-price1 {
-  font-size: 1.2rem;
+.original-price {
+  font-size: 1rem;
   color: #a0aec0;
   text-decoration: line-through;
 }
 
 .sizes-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .sizes-label {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #2d3748;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   display: block;
 }
 
 .size-option {
   background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .size-option:hover {
   border-color: #48bb78;
-  box-shadow: 0 4px 16px rgba(72, 187, 120, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.1);
+  transform: translateY(-1px);
 }
 
 .size-option.out-of-stock {
@@ -137,13 +214,13 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .size-name {
   font-weight: 600;
   color: #2d3748;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .size-price {
@@ -155,29 +232,31 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
 .size-current-price {
   font-weight: 700;
   color: #48bb78;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .size-original-price {
   color: #a0aec0;
   text-decoration: line-through;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .add-to-cart-btn1 {
   background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
   border: none;
   color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   font-weight: 600;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
+  width: 100%;
 }
 
 .add-to-cart-btn1:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
   color: white;
 }
 
@@ -185,22 +264,24 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
   background: #e2e8f0;
   color: #a0aec0;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: not-allowed;
+  width: 100%;
 }
 
 .product-info-accordion {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .accordion-item {
   border: none;
-  margin-bottom: 1rem;
-  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .accordion-button {
@@ -208,7 +289,8 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
   border: none;
   font-weight: 600;
   color: #2d3748;
-  padding: 1.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
 }
 
 .accordion-button:not(.collapsed) {
@@ -217,43 +299,44 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 .accordion-body {
-  padding: 1.5rem;
+  padding: 1rem;
   background: white;
   color: #718096;
-  line-height: 1.6;
+  line-height: 1.5;
+  font-size: 0.9rem;
 }
 
 .reviews-section {
-  margin-top: 4rem;
-  padding-top: 2rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
   border-top: 2px solid #e2e8f0;
 }
 
 .reviews-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .reviews-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #2d3748;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .rating-display {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
 .stars {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #ffd700;
 }
 
 .rating-score {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #2d3748;
 }
@@ -261,100 +344,144 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
 .review-card {
   background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
 .review-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .review-author {
   font-weight: 600;
   color: #2d3748;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
 }
 
 .review-content {
   color: #718096;
-  line-height: 1.6;
-  margin-bottom: 0.5rem;
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
 }
 
 .review-date {
   color: #a0aec0;
+  font-size: 0.8rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.pagination-btn {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  text-decoration: none;
   font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background: #48bb78;
+  color: white;
+  border-color: #48bb78;
+  text-decoration: none;
+}
+
+.pagination-btn.active {
+  background: #48bb78;
+  color: white;
+  border-color: #48bb78;
+}
+
+.pagination-btn:disabled {
+  background: #f7fafc;
+  color: #a0aec0;
+  cursor: not-allowed;
 }
 
 .write-review-btn {
   background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
   border: none;
   color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
   font-weight: 600;
   transition: all 0.3s ease;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }
 
 .write-review-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(45, 55, 72, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45, 55, 72, 0.3);
   color: white;
 }
 
 .review-form {
   background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: 8px;
+  padding: 1.5rem;
   margin-top: 1rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .review-form-title {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #2d3748;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-label {
   font-weight: 600;
   color: #2d3748;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   display: block;
+  font-size: 0.9rem;
 }
 
 .form-control {
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem;
   transition: all 0.3s ease;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  width: 100%;
 }
 
 .form-control:focus {
   border-color: #48bb78;
-  box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+  box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.1);
+  outline: none;
 }
 
 .rating-stars {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
 }
 
 .star {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #e2e8f0;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -363,50 +490,56 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
 .star:hover,
 .star.selected {
   color: #ffd700;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .submit-review-btn {
   background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
   border: none;
   color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
   font-weight: 600;
   transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
 .submit-review-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
 }
 
 @media (max-width: 768px) {
   .product-container {
-    padding: 1rem;
+    padding: 0.5rem;
   }
   
   .product-details-section {
     padding-left: 0;
-    margin-top: 2rem;
+    margin-top: 1rem;
+    max-height: none;
   }
   
-  .product-title1 {
-    font-size: 2rem;
+  .product-title {
+    font-size: 1.5rem;
   }
   
   .product-main-image {
-    height: 300px;
+    height: 250px;
   }
   
   .size-info {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: 0.25rem;
   }
   
   .current-price1 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
   }
 }
 </style>
@@ -414,21 +547,38 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
 <div class="product-container">
   <div class="row">
     <!-- Product Image Section -->
-    <div class="col-lg-6">
+    <div class="col-lg-5">
       <div class="product-image-section">
         <img src="<?= '../' . $product['image'] ?>" class="product-main-image" alt="<?= htmlspecialchars($product['name']) ?>">
+        
+        <!-- Rating Display Below Image -->
+        <div class="image-rating-section">
+          <div class="image-rating-title">Customer Rating</div>
+          <div class="image-rating-display">
+            <div class="image-stars">
+              <?php
+              $fullStars = floor($avgRating);
+              for ($i = 1; $i <= 5; $i++) {
+                echo $i <= $fullStars ? '★' : '☆';
+              }
+              ?>
+            </div>
+            <span class="image-rating-score"><?= $avgRating ?>/5</span>
+            <span style="font-size: 0.8rem; color: #a0aec0;">(<?= $totalReviews ?> reviews)</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Product Details Section -->
-    <div class="col-lg-6">
+    <div class="col-lg-7">
       <div class="product-details-section">
-        <h1 class="product-title1"><?= htmlspecialchars($product['name']) ?></h1>
+        <h1 class="product-title"><?= htmlspecialchars($product['name']) ?></h1>
         <p class="product-description"><?= htmlspecialchars($product['description']) ?></p>
         
         <div class="price-section">
           <span class="current-price1">₹<?= number_format($product['asp']) ?></span>
-          <span class="original-price1">₹<?= number_format($product['mrp']) ?></span>
+          <span class="original-price">₹<?= number_format($product['mrp']) ?></span>
         </div>
 
         <div class="sizes-section">
@@ -495,7 +645,7 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
             </h2>
             <div id="collapse2" class="accordion-collapse collapse">
               <div class="accordion-body">
-                Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>3-5 business days</strong>.<br>
+                Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>3-5 business days</strong>.
               </div>
             </div>
           </div>
@@ -517,32 +667,6 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
 
-  <?php
-  // Fetch all related productIds
-  $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
-  $relatedStmt->execute([$product['name'], $product['category']]);
-  $relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
-
-  // For overall average rating
-  $avgStmt = $conn->prepare("
-    SELECT ROUND(AVG(rating), 2) as avgRating
-    FROM products
-    WHERE productId IN (" . implode(',', array_fill(0, count($relatedIds), '?')) . ")");
-  $avgStmt->execute($relatedIds);
-  $avgRating = $avgStmt->fetchColumn();
-
-  // Fetch reviews across all sizes
-  $placeholders = implode(',', array_fill(0, count($relatedIds), '?'));
-  $reviewStmt = $conn->prepare("
-    SELECT u.name, r.feedback, r.createdAt
-    FROM reviews r
-    JOIN users u ON u.userId = r.userId
-    WHERE r.productId IN ($placeholders)
-    ORDER BY r.createdAt DESC");
-  $reviewStmt->execute($relatedIds);
-  $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
-  ?>
-
   <!-- Reviews Section -->
   <div class="reviews-section" id="reviewSection">
     <div class="reviews-header">
@@ -557,6 +681,7 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
           ?>
         </div>
         <span class="rating-score"><?= $avgRating ?>/5</span>
+        <span style="font-size: 0.9rem; color: #718096;">Based on <?= $totalReviews ?> reviews</span>
       </div>
     </div>
 
@@ -568,6 +693,26 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
           <div class="review-date"><?= date('d M Y, h:i A', strtotime($rev['createdAt'])) ?></div>
         </div>
       <?php endforeach; ?>
+      
+      <!-- Pagination -->
+      <?php if ($totalPages > 1): ?>
+        <div class="pagination">
+          <?php if ($currentPage > 1): ?>
+            <a href="?id=<?= $productId ?>&page=<?= $currentPage - 1 ?>" class="pagination-btn">← Previous</a>
+          <?php endif; ?>
+          
+          <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <a href="?id=<?= $productId ?>&page=<?= $i ?>" 
+               class="pagination-btn <?= $i == $currentPage ? 'active' : '' ?>">
+              <?= $i ?>
+            </a>
+          <?php endfor; ?>
+          
+          <?php if ($currentPage < $totalPages): ?>
+            <a href="?id=<?= $productId ?>&page=<?= $currentPage + 1 ?>" class="pagination-btn">Next →</a>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
     <?php else: ?>
       <div class="review-card">
         <div class="review-content">No reviews yet. Be the first to review this product!</div>
@@ -594,7 +739,7 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
         
         <div class="form-group">
           <label class="form-label">Your Review</label>
-          <textarea name="feedback" class="form-control" rows="4" placeholder="Share your thoughts about this product..." required></textarea>
+          <textarea name="feedback" class="form-control" rows="3" placeholder="Share your thoughts about this product..." required></textarea>
         </div>
         
         <div class="form-group">
