@@ -37,22 +37,24 @@ if (!empty($data['couponCode'])) {
 $total = $data['finalAmount'];
 
 $totalASP = 0;
-$totalProfit = 0;
+$totalProfit = $total;
 foreach ($cart as $item) {
     $productId = $item['productId'];
     $quantity = $item['quantity'];
 
-    $stmtP = $conn->prepare("SELECT asp, revenue FROM products WHERE productId = ?");
+    $stmtP = $conn->prepare("SELECT asp, msp, revenue FROM products WHERE productId = ?");
     $stmtP->execute([$productId]);
     $product = $stmtP->fetch(PDO::FETCH_ASSOC);
 
     if ($product) {
         $totalASP += $product['asp'] * $quantity;
-        $totalProfit += $product['revenue'] * $quantity;
+        $totalProfit = $totalProfit - $product['msp'] * $quantity;
     }
 }
 
+
 $gst = round($totalASP * 0.18);  // 18% GST
+$totalProfit = $totalProfit - $gst;
 $loss = 0;
 $stmt = $conn->prepare("INSERT INTO orders (userId, transactionId, billingAmount, TotalASP, GST, PROFIT, LOSS) VALUES (?, ?, ?, ?, ?, ?, ?)");
 $stmt->execute([$userId, $paymentId, $total, $totalASP, $gst, $totalProfit, $loss]);
