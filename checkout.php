@@ -509,7 +509,7 @@
       
       <div class="coupon-section">
         <div class="input-group mb-2">
-          <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
+          <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Enter coupon code">
           <button class="btn btn-coupon" id="applyCouponBtn">Apply</button>
         </div>
         <div id="couponMsg" class="status-message status-error" style="display: none;"></div>

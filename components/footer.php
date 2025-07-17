@@ -421,6 +421,7 @@ document.getElementById('rzp-button1').onclick = async function(e){
   const formData = new FormData(form);
   const user = Object.fromEntries(formData);
   const finalAmount = parseFloat(document.getElementById("totalPrice").textContent);
+  const code = document.getElementById('couponCode').value.trim().toUpperCase();
 
   console.log("🛒 Cart:", cart);
 console.log("👤 User:", user);
@@ -435,7 +436,7 @@ const resp = await fetch('create-order.php', {
 
 console.log("Create Order Response:", resp);
 
-
+            console.log("💳 Coupon Sent to Server:", appliedCoupon?.couponCode);
 
   const options = {
     key: "rzp_test_XymxxA8kk9Jv4x",
@@ -458,7 +459,10 @@ console.log("Create Order Response:", resp);
               id: resp.userId,
               name: user.firstName + ' ' + user.lastName,
               email: user.email
-            }
+            },
+            couponCode: code || null
+
+
           })
         }).then(r => r.json());
 

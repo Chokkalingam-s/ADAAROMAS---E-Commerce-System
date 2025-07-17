@@ -23,6 +23,16 @@ try {
   echo json_encode(['success'=>false]); exit;
 }
 
+if (!empty($data['couponCode'])) {
+    $couponCode = $data['couponCode'];
+    $couponCode = strtoupper($data['couponCode']);
+
+    $stmt = $conn->prepare("UPDATE coupons SET availability = 1 WHERE couponCode = ? AND availability = 0");
+    $stmt->execute([$couponCode]);
+    
+    
+}
+
 // Store order
 $total = isset($data['finalAmount']) ? (float)$data['finalAmount'] : array_sum(array_map(fn($p) => $p['price'] * $p['quantity'], $cart));
 
@@ -42,7 +52,7 @@ foreach ($cart as $item) {
     }
 }
 
-$gst = round($total * 0.18);  // 18% GST
+$gst = round($totalASP * 0.18);  // 18% GST
 $loss = 0;
 $stmt = $conn->prepare("INSERT INTO orders (userId, transactionId, billingAmount, TotalASP, GST, PROFIT, LOSS) VALUES (?, ?, ?, ?, ?, ?, ?)");
 $stmt->execute([$userId, $paymentId, $total, $totalASP, $gst, $totalProfit, $loss]);
@@ -53,6 +63,9 @@ $stmtOD = $conn->prepare("INSERT INTO order_details (orderId, productId, quantit
 foreach ($cart as $item) {
   $stmtOD->execute([$newOrderId, $item['productId'], $item['quantity'], $item['size']]);
 }
+
+
+
 
 echo json_encode(['success'=>true, 'orderId'=>$newOrderId]);
 flush(); // ✅ Push output to client
