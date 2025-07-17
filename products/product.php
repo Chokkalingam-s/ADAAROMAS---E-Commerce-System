@@ -28,7 +28,9 @@ $sizeStmt = $conn->prepare("
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
   WHERE p.name = ? AND p.category = ?
-  ORDER BY size ASC");
+  ORDER BY CAST(size AS UNSIGNED) ASC
+");
+
 $sizeStmt->execute([$product['name'], $product['category']]);
 $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -188,14 +190,26 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   display: block;
 }
 
+.sizes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
 .size-option {
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 0.75rem;
-  margin-bottom: 0.5rem;
   transition: all 0.3s ease;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  min-width: 140px;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .size-option:hover {
@@ -212,9 +226,11 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
 .size-info {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   margin-bottom: 0.5rem;
+  gap: 0.25rem;
 }
 
 .size-name {
@@ -225,20 +241,21 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
 .size-price {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.1rem;
 }
 
 .size-current-price {
   font-weight: 700;
   color: #48bb78;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .size-original-price {
   color: #a0aec0;
   text-decoration: line-through;
-  font-size: 0.8rem;
+  font-size: 0.75em;
 }
 
 .add-to-cart-btn1 {
@@ -542,6 +559,26 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     flex-wrap: wrap;
   }
 }
+
+@media (max-width: 480px) {
+  .sizes-container {
+    flex-direction: column;
+  }
+  
+  .size-option {
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .size-info {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+  
+  .size-price {
+    align-items: flex-end;
+  }
 </style>
 
 <div class="product-container">
@@ -576,50 +613,52 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
         <h1 class="product-title"><?= htmlspecialchars($product['name']) ?></h1>
         <p class="product-description"><?= htmlspecialchars($product['description']) ?></p>
         
-        <div class="price-section">
+        <!-- <div class="price-section">
           <span class="current-price1">₹<?= number_format($product['asp']) ?></span>
           <span class="original-price">₹<?= number_format($product['mrp']) ?></span>
-        </div>
+        </div> -->
 
         <div class="sizes-section">
           <label class="sizes-label">Available Sizes & Variants:</label>
           
-          <?php foreach ($sizes as $s): ?>
-            <div class="size-option <?= $s['stockInHand'] <= 0 ? 'out-of-stock' : '' ?>">
-              <div class="size-info">
-                <div class="size-name">
-                  <?= ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'] . 'ml' ?>
+          <div class="sizes-container">
+            <?php foreach ($sizes as $s): ?>
+              <div class="size-option <?= $s['stockInHand'] <= 0 ? 'out-of-stock' : '' ?>">
+                <div class="size-info">
+                  <div class="size-name">
+                    <?= ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'] . 'ml' ?>
+                  </div>
+                  <div class="size-price">
+                    <span class="size-current-price">₹<?= number_format($s['asp']) ?></span>
+                    <span class="size-original-price">₹<?= number_format($s['mrp']) ?></span>
+                  </div>
                 </div>
-                <div class="size-price">
-                  <span class="size-current-price">₹<?= number_format($s['asp']) ?></span>
-                  <span class="size-original-price">₹<?= number_format($s['mrp']) ?></span>
-                </div>
+                
+                <?php
+                $absImage = "/adaaromas/assets/images/" . basename($product['image']);
+                $displaySize = ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'] . 'ml';
+                $cartSize = ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'];
+                ?>
+                
+                <?php if ($s['stockInHand'] > 0): ?>
+                  <button 
+                    class="add-to-cart-btn"
+                    onclick='addToCart({
+                      productId: <?= (int)$s['productId'] ?>,
+                      title: "<?= htmlspecialchars($product['name'], ENT_QUOTES) ?>",
+                      size: "<?= $cartSize ?>",
+                      price: <?= (float)$s['asp'] ?>,
+                      mrp: <?= (float)$s['mrp'] ?>,
+                      image: "<?= $absImage ?>"
+                    })'>
+                    Add to Cart
+                  </button>
+                <?php else: ?>
+                  <button class="out-of-stock-btn" disabled>Out of Stock</button>
+                <?php endif; ?>
               </div>
-              
-              <?php
-              $absImage = "/adaaromas/assets/images/" . basename($product['image']);
-              $displaySize = ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'] . 'ml';
-              $cartSize = ($s['size'] === '0' || $s['size'] == 0 || empty($s['size'])) ? '1 Nos' : $s['size'];
-              ?>
-              
-              <?php if ($s['stockInHand'] > 0): ?>
-                <button 
-                  class="add-to-cart-btn1"
-                  onclick='addToCart({
-                    productId: <?= (int)$s['productId'] ?>,
-                    title: "<?= htmlspecialchars($product['name'], ENT_QUOTES) ?>",
-                    size: "<?= $cartSize ?>",
-                    price: <?= (float)$s['asp'] ?>,
-                    mrp: <?= (float)$s['mrp'] ?>,
-                    image: "<?= $absImage ?>"
-                  })'>
-                  Add to Cart
-                </button>
-              <?php else: ?>
-                <button class="out-of-stock-btn1" disabled>Out of Stock</button>
-              <?php endif; ?>
-            </div>
-          <?php endforeach; ?>
+            <?php endforeach; ?>
+          </div>
         </div>
 
         <!-- Product Information Accordion -->
