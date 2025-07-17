@@ -85,8 +85,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
       </div>
     </form>
   </div>
-
-
+<div class="row">
   <?php foreach ($orders as $orderId => $items): 
     $first = $items[0];
     $totalAmount = array_sum(array_map(fn($x) => $x['asp'] * $x['quantity'], $items));
@@ -94,138 +93,139 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
       ? $first['originalOrderId'] . 'R'
       : $orderId;
   ?>
-  
-    <div class="card mb-4 shadow-sm border-light">
-      <div class="card-header d-flex justify-content-between align-items-center toggle-card">
-        <div> 
-          <strong>Order #<?= $displayId ?></strong>
-|
-          <span class="status-badge bg-<?= $first['status'] ?>"><?= $first['status'] ?></span> |
-
-
-          <small><?= date('d M Y, h:i A', strtotime($first['orderDate'])) ?></small>
-        </div>
-        <form method="POST" action="update-status.php" class="d-flex gap-2">
-          <input type="hidden" name="orderId" value="<?= $orderId ?>">
-          <input type="hidden" name="currentStatus" value="<?= $first['status'] ?>">
-          <select name="newStatus" class="form-select form-select-sm">
-            <?php foreach (['Pending','Confirmed','Cancelled','Delivered'] as $opt): ?>
-              <option value="<?= $opt ?>" <?= $opt === $first['status'] ? 'selected' : '' ?>><?= $opt ?></option>
-            <?php endforeach; ?>
-          </select>
-          <button class="btn btn-sm btn-primary">Update</button>
-        </form>
-      </div>
-
-      <div class="card-body">
-        <h5 class="text-muted mb-2">Billing Info</h5>
-        <p><strong><?= $first['name'] ?></strong> | <?= $first['phoneNo'] ?> | <?= $first['email'] ?><br>
-          <?= $first['address'] ?>, <?= $first['city'] ?>, <?= $first['district'] ?>, <?= $first['state'] ?> - <?= $first['pincode'] ?>
-        </p>
-
-        <h5 class="text-muted mt-4">Order Details</h5>
-        <div class="table-responsive">
-          <table class="table table-bordered align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>Image</th>
-                <th>Product</th>
-                <th>Size</th>
-                <th>Quantity</th>
-                <th>Total (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach ($items as $item): ?>
-                <tr>
-                  <td><img src="../<?= $item['image'] ?>" width="60" height="60" style="object-fit:cover;"></td>
-                  <td><?= $item['productName'] ?></td>
-                  <td><?= $item['size'] ?></td>
-                  <td><?= $item['quantity'] ?></td>
-                  <td><strong>₹<?= number_format($item['asp'] * $item['quantity'], 2) ?></strong></td>
-                </tr>
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm border-light">
+        <div class="card-header d-flex justify-content-between align-items-center toggle-card">
+          <div> 
+            <strong>Order #<?= $displayId ?></strong> |
+            <span class="status-badge bg-<?= $first['status'] ?>"><?= $first['status'] ?></span> |
+            <small><?= date('d M Y, h:i A', strtotime($first['orderDate'])) ?></small>
+          </div>
+          <form method="POST" action="update-status.php" class="d-flex gap-2">
+            <input type="hidden" name="orderId" value="<?= $orderId ?>">
+            <input type="hidden" name="currentStatus" value="<?= $first['status'] ?>">
+            <select name="newStatus" class="form-select form-select-sm">
+              <?php foreach (['Pending','Confirmed','Cancelled','Delivered'] as $opt): ?>
+                <option value="<?= $opt ?>" <?= $opt === $first['status'] ? 'selected' : '' ?>><?= $opt ?></option>
               <?php endforeach; ?>
-            </tbody>
-          </table>
+            </select>
+            <button class="btn btn-sm btn-primary">Update</button>
+          </form>
         </div>
-        <?php
-  $gst = $first['GST']; // Assuming you’ve already fetched it
-  $estimatedPayable = $first['TotalASP'] + $gst;
-  $discount = $estimatedPayable - $first['billingAmount'];
-?>
-<div class="row justify-content-end">
-  <div class="col-md-6">
-    <div class="border rounded p-3 bg-light">
-      <h6 class="text-muted fw-semibold mb-3">Order Summary</h6>
-      <div class="d-flex justify-content-between mb-2">
-        <span>Total Product Value</span>
-        <span>₹<?= number_format($totalAmount, 2) ?></span>
-      </div>
-      <div class="d-flex justify-content-between mb-2">
-        <span>GST (18%)</span>
-        <span>₹<?= number_format($gst, 2) ?></span>
-      </div>
-      <div class="d-flex justify-content-between mb-2">
-        <span><strong>Estimated Total</strong></span>
-        <span><strong>₹<?= number_format($estimatedPayable, 2) ?></strong></span>
-      </div>
-      <div class="d-flex justify-content-between mb-2 text-success">
-        <span>Discount</span>
-        <span>− ₹<?= number_format($discount, 2) ?></span>
-      </div>
-      <div class="d-flex justify-content-between border-top pt-2 mt-2">
-        <span><strong>Total Paid</strong></span>
-        <span><strong class="text-primary">₹<?= number_format($first['billingAmount'], 2) ?></strong></span>
-      </div>
-    </div>
-  </div>
-</div>
 
-<?php if (!str_contains($orderId, 'R')): ?>
-<div class="text-end mt-3">
-  <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#replaceModal<?= $orderId ?>">Replace Order</button>
-</div>
+        <div class="card-body">
+          <h5 class="text-muted mb-2">Billing Info</h5>
+          <p><strong><?= $first['name'] ?></strong> | <?= $first['phoneNo'] ?> | <?= $first['email'] ?><br>
+            <?= $first['address'] ?>, <?= $first['city'] ?>, <?= $first['district'] ?>, <?= $first['state'] ?> - <?= $first['pincode'] ?>
+          </p>
 
-<!-- Modal -->
-<div class="modal fade" id="replaceModal<?= $orderId ?>" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <form method="POST" action="place-replacement.php">
-        <input type="hidden" name="orderId" value="<?= $orderId ?>">
-        <div class="modal-header">
-          <h5 class="modal-title">Place Replacement for Order #<?= $orderId ?></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <table class="table">
-            <thead><tr><th>Product</th><th>Size</th><th>Original Qty</th><th>Replace Qty</th></tr></thead>
-            <tbody>
-              <?php foreach ($items as $item): ?>
+          <h5 class="text-muted mt-4">Order Details</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+              <thead class="table-light">
                 <tr>
-                  <td><?= $item['productName'] ?></td>
-                  <td><?= $item['size'] ?></td>
-                  <td><?= $item['quantity'] ?></td>
-                  <td>
-                    <input type="number" class="form-control" name="replaceQty[<?= $item['productId'] ?>][<?= $item['size'] ?>]" min="0" max="<?= $item['quantity'] ?>" value="0">
-                  </td>
+                  <th>Image</th>
+                  <th>Product</th>
+                  <th>Size</th>
+                  <th>Quantity</th>
+                  <th>Total (₹)</th>
                 </tr>
-              <?php endforeach; ?>
-            </tbody>
-          </table>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Confirm Replacement</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<?php endif; ?>
+              </thead>
+              <tbody>
+                <?php foreach ($items as $item): ?>
+                  <tr>
+                    <td><img src="../<?= $item['image'] ?>" width="60" height="60" style="object-fit:cover;"></td>
+                    <td><?= $item['productName'] ?></td>
+                    <td><?= $item['size'] ?></td>
+                    <td><?= $item['quantity'] ?></td>
+                    <td><strong>₹<?= number_format($item['asp'] * $item['quantity'], 2) ?></strong></td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
 
+          <?php
+            $gst = $first['GST'];
+            $estimatedPayable = $first['TotalASP'] + $gst;
+            $discount = $estimatedPayable - $first['billingAmount'];
+          ?>
+          <div class="row justify-content-end">
+            <div class="col-md-12">
+              <div class="border rounded p-3 bg-light">
+                <h6 class="text-muted fw-semibold mb-3">Order Summary</h6>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Total Product Value</span>
+                  <span>₹<?= number_format($totalAmount, 2) ?></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>GST (18%)</span>
+                  <span>₹<?= number_format($gst, 2) ?></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span><strong>Estimated Total</strong></span>
+                  <span><strong>₹<?= number_format($estimatedPayable, 2) ?></strong></span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-success">
+                  <span>Discount</span>
+                  <span>− ₹<?= number_format($discount, 2) ?></span>
+                </div>
+                <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                  <span><strong>Total Paid</strong></span>
+                  <span><strong class="text-primary">₹<?= number_format($first['billingAmount'], 2) ?></strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <?php if (!str_contains($orderId, 'R')): ?>
+            <div class="text-end mt-3">
+              <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#replaceModal<?= $orderId ?>">Replace Order</button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="replaceModal<?= $orderId ?>" tabindex="-1">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <form method="POST" action="place-replacement.php">
+                    <input type="hidden" name="orderId" value="<?= $orderId ?>">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Place Replacement for Order #<?= $orderId ?></h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                      <table class="table">
+                        <thead>
+                          <tr><th>Product</th><th>Size</th><th>Original Qty</th><th>Replace Qty</th></tr>
+                        </thead>
+                        <tbody>
+                          <?php foreach ($items as $item): ?>
+                            <tr>
+                              <td><?= $item['productName'] ?></td>
+                              <td><?= $item['size'] ?></td>
+                              <td><?= $item['quantity'] ?></td>
+                              <td>
+                                <input type="number" class="form-control" name="replaceQty[<?= $item['productId'] ?>][<?= $item['size'] ?>]" min="0" max="<?= $item['quantity'] ?>" value="0">
+                              </td>
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Confirm Replacement</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
+        </div>
       </div>
     </div>
   <?php endforeach; ?>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
