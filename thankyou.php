@@ -80,7 +80,6 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="alert alert-info mt-4">
         <strong>Delivery Policy:</strong><br>
         Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>5–6 business days</strong>.<br>
-        Your estimated delivery date is <strong>Tuesday, 01 July 2025</strong>.
       </div>
     </div>
   </div>

@@ -490,12 +490,12 @@ $sizes = $sizeStmt->fetchAll(PDO::FETCH_ASSOC);
           <div class="accordion-item">
             <h2 class="accordion-header" id="heading2">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
-                Shipping & Returns
+                Shipping Policy
               </button>
             </h2>
             <div id="collapse2" class="accordion-collapse collapse">
               <div class="accordion-body">
-                Free shipping on orders above ₹500. Easy returns within 7 days of delivery.
+                Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>3-5 business days</strong>.<br>
               </div>
             </div>
           </div>
