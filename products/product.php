@@ -562,8 +562,19 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
 @media (max-width: 480px) {
   .sizes-container {
-    flex-direction: column;
+      display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   }
+
+  .product-main-image {
+  width: 100%;
+  height: 38vh;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
   
   .size-option {
     min-width: auto;
