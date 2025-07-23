@@ -24,21 +24,28 @@ $stockMap = [];
 foreach ($rows as $row) {
   $key = strtolower(trim($row['name'])) . '_' . strtolower(trim($row['category']));
   
-  if (!isset($grouped[$key])) {
-    $grouped[$key] = [
-      "title" => $row['name'],
-      "productId" => (int)$row['productId'],
-      "size" => $row['size'] ?? 'No size specified', // Use size if available, else default
-      "category" => $row['category'],
-      "image" => "../" . $row['image'],
-      "price" => (int)$row['asp'],
-      "mrp" => (int)$row['mrp'],
-      "rating" => $row['rating'],
-      "reviews" => $row['reviewCount'],
-      "stock" => false, // default
-      "date" => $row['created_at'] ?? '2024-01-01'
-    ];
-  }
+ if (!isset($grouped[$key])) {
+  // Temporarily store all sizes
+  $grouped[$key] = [
+    "title" => $row['name'],
+    "productId" => (int)$row['productId'],
+    "category" => $row['category'],
+    "image" => "../" . $row['image'],
+    "rating" => $row['rating'],
+    "reviews" => $row['reviewCount'],
+    "date" => $row['created_at'] ?? '2024-01-01',
+    "stockOptions" => [] // Temp hold all size options for selection
+  ];
+}
+
+// Store all size/stock options for this product
+$grouped[$key]["stockOptions"][] = [
+  "size" => $row['size'],
+  "asp" => (int)$row['asp'],
+  "mrp" => (int)$row['mrp'],
+  "stock" => (int)$row['stockInHand']
+];
+
 
   // track if at least one size is in stock
   if (!isset($stockMap[$key])) $stockMap[$key] = [];
@@ -52,8 +59,36 @@ foreach ($grouped as $key => &$item) {
 }
 unset($item); // break reference
 
-$products = array_values($grouped);
 
+
+foreach ($grouped as $key => &$item) {
+  $inStockSizes = array_filter($item['stockOptions'], fn($s) => $s['stock'] > 0);
+
+  if (count($inStockSizes) > 0) {
+    // Get the lowest in-stock size (sorted by size, assuming size is numeric like 50, 100)
+    usort($inStockSizes, fn($a, $b) => $a['size'] <=> $b['size']);
+    $best = $inStockSizes[0];
+
+    $item['stock'] = true;
+    $item['size'] = $best['size'];
+    $item['price'] = $best['asp'];
+    $item['mrp'] = $best['mrp'];
+  } else {
+    // No in-stock sizes, fallback to lowest size
+    usort($item['stockOptions'], fn($a, $b) => $a['size'] <=> $b['size']);
+    $fallback = $item['stockOptions'][0];
+
+    $item['stock'] = false;
+    $item['size'] = $fallback['size'];
+    $item['price'] = $fallback['asp'];
+    $item['mrp'] = $fallback['mrp'];
+  }
+
+  unset($item['stockOptions']); // Cleanup temp field
+}
+unset($item);
+
+$products = array_values($grouped);
 // STOCK COUNTERS
 $stockInHand = 0;
 $stockOutOfHand = 0;
