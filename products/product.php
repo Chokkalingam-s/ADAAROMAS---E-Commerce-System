@@ -673,46 +673,47 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <!-- Product Information Accordion -->
-        <div class="accordion product-info-accordion" id="productInfoAccordion">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="heading1">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
-                Product Details
-              </button>
-            </h2>
-            <div id="collapse1" class="accordion-collapse collapse show">
-              <div class="accordion-body">
-                <?= $product['description'] ?? 'Detailed description will be added soon.' ?>
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="heading2">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
-                Shipping Policy
-              </button>
-            </h2>
-            <div id="collapse2" class="accordion-collapse collapse">
-              <div class="accordion-body">
-                Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>3-5 business days</strong>.
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="heading3">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
-                Quality Guarantee
-              </button>
-            </h2>
-            <div id="collapse3" class="accordion-collapse collapse">
-              <div class="accordion-body">
-                100% authentic products with quality guarantee. Contact us for any quality concerns.
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="accordion product-info-accordion" id="productInfoAccordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading1">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+        Product Details
+      </button>
+    </h2>
+    <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#productInfoAccordion">
+      <div class="accordion-body">
+        <?= $product['description'] ?? 'Detailed description will be added soon.' ?>
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading2">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+        Shipping Policy
+      </button>
+    </h2>
+    <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#productInfoAccordion">
+      <div class="accordion-body">
+        Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>3-5 business days</strong>.
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading3">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+        Quality Guarantee
+      </button>
+    </h2>
+    <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#productInfoAccordion">
+      <div class="accordion-body">
+        100% authentic products with quality guarantee. Contact us for any quality concerns.
+      </div>
+    </div>
+  </div>
+</div>
+
       </div>
     </div>
   </div>
