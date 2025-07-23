@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/css/style.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <style>
 /* Professional Navbar Styles */
 * {
@@ -42,6 +43,83 @@
   color: #8b4513 !important;
 }
 
+/* Mobile Navigation Controls */
+.mobile-nav-controls {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hamburger-btn {
+  background: transparent !important;
+  border: 1px solid #dee2e6 !important;
+  padding: 0.5rem !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  color: #495057 !important;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger-btn:hover {
+  background: #f8f9fa !important;
+  border-color: #8b4513 !important;
+  color: #8b4513 !important;
+}
+
+.hamburger-btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25) !important;
+}
+
+.mobile-separator {
+  width: 1px;
+  height: 24px;
+  background: #dee2e6;
+}
+
+.mobile-cart-btn {
+  background: transparent !important;
+  border: 1px solid #dee2e6 !important;
+  padding: 0.5rem !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  color: #495057 !important;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.mobile-cart-btn:hover {
+  background: #f8f9fa !important;
+  border-color: #8b4513 !important;
+  color: #8b4513 !important;
+}
+
+.mobile-cart-btn .cart-count-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #8b4513 !important;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Desktop Navigation */
 .navbar-toggler {
   border: 1px solid #dee2e6 !important;
   padding: 0.375rem 0.75rem;
@@ -156,6 +234,194 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Navigation Sidebar */
+.nav-sidebar {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 320px;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+  z-index: 1055;
+  transition: left 0.35s ease-in-out;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-sidebar.open {
+  left: 0;
+}
+
+.nav-sidebar-header {
+  padding: 1.5rem;
+  background: #ffffff;
+  color: #2c3e50;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-sidebar-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nav-close-btn {
+  background: #ffffff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  color: #6c757d !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+.nav-close-btn:hover {
+  background: #f8f9fa !important;
+  border-color: #dee2e6 !important;
+  color: #343a40 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+  transform: scale(1.05) !important;
+}
+
+.nav-sidebar-body {
+  flex-grow: 1;
+  padding: 1.5rem;
+}
+
+.nav-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-sidebar-item {
+  margin-bottom: 0.5rem;
+}
+
+.nav-sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 1rem;
+  border: 1px solid transparent;
+}
+
+.nav-sidebar-link:hover {
+  background: #f8f9fa;
+  color: #8b4513;
+  border-color: #e9ecef;
+  text-decoration: none;
+}
+
+.nav-sidebar-link.active {
+  background: #f8f9fa;
+  color: #8b4513;
+  border-color: #e9ecef;
+  font-weight: 600;
+}
+
+.nav-sidebar-link i {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* Dropdown in sidebar */
+.nav-sidebar-dropdown {
+  margin-bottom: 0.5rem;
+}
+
+.nav-sidebar-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 1rem;
+  border: 1px solid transparent;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-sidebar-dropdown-toggle:hover {
+  background: #f8f9fa;
+  color: #8b4513;
+  border-color: #e9ecef;
+}
+
+.nav-sidebar-dropdown-toggle i.dropdown-icon {
+  transition: transform 0.3s ease;
+}
+
+.nav-sidebar-dropdown-toggle[aria-expanded="true"] i.dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.nav-sidebar-dropdown-menu {
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+  border-left: 2px solid #f8f9fa;
+}
+
+.nav-sidebar-dropdown-item {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  color: #6c757d;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.nav-sidebar-dropdown-item:hover {
+  background: #f8f9fa;
+  color: #8b4513;
+  text-decoration: none;
+}
+
+/* Overlay */
+.nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.nav-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Professional Cart Header */
 .cart-header {
   padding: 1.5rem;
@@ -227,60 +493,29 @@
   font-size: 16px !important;
   font-weight: 600 !important;
 }
+
 /* Mobile Responsiveness */
 @media (max-width: 991.98px) {
+  .mobile-nav-controls {
+    display: flex;
+  }
+  
   .navbar-collapse {
-    background: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    margin-top: 1rem;
-    padding: 1rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: none !important;
   }
   
-  .nav-link {
-    color: #495057 !important;
-    margin: 0.25rem 0;
-    border-radius: 6px;
-  }
-  
-  .nav-link:hover {
-    background: #f8f9fa !important;
-    color: #8b4513 !important;
-  }
-  
-  .nav-link.active {
-    background: #f8f9fa !important;
-    color: #8b4513 !important;
-  }
-  
-  .cart-icon-wrapper {
-    background: #f8f9fa !important;
-    margin: 0.5rem 0;
-    border: 1px solid #e9ecef;
-  }
-  
-  .dropdown-menu {
-    border: none !important;
-    box-shadow: none !important;
-    background: #f8f9fa !important;
-    margin-top: 0.5rem !important;
-    border-radius: 6px !important;
-  }
-  
-  .dropdown-item {
-    color: #495057 !important;
-  }
-  
-  .dropdown-item:hover {
-    background: #e9ecef !important;
-    color: #8b4513 !important;
+  .nav-sidebar {
+    width: 280px;
   }
 }
 
 @media (max-width: 576px) {
   .navbar-brand {
     font-size: 1.5rem !important;
+  }
+  
+  .nav-sidebar {
+    width: 100%;
   }
   
   .cart-header {
@@ -489,20 +724,20 @@
   .cart-sidebar {
     width: 100%;
   }
-    
+  
   .cart-item {
     gap: 10px;
   }
-    
+  
   .cart-item img {
     width: 60px;
     height: 60px;
   }
-    
+  
   .cart-title {
     font-size: 14px;
   }
-    
+  
   .cart-current-price {
     font-size: 15px;
   }
@@ -548,12 +783,84 @@ body {
 </head>
 
 <body>
+<!-- Navigation Overlay -->
+<div id="navOverlay" class="nav-overlay" onclick="toggleNavSidebar()"></div>
+
+<!-- Navigation Sidebar -->
+<div id="navSidebar" class="nav-sidebar">
+  <div class="nav-sidebar-header">
+    <div class="nav-sidebar-title">ADA AROMAS</div>
+    <button class="nav-close-btn" onclick="toggleNavSidebar()" aria-label="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+  
+  <div class="nav-sidebar-body">
+    <ul class="nav-sidebar-menu">
+      <li class="nav-sidebar-item">
+        <a class="nav-sidebar-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" href="/adaaromas/index.php">
+          <i class="bi bi-house"></i>
+          Home
+        </a>
+      </li>
+      
+      <li class="nav-sidebar-dropdown">
+        <button class="nav-sidebar-dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#perfumeSubmenu" aria-expanded="false">
+          <span><i class="bi bi-droplet"></i> Perfume</span>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </button>
+        <div class="collapse nav-sidebar-dropdown-menu" id="perfumeSubmenu">
+          <a class="nav-sidebar-dropdown-item" href="/adaaromas/products/perfume-men.php">For Him</a>
+          <a class="nav-sidebar-dropdown-item" href="/adaaromas/products/perfume-women.php">For Her</a>
+          <a class="nav-sidebar-dropdown-item" href="/adaaromas/products/perfume.php">All Collection</a>
+        </div>
+      </li>
+      
+      <li class="nav-sidebar-item">
+        <a class="nav-sidebar-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="/adaaromas/products/attar.php">
+          <i class="bi bi-flower1"></i>
+          Attar
+        </a>
+      </li>
+      
+      <li class="nav-sidebar-item">
+        <a class="nav-sidebar-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="/adaaromas/products/Essenceoil.php">
+          <i class="bi bi-droplet-half"></i>
+          Essence Oil
+        </a>
+      </li>
+      
+      <li class="nav-sidebar-item">
+        <a class="nav-sidebar-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="/adaaromas/products/diffuser.php">
+          <i class="bi bi-wind"></i>
+          Diffuser
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
 <!-- Professional Navbar -->
 <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
   <div class="container">
     <a class="navbar-brand" href="/adaaromas/index.php">ADA AROMAS</a>
     
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- Mobile Navigation Controls -->
+    <div class="mobile-nav-controls">
+      <button class="hamburger-btn" onclick="toggleNavSidebar()" aria-label="Open Menu">
+        <i class="bi bi-list"></i>
+      </button>
+      
+      <div class="mobile-separator"></div>
+      
+      <button class="mobile-cart-btn" onclick="toggleCartSidebar()" aria-label="Open Cart">
+        <i class="bi bi-bag"></i>
+        <span class="cart-count-badge" id="mobileCartCount">0</span>
+      </button>
+    </div>
+    
+    <!-- Desktop Navigation -->
+    <button class="navbar-toggler d-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     
@@ -607,19 +914,21 @@ body {
       <i class="bi bi-bag cart-header-icon"></i>
       <span class="cart-header-text">Shopping Bag</span>
       <span class="cart-header-count" id="cartItemCount">0 items</span>
-    </div>    <button class="cart-close-btn" onclick="toggleCartSidebar()" aria-label="Close">
-  <i class="bi bi-x-lg"></i>
-</button></div>
+    </div>
+    <button class="cart-close-btn" onclick="toggleCartSidebar()" aria-label="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
   
   <div class="cart-body" id="cartItems">
     <p class="text-muted">No items in cart.</p>
   </div>
-
+  
   <div class="recommendations custom-scroll-wrap">
     <div class="recommend-title">You May Also Like</div>
     <div id="recommendationBox" class="scroll-row"></div>
   </div>
-
+  
   <div id="hiddenRecommendations" style="display: none;">
     <?php 
     include __DIR__ . '/../config/db.php';
@@ -658,7 +967,7 @@ body {
     }
     ?>
   </div>
-
+  
   <div class="cart-footer">
     <a href="/adaaromas/checkout.php" class="btn btn-dark w-100">
       <i class="bi bi-lock"></i> Checkout • <span id="cartTotal">₹0</span>
@@ -679,4 +988,81 @@ window.addEventListener('scroll', function() {
     navbar.classList.remove('scrolled');
   }
 });
+
+// Navigation Sidebar Functions
+function toggleNavSidebar() {
+  const navSidebar = document.getElementById('navSidebar');
+  const navOverlay = document.getElementById('navOverlay');
+  
+  if (navSidebar.classList.contains('open')) {
+    navSidebar.classList.remove('open');
+    navOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+  } else {
+    navSidebar.classList.add('open');
+    navOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+// Cart Sidebar Functions (keep your existing cart functionality)
+function toggleCartSidebar() {
+  const cartSidebar = document.getElementById('cartSidebar');
+  
+  if (cartSidebar.classList.contains('open')) {
+    cartSidebar.classList.remove('open');
+    document.body.style.overflow = '';
+  } else {
+    cartSidebar.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+// Close sidebars when clicking outside
+document.addEventListener('click', function(event) {
+  const navSidebar = document.getElementById('navSidebar');
+  const cartSidebar = document.getElementById('cartSidebar');
+  const hamburgerBtn = document.querySelector('.hamburger-btn');
+  const cartBtn = document.querySelector('.mobile-cart-btn');
+  const desktopCartBtn = document.querySelector('.cart-icon-wrapper');
+  
+  // Close nav sidebar if clicking outside
+  if (!navSidebar.contains(event.target) && !hamburgerBtn.contains(event.target)) {
+    if (navSidebar.classList.contains('open')) {
+      toggleNavSidebar();
+    }
+  }
+  
+  // Close cart sidebar if clicking outside
+  if (!cartSidebar.contains(event.target) && 
+      !cartBtn?.contains(event.target) && 
+      !desktopCartBtn?.contains(event.target)) {
+    if (cartSidebar.classList.contains('open')) {
+      toggleCartSidebar();
+    }
+  }
+});
+
+// Sync cart count between mobile and desktop
+function updateCartCount(count) {
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('mobileCartCount').textContent = count;
+  document.getElementById('cartItemCount').textContent = count + ' items';
+}
+
+// Handle window resize
+window.addEventListener('resize', function() {
+  if (window.innerWidth > 991) {
+    const navSidebar = document.getElementById('navSidebar');
+    const navOverlay = document.getElementById('navOverlay');
+    
+    if (navSidebar.classList.contains('open')) {
+      navSidebar.classList.remove('open');
+      navOverlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  }
+});
 </script>
+</body>
+</html>
