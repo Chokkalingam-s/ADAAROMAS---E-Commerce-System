@@ -195,23 +195,38 @@
 }
 
 .cart-close-btn {
-  background: #f8f9fa !important;
+  background: #ffffff !important;
   border: 1px solid #e9ecef !important;
-  border-radius: 6px !important;
-  width: 36px !important;
-  height: 36px !important;
+  border-radius: 8px !important;
+  width: 40px !important;
+  height: 40px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   transition: all 0.3s ease !important;
   color: #6c757d !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
 }
 
 .cart-close-btn:hover {
-  background: #e9ecef !important;
-  color: #495057 !important;
+  background: #f8f9fa !important;
+  border-color: #dee2e6 !important;
+  color: #343a40 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+  transform: scale(1.05) !important;
 }
 
+.cart-close-btn:active {
+  background: #e9ecef !important;
+  transform: scale(0.98) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+.cart-close-btn i {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
 /* Mobile Responsiveness */
 @media (max-width: 991.98px) {
   .navbar-collapse {
@@ -375,7 +390,7 @@
 
 .cart-original-price {
   font-size: 13px;
-  color: #999;
+  color: red;
   text-decoration: line-through;
 }
 
@@ -592,9 +607,9 @@ body {
       <i class="bi bi-bag cart-header-icon"></i>
       <span class="cart-header-text">Shopping Bag</span>
       <span class="cart-header-count" id="cartItemCount">0 items</span>
-    </div>
-    <button class="btn-close cart-close-btn" onclick="toggleCartSidebar()" aria-label="Close"></button>
-  </div>
+    </div>    <button class="cart-close-btn" onclick="toggleCartSidebar()" aria-label="Close">
+  <i class="bi bi-x-lg"></i>
+</button></div>
   
   <div class="cart-body" id="cartItems">
     <p class="text-muted">No items in cart.</p>
