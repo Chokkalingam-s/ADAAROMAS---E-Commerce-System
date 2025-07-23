@@ -275,7 +275,7 @@
       </div>
 
       <div class="product-rating">
-        <span class="rating-stars">Onwards
+        <span class="rating-stars">
           ⭐ <?= number_format($rating, 1) ?>
         </span>
         <span class="verified-badge">✓</span>

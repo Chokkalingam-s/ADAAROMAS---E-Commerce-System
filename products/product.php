@@ -142,7 +142,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   overflow-y: auto;
 }
 
-.product-title {
+.product-title1 {
   font-size: 1.8rem;
   font-weight: 700;
   color: #2d3748;
@@ -537,7 +537,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     max-height: none;
   }
   
-  .product-title {
+  .product-title1 {
     font-size: 1.5rem;
   }
   
@@ -621,7 +621,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Product Details Section -->
     <div class="col-lg-7">
       <div class="product-details-section">
-        <h1 class="product-title"><?= htmlspecialchars($product['name']) ?></h1>
+        <h1 class="product-title1"><?= htmlspecialchars($product['name']) ?></h1>
         <p class="product-description"><?= htmlspecialchars($product['description']) ?></p>
         
         <!-- <div class="price-section">
