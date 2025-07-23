@@ -56,6 +56,7 @@ function updateQuantity(title, change) {
 function updateCartCount() {
   const count = getCart().reduce((sum, item) => sum + item.quantity, 0);
   document.getElementById("cartCount").textContent = count;
+  document.getElementById("mobileCartCount").textContent = count;
 }
 
 function renderCart() {
