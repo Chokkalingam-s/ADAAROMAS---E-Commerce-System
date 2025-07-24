@@ -130,18 +130,18 @@
   }
 
   .product-pricing {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.70rem;
   }
 
   .current-price {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #2c2c2c;
-    margin-right: 0.5rem;
+    margin-right: 0.3rem;
   }
 
   .original-price {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #999;
     text-decoration: line-through;
   }
@@ -180,7 +180,38 @@
     .current-price {
       font-size: 1rem;
     }
+
+      .onwards-text {
+  font-size: 0.4em;
+  letter-spacing: 0.1px;
+}
+
+ .recommendations .discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #2c2c2c;
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    z-index: 2;
   }
+  }
+ .recommendations  .onwards-text {
+  font-size: 0.6em;
+  letter-spacing: 0.1px;
+}
+  .onwards-text {
+  font-size: 0.8em;
+  letter-spacing: 0.2px;
+}
+
+ .recommendations     .current-price {
+      font-size: 0.9rem;
+    }
 </style>
 
 <div class="col-6 col-sm-6 col-md-4 col-lg-3 product-card-wrapper">
@@ -268,7 +299,7 @@
       </h5>
       
       <div class="product-pricing">
-        <span class="current-price">₹<?= $price ?><small class="text-muted ms-1">Onwards</small></span>
+        <span class="current-price">₹<?= $price ?><small class="onwards-text text-muted ms-1">Onwards</small></span>
         <?php if ($mrp > $price): ?>
           <span class="original-price" style="text-decoration: line-through; color: red;">₹<?= $mrp ?></span>
         <?php endif; ?>
