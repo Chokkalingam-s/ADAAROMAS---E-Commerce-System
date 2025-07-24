@@ -141,7 +141,7 @@
 }
 
 .nav-link {
-  color: #495057 !important;
+  color: #8b4513 !important; 
   font-weight: 500 !important;
   font-size: 0.95rem !important;
   padding: 0.75rem 1.25rem !important;
@@ -149,16 +149,18 @@
   transition: all 0.3s ease !important;
   position: relative;
   text-transform: capitalize;
+  background: transparent !important;
 }
 
-.nav-link:hover {
-  color: #8b4513 !important;
-  background: #f8f9fa !important;
+.nav-link:hover,
+.nav-link:focus {
+  color: #d35400 !important;  
+  background: transparent !important; 
 }
 
 .nav-link.active {
-  color: #8b4513 !important;
-  background: #f8f9fa !important;
+color: #d35400 !important; 
+  background: transparent !important;
   font-weight: 600 !important;
 }
 
