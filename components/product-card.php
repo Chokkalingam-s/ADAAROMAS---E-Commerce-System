@@ -212,6 +212,32 @@
  .recommendations     .current-price {
       font-size: 0.9rem;
     }
+.recommendations .add-to-cart-btn {
+    width: 100%;
+    background: #fff;
+    color: #2c2c2c;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 25px;
+    font-weight: 300;
+    font-size: 0.5rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .recommendations .add-to-cart-btn:hover {
+    background: #2c2c2c;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+.recommendations .add-to-cart-btn:disabled {
+    background: #6c757d;
+    color: #fff;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  
 </style>
 
 <div class="col-6 col-sm-6 col-md-4 col-lg-3 product-card-wrapper">
