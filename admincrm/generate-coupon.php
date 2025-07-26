@@ -112,7 +112,8 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
       <li class="nav-item"><a class="nav-link" href="manage-stock.php">Manage Stock</a></li>
       <li class="nav-item"><a class="nav-link active" href="generate-coupon.php">Generate Coupon</a></li>
       <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
-      <li class="nav-item"><a class="nav-link" href="report.php">View Report</a></li>
+      <li class="nav-item"><a class="nav-link" href="stats.php">Stats</a></li>
+      <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
       <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
     </ul>
   </div>

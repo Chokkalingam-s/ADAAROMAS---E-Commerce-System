@@ -117,7 +117,8 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       <li class="nav-item"><a class="nav-link" href="manage-stock.php">Manage Stock</a></li>
       <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
       <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
-      <li class="nav-item"><a class="nav-link active" href="report.php">View Report</a></li>
+      <li class="nav-item"><a class="nav-link active" href="stats.php">Stats</a></li>
+      <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
       <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
     </ul>
   </div>
@@ -161,6 +162,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
     </div>
   </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
