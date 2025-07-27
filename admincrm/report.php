@@ -133,26 +133,87 @@ function toggleCustomDates(val) {
   fields.forEach(f => f.style.display = (val === 'custom') ? '' : 'none');
 }
 
-function downloadExcel() {
-  const tableHTML = document.getElementById('reportTable').outerHTML;
-  const blob = new Blob([tableHTML], { type: 'application/vnd.ms-excel' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'Sales_Report.xls';
-  link.click();
+function getFormattedDate(date) {
+  const d = new Date(date);
+  return d.toLocaleDateString('en-GB').replace(/\//g, '-'); // dd-mm-yyyy
 }
 
+// Get report range from PHP
+const urlParams = new URLSearchParams(window.location.search);
+const filter = urlParams.get('filter') || 'today';
+const start = urlParams.get('start') || new Date().toISOString().slice(0, 10);
+const end = urlParams.get('end') || new Date().toISOString().slice(0, 10);
+
+// Generate proper label
+const startLabel = getFormattedDate(start);
+const endLabel = getFormattedDate(end);
+const filename = `adaaromas report - ${startLabel} - to - ${endLabel}`;
+
+// ⬇ Download Excel
+function downloadExcel() {
+  const table = document.getElementById('reportTable');
+  if (!table) return alert("Table not found");
+
+  const clone = table.cloneNode(true);
+  const rows = clone.querySelectorAll("tbody tr");
+
+  // Replace ₹ with HTML entity (for Excel compatibility)
+  rows.forEach(row => {
+    row.innerHTML = row.innerHTML.replace(/₹/g, "&#8377;");
+  });
+
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+          xmlns:x="urn:schemas-microsoft-com:office:excel" 
+          xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="utf-8">
+    </head>
+    <body>
+      ${clone.outerHTML}
+    </body>
+    </html>`;
+
+  const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename + '.xls';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ⬇ Download PDF
 function downloadPDF() {
-  const printContent = document.getElementById('reportTable').outerHTML;
-  const w = window.open('', '', 'width=900,height=700');
-  w.document.write('<html><head><title>Sales Report</title></head><body>');
-  w.document.write(printContent);
-  w.document.write('</body></html>');
+  const table = document.getElementById('reportTable');
+  if (!table) return alert("Table not found");
+
+  const content = `
+    <html>
+      <head>
+        <title>${filename}</title>
+        <style>
+          table { width: 100%; border-collapse: collapse; font-family: Arial; }
+          th, td { border: 1px solid #333; padding: 8px; font-size: 13px; }
+          th { background: #f0f0f0; }
+        </style>
+      </head>
+      <body>
+        <h3>${filename}</h3>
+        ${table.outerHTML}
+      </body>
+    </html>`;
+
+  const w = window.open('', '', 'width=1000,height=800');
+  w.document.write(content);
   w.document.close();
+  w.focus();
   w.print();
 }
 </script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
