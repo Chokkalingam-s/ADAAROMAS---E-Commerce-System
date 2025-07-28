@@ -180,29 +180,30 @@ if ($available) {
 </section>
   <!-- Gifting Section -->
 <?php
-// Fetch random 8 products
+// Fetch more random variants (to get at least 4 unique products)
 $giftStmt = $conn->prepare("
   SELECT p.*, ps.stockInHand, ps.size
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
   ORDER BY RAND()
-  LIMIT 4
+  LIMIT 15
 ");
 $giftStmt->execute();
-$giftProducts = $giftStmt->fetchAll(PDO::FETCH_ASSOC);
+$giftProductsRaw = $giftStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Group by name + category (1 card per product)
-$grouped = [];
+// Filter to get only 4 unique products (by name + category)
+$giftProducts = [];
 $seen = [];
 
-foreach ($giftProducts as $p) {
+foreach ($giftProductsRaw as $p) {
   $key = $p['name'] . '|' . $p['category'];
   if (!isset($seen[$key])) {
     $seen[$key] = true;
-    $grouped[] = $p;
+    $giftProducts[] = $p;
   }
+  if (count($giftProducts) === 4) break; // stop at 4 unique products
 }
-$giftProducts = $grouped;
+
 ?>
 
 <!-- Gifting Section -->
