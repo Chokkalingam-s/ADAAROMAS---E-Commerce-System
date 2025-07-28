@@ -180,6 +180,7 @@ if ($available) {
 </section>
   <!-- Gifting Section -->
 <?php
+// Fetch random 8 products
 $giftStmt = $conn->prepare("
   SELECT p.*, ps.stockInHand, ps.size
   FROM products p
@@ -190,40 +191,67 @@ $giftStmt = $conn->prepare("
 $giftStmt->execute();
 $giftProducts = $giftStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Filter only one product per name + category
-$uniqueProducts = [];
+// Group by name + category (1 card per product)
+$grouped = [];
 $seen = [];
 
 foreach ($giftProducts as $p) {
   $key = $p['name'] . '|' . $p['category'];
-  if (!in_array($key, $seen)) {
-    $uniqueProducts[] = $p;
-    $seen[] = $key;
+  if (!isset($seen[$key])) {
+    $seen[$key] = true;
+    $grouped[] = $p;
   }
 }
-$giftProducts = $uniqueProducts;
-
-  foreach ($giftProducts as &$row) {
-    $row['asp'] = intval($row['asp']);
-    $row['mrp'] = intval($row['mrp']);
-}
-
+$giftProducts = $grouped;
 ?>
+
 <!-- Gifting Section -->
 <section class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-4">Perfect for Gifting</h2>
     <div class="row g-4">
-      <?php
-      foreach ($giftProducts as $p) {
+      <?php foreach ($giftProducts as $p):
         $title = $p['name'];
         $image = $p['image'];
-        $price = $p['asp'];
-        $mrp = $p['mrp'];
-        $productId = $p['productId'];
-        $size = $p['size'] ?? '1 Nos';
-        $inStock = $p['stockInHand'] > 0;
 
+        // STEP 1: Get all variants (same name + category)
+        $variantStmt = $conn->prepare("
+          SELECT p.productId, ps.size, ps.stockInHand, p.asp, p.mrp
+          FROM products p
+          JOIN product_stock ps ON p.productId = ps.productId
+          WHERE p.name = ? AND p.category = ?
+          ORDER BY ps.size * 1 ASC
+        ");
+        $variantStmt->execute([$p['name'], $p['category']]);
+        $variants = $variantStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // STEP 2: Find first in-stock variant
+        $available = null;
+        foreach ($variants as $v) {
+          if ($v['stockInHand'] > 0) {
+            $available = $v;
+            break;
+          }
+        }
+
+        if ($available) {
+          // Use in-stock variant
+          $productId = $available['productId'];
+          $size = $available['size'];
+          $price = intval($available['asp']);
+          $mrp = intval($available['mrp']);
+          $inStock = true;
+        } else {
+          // Fallback to first variant
+          $fallback = $variants[0];
+          $productId = $fallback['productId'];
+          $size = $fallback['size'];
+          $price = intval($fallback['asp']);
+          $mrp = intval($fallback['mrp']);
+          $inStock = false;
+        }
+
+        // STEP 3: Rating & Reviews across all variants
         $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND category = ?");
         $relatedStmt->execute([$p['name'], $p['category']]);
         $relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
@@ -235,15 +263,17 @@ $giftProducts = $uniqueProducts;
           $avgStmt = $conn->prepare("SELECT ROUND(AVG(rating),1) FROM products WHERE productId IN ($placeholders)");
           $avgStmt->execute($relatedIds);
           $rating = $avgStmt->fetchColumn() ?: 0;
-          
+
           $revStmt = $conn->prepare("SELECT COUNT(*) FROM reviews WHERE productId IN ($placeholders)");
           $revStmt->execute($relatedIds);
           $reviews = $revStmt->fetchColumn() ?: 0;
         }
+
         $discount = round((($mrp - $price) / $mrp) * 100);
+
+        // Use same product-card.php to maintain UI
         include "components/product-card.php";
-      }
-      ?>
+      endforeach; ?>
     </div>
   </div>
 </section>
