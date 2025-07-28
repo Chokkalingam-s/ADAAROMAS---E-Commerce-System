@@ -175,6 +175,35 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
                   <span><strong>Total Paid</strong></span>
                   <span><strong class="text-primary">₹<?= number_format($first['billingAmount'], 2) ?></strong></span>
                 </div>
+                <?php if (!empty($first['remarks'])): ?>
+  <div class="alert alert-secondary mt-3 small"><strong>Remarks:</strong> <?= nl2br(htmlspecialchars($first['remarks'])) ?></div>
+<?php endif; ?>
+
+<div class="text-end mt-2">
+  <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#remarksModal<?= $orderId ?>">Add/Edit Remarks</button>
+</div>
+
+<!-- Remarks Modal -->
+<div class="modal fade" id="remarksModal<?= $orderId ?>" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="update-remarks.php">
+        <input type="hidden" name="orderId" value="<?= $orderId ?>">
+        <div class="modal-header">
+          <h5 class="modal-title">Remarks for Order #<?= $displayId ?></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <textarea name="remarks" class="form-control" rows="5"><?= htmlspecialchars($first['remarks']) ?></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save Remarks</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
               </div>
             </div>
           </div>
