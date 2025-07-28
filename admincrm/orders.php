@@ -44,8 +44,25 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   border-radius: 5px;
   font-weight: 500;
 }
-
-  </style>
+.filter-card{
+  background: #c2ac9cff;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  width: 35%;
+  left:35%;
+  position: relative;
+  
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filter-card {
+    width: 100%;
+    left: 0;
+  }
+}
+</style>
 </head>
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
@@ -69,7 +86,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 <div class="container py-4">
   <h2 class="mb-4">All Orders</h2>
 
-  <div class="card mb-4 shadow-sm p-3">
+  <div class="card mb-4 shadow-sm p-3 filter-card">
     <form id="filterForm" class="row g-3 align-items-center">
       <div class="col-auto">
         <label for="statusFilter" class="form-label fw-bold mb-0">Filter by Status:</label>
