@@ -782,6 +782,20 @@ body {
   height: auto;
 }
 </style>
+<style>
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+}
+@media (max-width: 768px) {
+  .carousel-item img {
+    max-height: 300px;
+  }
+}
+</style>
+
 </head>
 
 <body>

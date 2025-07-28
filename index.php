@@ -2,9 +2,36 @@
 
   <!-- Banner -->
   
-    <div class="banner">
-      <img src="assets/images/banner.png" class="img-fluid w-100 banner" alt="Banner" />
-    </div>
+<!-- Banner Carousel -->
+<?php
+$bannerDir = __DIR__ . "/BannerImages";
+$bannerFiles = array_values(array_filter(scandir($bannerDir), function ($f) {
+  return preg_match('/\.(jpg|jpeg|png|webp)$/i', $f);
+}));
+?>
+
+<?php if (count($bannerFiles) > 0): ?>
+<div id="bannerCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+  <div class="carousel-inner">
+    <?php foreach ($bannerFiles as $index => $file): ?>
+      <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+        <img src="BannerImages/<?= htmlspecialchars($file) ?>" class="d-block w-100 img-fluid" alt="Banner <?= $index + 1 ?>" style="object-fit: cover; max-height: 600px;">
+      </div>
+    <?php endforeach; ?>
+  </div>
+
+  <!-- Optional: Carousel controls -->
+  <?php if (count($bannerFiles) > 1): ?>
+  <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+  </button>
+  <?php endif; ?>
+</div>
+<?php endif; ?>
+
   
 
   <!-- Featured Products -->
