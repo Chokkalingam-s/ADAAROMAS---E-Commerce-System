@@ -20,19 +20,30 @@ $desc = $_POST['description'];
 $gender = ($_POST['category'] === 'Perfume') ? $_POST['gender'] : null;
 $revenue = $_POST['revenue'];
 
+// FRONT IMAGE
 $imagePath = '';
-
-$imageUploaded = false;
 if (isset($_FILES['productImage']) && $_FILES['productImage']['error'] === UPLOAD_ERR_OK) {
   $tmp = $_FILES['productImage']['tmp_name'];
   $ext = pathinfo($_FILES['productImage']['name'], PATHINFO_EXTENSION);
-  $fileName = clean($name) . clean($category) .  '.' . $ext;
+  $fileName = clean($name) . clean($category) . '.' . $ext;
   $targetDir = "../assets/images/";
   $imagePath = $targetDir . $fileName;
   move_uploaded_file($tmp, $imagePath);
-  $imagePath = substr($imagePath, 3); // remove ../ for DB
-  $imageUploaded = true;
+  $imagePath = substr($imagePath, 3); // store without ../
 }
+
+// BACK IMAGE
+$backImagePath = '';
+if (isset($_FILES['backImage']) && $_FILES['backImage']['error'] === UPLOAD_ERR_OK) {
+  $tmp = $_FILES['backImage']['tmp_name'];
+  $ext = pathinfo($_FILES['backImage']['name'], PATHINFO_EXTENSION);
+  $fileName = clean($name) . clean($category) . '-back.' . $ext;
+  $targetDir = "../assets/images/";
+  $backImagePath = $targetDir . $fileName;
+  move_uploaded_file($tmp, $backImagePath);
+  $backImagePath = substr($backImagePath, 3);
+}
+
 
 // Check for existing same name + category + size combo
 $check = $conn->prepare("
@@ -49,10 +60,10 @@ if ($check->rowCount() > 0) {
 
 // Create a new product entry (even if same name & category) for new size and price
 $insertProduct = $conn->prepare("
-  INSERT INTO products (name, category, gender, costPrice, margin, msp, asp, mrp, description, image , revenue)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO products (name, category, gender, costPrice, margin, msp, asp, mrp, description, image, backImage, revenue)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
-$insertProduct->execute([$name, $category, $gender, $cost, $margin, $msp, $asp, $mrp, $desc, $imagePath, $revenue]);
+$insertProduct->execute([$name, $category, $gender, $cost, $margin, $msp, $asp, $mrp, $desc, $imagePath, $backImagePath, $revenue]);
 
 $productId = $conn->lastInsertId();
 

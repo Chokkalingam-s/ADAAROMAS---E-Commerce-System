@@ -110,14 +110,14 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
     <div class="row g-3">
       
       <!-- Row 1: Product Name -->
-      <div class="col-12 col-md-3">
+      <div class="col-12 col-md-4">
         <label for="productName" class="form-label">PRODUCT NAME</label>
         <input type="text" name="productName" id="productName" class="form-control" placeholder="Start typing..." autocomplete="off" required>
         <div id="suggestionsBox" class="border rounded bg-white shadow-sm mt-1 position-absolute d-none" style="z-index:1000;"></div>
       </div>
 
       <!-- Row 2: Category + Gender -->
-      <div class="col-6 col-md-3">
+      <div class="col-6 col-md-2">
         <label for="category" class="form-label">CATEGORY</label>
         <select name="category" id="category" class="form-select" style="text-align: left;" required>
           <option value="">Select Category</option>
@@ -128,7 +128,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
 
-      <div class="col-6 col-md-3">
+      <div class="col-6 col-md-2">
         <label for="gender" class="form-label">GENDER</label>
         <select name="gender" id="gender" class="form-select" style="text-align: left;" >
           <option value="">Select Gender</option>
@@ -139,10 +139,17 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <!-- Row 3: Image Upload -->
-      <div class="col-12 col-md-3">
-        <label class="form-label">UPLOAD PRODUCT IMAGE</label>
-        <input type="file" name="productImage" accept="image/png, image/jpeg" class="form-control" required>
-      </div>
+<!-- Row 3: Front & Back Image Upload -->
+<div class="col-6 col-md-2">
+  <label class="form-label">FRONT IMAGE</label>
+  <input type="file" name="productImage" accept="image/webp,image/png,image/jpeg" class="form-control" required>
+</div>
+
+<div class="col-6 col-md-2">
+  <label class="form-label">BACK IMAGE</label>
+  <input type="file" name="backImage" accept="image/webp,image/png,image/jpeg" class="form-control" required>
+</div>
+
 
       <!-- Row 4: Size | Purchase Cost | Initial Stock -->
       <div class="col-4 col-md-2">
