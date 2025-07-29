@@ -285,18 +285,21 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 <script>
   document.getElementById('statusFilter').addEventListener('change', function () {
     const selected = this.value;
-    document.querySelectorAll('.card.shadow-sm').forEach(card => {
-      const badge = card.querySelector('.status-badge');
-      if (!badge) return;
-      const status = badge.textContent.trim();
+    const allCards = document.querySelectorAll('.col-lg-4');
+
+    allCards.forEach(col => {
+      const statusBadge = col.querySelector('.status-badge');
+      const status = statusBadge ? statusBadge.textContent.trim() : '';
+
       if (selected === 'All' || status === selected) {
-        card.style.display = 'block';
+        col.classList.remove('d-none');
       } else {
-        card.style.display = 'none';
+        col.classList.add('d-none');
       }
     });
   });
 </script>
+
 
 </body>
 </html>
