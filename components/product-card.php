@@ -237,6 +237,50 @@
     transform: none;
   }
 
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Ensure base layer */
+}
+
+.front-image,
+.back-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  backface-visibility: hidden;
+  z-index: 1; /* Images are below badges/overlays */
+}
+
+.back-image {
+  opacity: 0;
+}
+
+.product-card:hover .back-image {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.product-card:hover .front-image {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+/* Keep badges & add-to-cart overlay above everything */
+.discount-badge,
+.new-arrival-badge,
+.add-to-cart-overlay {
+  z-index: 3 !important;
+  position: absolute;
+}
+
+
+
   
 </style>
 
@@ -254,9 +298,13 @@
       $prefix = (strpos($_SERVER['PHP_SELF'], '/products/') !== false) ? '' : 'products/';
       ?>
       
-      <a href="<?= $prefix ?>product.php?id=<?= $productId ?>">
-        <img src="<?= $image ?>" class="product-image" alt="<?= $title ?>">
-      </a>
+<a href="<?= $prefix ?>product.php?id=<?= $productId ?>">
+  <div class="product-image-wrapper">
+    <img src="<?= $image ?>" class="product-image front-image" alt="<?= $title ?>">
+    <img src="<?= $backImage ?? $image ?>" class="product-image back-image" alt="<?= $title ?> Back">
+  </div>
+</a>
+
 
       <div class="add-to-cart-overlay">
         <?php

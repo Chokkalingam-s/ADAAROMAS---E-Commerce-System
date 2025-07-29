@@ -109,6 +109,7 @@ $products = $uniqueProducts;
       foreach ($products as $p) {
         $title = $p['name'];
         $image = $p['image'];
+        $backImage = $p['backImage'] ?? $p['image'];
         $price = $p['asp'];
         $mrp = $p['mrp'];
         $productId = $p['productId'];
@@ -214,6 +215,7 @@ foreach ($giftProductsRaw as $p) {
       <?php foreach ($giftProducts as $p):
         $title = $p['name'];
         $image = $p['image'];
+        $backImage = $p['backImage'] ?? $p['image'];
 
         // STEP 1: Get all variants (same name + category)
         $variantStmt = $conn->prepare("

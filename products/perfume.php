@@ -8,7 +8,7 @@ $pageTitle = "Perfume Collection";
 // MAIN QUERY
 $stmt = $conn->prepare("
   SELECT 
-    p.productId, p.name, p.category, p.asp, p.mrp, p.image, p.rating, p.reviewCount,
+    p.productId, p.name, p.category, p.asp, p.mrp, p.image, p.backImage, p.rating, p.reviewCount,
     ps.size, ps.stockInHand
   FROM products p
   JOIN product_stock ps ON p.productId = ps.productId
@@ -32,6 +32,7 @@ foreach ($rows as $row) {
     "productId" => (int)$row['productId'],
     "category" => $row['category'],
     "image" => "../" . $row['image'],
+    "backImage" => isset($row['backImage']) ? "../" . $row['backImage'] : null,
     "rating" => $row['rating'],
     "reviews" => $row['reviewCount'],
     "date" => $row['created_at'] ?? '2024-01-01',
