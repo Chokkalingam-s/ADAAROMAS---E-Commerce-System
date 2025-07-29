@@ -19,7 +19,7 @@ $userStmt->execute([$phoneNo]);
 $user = $userStmt->fetch();
 
 if (!$user) {
-  echo json_encode(['success' => false, 'message' => 'Mobile number not registered.']);
+  echo json_encode(['success' => false, 'message' => 'Registered Mobile Number has not bought any product.']);
   exit;
 }
 
