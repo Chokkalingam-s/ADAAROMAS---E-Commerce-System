@@ -38,67 +38,86 @@ $bannerFiles = array_values(array_filter(scandir($bannerDir), function ($f) {
 <?php
 include "config/db.php";
 
-// Get top 8 best-selling productIds based on how many times they appear in orders
+// Step 1: Get up to 50 best-selling product IDs
 $topStmt = $conn->prepare("
   SELECT od.productId, COUNT(*) as saleCount
   FROM order_details od
   GROUP BY od.productId
   ORDER BY saleCount DESC
-  LIMIT 8
+  LIMIT 50
 ");
 $topStmt->execute();
 $topSellingIds = $topStmt->fetchAll(PDO::FETCH_COLUMN);
 
-// If fewer than 8 best-sellers, fill remaining with random products
-$productIds = $topSellingIds;
-$needed = 8 - count($productIds);
-
-if ($needed > 0) {
-  $placeholders = $productIds ? implode(',', $productIds) : '0';
-  $randStmt = $conn->prepare("
-    SELECT p.productId
-    FROM products p
-    WHERE p.productId NOT IN ($placeholders)
-    ORDER BY RAND()
-    LIMIT $needed
-  ");
-  $randStmt->execute();
-  $randomIds = $randStmt->fetchAll(PDO::FETCH_COLUMN);
-  $productIds = array_merge($productIds, $randomIds);
-}
-
-// Fetch product details for final productId list
-if (count($productIds)) {
-  $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+// Step 2: Fetch product details for these IDs
+$products = [];
+if (count($topSellingIds)) {
+  $placeholders = implode(',', array_fill(0, count($topSellingIds), '?'));
   $prodStmt = $conn->prepare("
     SELECT p.*, ps.stockInHand, ps.size
     FROM products p
     JOIN product_stock ps ON p.productId = ps.productId
     WHERE p.productId IN ($placeholders)
+    ORDER BY FIELD(p.productId, $placeholders)
   ");
-  $prodStmt->execute($productIds);
+  $prodStmt->execute([...$topSellingIds, ...$topSellingIds]); // repeat for FIELD()
   $products = $prodStmt->fetchAll(PDO::FETCH_ASSOC);
-  foreach ($products as &$row) {
-    $row['asp'] = intval($row['asp']);
-    $row['mrp'] = intval($row['mrp']);
 }
-  // Filter only one product per name + category
+
+// Step 3: Filter to 8 unique products by name + category
 $uniqueProducts = [];
 $seen = [];
 
 foreach ($products as $p) {
   $key = $p['name'] . '|' . $p['category'];
-  if (!in_array($key, $seen)) {
+  if (!isset($seen[$key])) {
     $uniqueProducts[] = $p;
-    $seen[] = $key;
+    $seen[$key] = true;
+  }
+  if (count($uniqueProducts) >= 8) break;
+}
+
+// Step 4: If less than 8, fill remaining from random products
+if (count($uniqueProducts) < 8) {
+  $needed = 8 - count($uniqueProducts);
+  $excludeKeys = array_keys($seen);
+
+  // Generate dynamic exclusion for already used name|category pairs
+  $excludeConds = [];
+  $params = [];
+  foreach ($excludeKeys as $ekey) {
+    [$name, $cat] = explode('|', $ekey);
+    $excludeConds[] = '(name != ? OR category != ?)';
+    $params[] = $name;
+    $params[] = $cat;
+  }
+  $whereClause = $excludeConds ? implode(' AND ', $excludeConds) : '1';
+
+  $randStmt = $conn->prepare("
+    SELECT p.*, ps.stockInHand, ps.size
+    FROM products p
+    JOIN product_stock ps ON p.productId = ps.productId
+    WHERE $whereClause
+    ORDER BY RAND()
+    LIMIT $needed
+  ");
+  $randStmt->execute($params);
+  $randomProducts = $randStmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Add remaining unique items
+  foreach ($randomProducts as $p) {
+    $key = $p['name'] . '|' . $p['category'];
+    if (!isset($seen[$key])) {
+      $uniqueProducts[] = $p;
+      $seen[$key] = true;
+    }
+    if (count($uniqueProducts) >= 8) break;
   }
 }
-$products = $uniqueProducts;
 
-} else {
-  $products = [];
-}
+$products = $uniqueProducts;
 ?>
+
 
 <!-- Best Sellers Section -->
 <section class="py-5">
