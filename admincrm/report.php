@@ -27,10 +27,11 @@ if ($filterType === 'today') {
 $reportData = [];
 if ($startDate && $endDate) {
   $stmt = $conn->prepare("
-    SELECT o.orderDate, o.billingAmount, o.TotalASP, o.GST, u.name, u.state
+    SELECT o.orderDate, o.billingAmount, o.TotalASP, o.GST, o.orderId, u.name, u.state
     FROM orders o
     JOIN users u ON o.userId = u.userId
     WHERE o.orderDate BETWEEN ? AND ?
+    AND o.status != 'Replaced'
     ORDER BY o.orderDate DESC
   ");
   $stmt->execute([$startDate, $endDate]);
@@ -95,6 +96,7 @@ if ($startDate && $endDate) {
         <thead class="table-dark">
           <tr>
             <th>S.No</th>
+            <th>Order ID</th>
             <th>Date</th>
             <th>Customer Name</th>
             <th>State</th>
@@ -108,6 +110,7 @@ if ($startDate && $endDate) {
           <?php foreach ($reportData as $i => $row): ?>
             <tr>
               <td><?= $i + 1 ?></td>
+              <td><?= htmlspecialchars($row['orderId']) ?></td>
               <td><?= date('Y-m-d', strtotime($row['orderDate'])) ?></td>
               <td><?= htmlspecialchars($row['name']) ?></td>
               <td><?= htmlspecialchars($row['state']) ?></td>
