@@ -112,3 +112,6 @@ ALTER TABLE orders
 
 ALTER TABLE orders ADD COLUMN remarks TEXT DEFAULT NULL;
 
+ALTER TABLE products ADD COLUMN backImage VARCHAR(255) AFTER image;
+
+
