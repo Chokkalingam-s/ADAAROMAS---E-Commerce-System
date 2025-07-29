@@ -945,44 +945,85 @@ body {
     <div id="recommendationBox" class="scroll-row"></div>
   </div>
   
-  <div id="hiddenRecommendations" style="display: none;">
-    <?php 
-    include __DIR__ . '/../config/db.php';
-    try {
-      $stmt = $conn->prepare("
-        SELECT 
-          p.productId, p.name, p.asp, p.mrp, p.rating, p.reviewCount,
-          p.image, p.createdAt,
-          MIN(ps.size) as size,
-          MIN(ps.stockInHand) as stockInHand
-        FROM products p
-        INNER JOIN product_stock ps ON p.productId = ps.productId
-        WHERE ps.stockInHand > 0
-        GROUP BY p.productId, p.name, p.asp, p.mrp, p.rating, p.reviewCount, p.image, p.createdAt
-        ORDER BY p.rating DESC, p.reviewCount DESC
-        LIMIT 10
-      ");
-      $stmt->execute();
-      $cartProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-      
-      foreach ($cartProducts as $product) {
-        $productId = $product['productId'];
-        $title = $product['name'];
-        $price = $product['asp'];
-        $mrp = $product['mrp'];
-        $basePath = (substr_count($_SERVER['PHP_SELF'], '/') > 2) ? "../" : "";
-        $image = $basePath . $product['image'];
-        $size = $product['size'];
-        $inStock = $product['stockInHand'] > 0;
-        $createdAt = $product['createdAt'];
-        $discount = ($mrp > $price) ? round((($mrp - $price) / $mrp) * 100) : 0;
-        include __DIR__ . '/../components/product-card.php';
-      }
-    } catch (Exception $e) {
-      echo "<div style='color:red;'>Error: " . $e->getMessage() . "</div>";
+<div id="hiddenRecommendations" style="display: none;">
+<?php 
+include __DIR__ . '/../config/db.php';
+
+try {
+  // Step 1: Fetch all product variants (more than needed to get unique suggestions)
+  $stmt = $conn->prepare("
+    SELECT p.*, ps.stockInHand, ps.size
+    FROM products p
+    JOIN product_stock ps ON p.productId = ps.productId
+    ORDER BY p.rating DESC, p.reviewCount DESC, RAND()
+    LIMIT 20
+  ");
+  $stmt->execute();
+  $rawProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Step 2: Deduplicate by name + category
+  $unique = [];
+  $seen = [];
+  foreach ($rawProducts as $p) {
+    $key = $p['name'] . '|' . $p['category'];
+    if (!isset($seen[$key])) {
+      $seen[$key] = true;
+      $unique[] = $p;
     }
-    ?>
-  </div>
+    if (count($unique) >= 10) break;
+  }
+
+  // Step 3: For each unique product, find the lowest size variant with stock > 0
+  foreach ($unique as $p) {
+    $variantStmt = $conn->prepare("
+      SELECT p.productId, ps.size, ps.stockInHand, p.asp, p.mrp
+      FROM products p
+      JOIN product_stock ps ON p.productId = ps.productId
+      WHERE p.name = ? AND p.category = ?
+      ORDER BY ps.size * 1 ASC
+    ");
+    $variantStmt->execute([$p['name'], $p['category']]);
+    $variants = $variantStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $available = null;
+    foreach ($variants as $v) {
+      if ($v['stockInHand'] > 0) {
+        $available = $v;
+        break;
+      }
+    }
+
+    if ($available) {
+      $productId = $available['productId'];
+      $size = $available['size'];
+      $price = $available['asp'];
+      $mrp = $available['mrp'];
+      $inStock = true;
+    } else {
+      $fallback = $variants[0];
+      $productId = $fallback['productId'];
+      $size = $fallback['size'];
+      $price = $fallback['asp'];
+      $mrp = $fallback['mrp'];
+      $inStock = false;
+    }
+
+    // Get image, rating, reviewCount, etc from base product
+    $title = $p['name'];
+    $basePath = (substr_count($_SERVER['PHP_SELF'], '/') > 2) ? "../" : "";
+    $image = $basePath . $p['image'];
+    $rating = $p['rating'];
+    $reviews = $p['reviewCount'];
+    $discount = ($mrp > $price) ? round((($mrp - $price) / $mrp) * 100) : 0;
+
+    include __DIR__ . '/../components/product-card.php';
+  }
+} catch (Exception $e) {
+  echo "<div style='color:red;'>Error: " . $e->getMessage() . "</div>";
+}
+?>
+</div>
+
   
   <div class="cart-footer">
     <a href="/adaaromas/checkout.php" class="btn btn-dark w-100">
