@@ -11,6 +11,7 @@ if (!$code) {
   exit;
 }
 
+// Check for coupon existence
 $stmt = $conn->prepare("SELECT * FROM coupons WHERE couponCode = ?");
 $stmt->execute([$code]);
 $coupon = $stmt->fetch(PDO::FETCH_ASSOC);
