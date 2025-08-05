@@ -156,7 +156,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
                     <td><?= $item['productName'] ?></td>
                     <td><?= $item['size'] ?></td>
                     <td><?= $item['quantity'] ?></td>
-                    <td><strong>₹<?= number_format($item['asp'] * $item['quantity'], 2) ?></strong></td>
+                    <td><strong>₹<?= number_format($item['asp'] * $item['quantity']) ?></strong></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
@@ -174,23 +174,23 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
                 <h6 class="text-muted fw-semibold mb-3">Order Summary</h6>
                 <div class="d-flex justify-content-between mb-2">
                   <span>Total Product Value</span>
-                  <span>₹<?= number_format($totalAmount, 2) ?></span>
+                  <span>₹<?= number_format($totalAmount) ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                   <span>GST (18%)</span>
-                  <span>₹<?= number_format($gst, 2) ?></span>
+                  <span>₹<?= number_format($gst) ?></span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                   <span><strong>Estimated Total</strong></span>
-                  <span><strong>₹<?= number_format($estimatedPayable, 2) ?></strong></span>
+                  <span><strong>₹<?= number_format($estimatedPayable) ?></strong></span>
                 </div>
                 <div class="d-flex justify-content-between mb-2 text-success">
                   <span>Discount</span>
-                  <span>− ₹<?= number_format($discount, 2) ?></span>
+                  <span>− ₹<?= number_format($discount) ?></span>
                 </div>
                 <div class="d-flex justify-content-between border-top pt-2 mt-2">
                   <span><strong>Total Paid</strong></span>
-                  <span><strong class="text-primary">₹<?= number_format($first['billingAmount'], 2) ?></strong></span>
+                  <span><strong class="text-primary">₹<?= number_format($first['billingAmount']) ?></strong></span>
                 </div>
                 <?php if (!empty($first['remarks'])): ?>
   <div class="alert alert-secondary mt-3 small"><strong>Remarks:</strong> <?= nl2br(htmlspecialchars($first['remarks'])) ?></div>
