@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
 $stmt = $conn->query("
   SELECT o.orderId, o.*, o.transactionId, o.orderDate, o.billingAmount,
-         u.name, u.phoneNo, u.email, u.state, u.district, u.city, u.address, u.pincode,
+         u.name as uname, u.phoneNo, u.email, u.state, u.district, u.city, u.address, u.pincode,
          od.productId, od.quantity, od.size,
          p.name AS productName, p.*
   FROM orders o
@@ -133,7 +133,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 
         <div class="card-body">
           <h5 class="text-muted mb-2">Billing Info</h5>
-          <p><strong><?= $first['name'] ?></strong> | <?= $first['phoneNo'] ?> | <?= $first['email'] ?><br>
+          <p><strong><?= $first['uname'] ?></strong> | <?= $first['phoneNo'] ?> | <?= $first['email'] ?><br>
             <?= $first['address'] ?>, <?= $first['city'] ?>, <?= $first['district'] ?>, <?= $first['state'] ?> - <?= $first['pincode'] ?>
           </p>
 
