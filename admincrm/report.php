@@ -170,20 +170,32 @@ function toggleCustomDates(val) {
 }
 
 function getFormattedDate(date) {
-  const d = new Date(date);
-  return d.toLocaleDateString('en-GB').replace(/\//g, '-'); // dd-mm-yyyy
+  if (typeof date === 'string') {
+    const d = new Date(date);
+    return d.toLocaleDateString('en-GB').replace(/\//g, '-');
+  }
+  return date.toLocaleDateString('en-GB').replace(/\//g, '-');
 }
 
 // Get report range from PHP
 const urlParams = new URLSearchParams(window.location.search);
 const filter = urlParams.get('filter') || 'today';
-const start = urlParams.get('start') || new Date().toISOString().slice(0, 10);
-const end = urlParams.get('end') || new Date().toISOString().slice(0, 10);
+let start, end;
 
-// Generate proper label
+if (filter === 'custom') {
+  start = urlParams.get('start') || new Date().toISOString().slice(0, 10);
+  end = urlParams.get('end') || new Date().toISOString().slice(0, 10);
+} else {
+  start = new Date().toISOString().slice(0, 10);
+  end = new Date().toISOString().slice(0, 10);
+}
+
+// Generate proper label with uppercase brand name
 const startLabel = getFormattedDate(start);
 const endLabel = getFormattedDate(end);
-const filename = `adaaromas report - ${startLabel} - to - ${endLabel}`;
+const brandName = "ADA AROMAS";
+const filename = `${brandName} Report - ${startLabel} to ${endLabel}`;
+
 
 // ⬇ Download Excel
 function downloadExcel() {
@@ -229,15 +241,29 @@ function downloadPDF() {
   const content = `
     <html>
       <head>
-        <title>${filename}</title>
+        <title>${brandName} Report</title>
         <style>
           table { width: 100%; border-collapse: collapse; font-family: Arial; }
           th, td { border: 1px solid #333; padding: 8px; font-size: 13px; }
           th { background: #f0f0f0; }
+          .report-title { 
+            text-align: center; 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin-bottom: 10px;
+            font-family: Arial;
+          }
+          .report-date {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-family: Arial;
+          }
         </style>
       </head>
       <body>
-        <h3>${filename}</h3>
+        <div class="report-title">${brandName} Report</div>
+        <div class="report-date">Period: ${startLabel} to ${endLabel}</div>
         ${table.outerHTML}
       </body>
     </html>`;
