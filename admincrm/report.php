@@ -65,11 +65,11 @@ if ($startDate && $endDate) {
   </div>
 </nav>
 
-<div class="container mt-4">
+<div class="container mt-4 text-center">
   <h3>Sales Report</h3>
-  <form class="row g-2 align-items-end mb-4" method="GET">
+  <form class="row g-2 align-items-end mb-4 justify-content-center" method="GET">
     <div class="col-auto">
-      <label class="form-label">Select Range</label>
+      <label class="form-label text-center "><b><i> Select Range </i></b></label>
       <select name="filter" class="form-select" onchange="toggleCustomDates(this.value)">
         <option value="today" <?= $filterType === 'today' ? 'selected' : '' ?>>Today</option>
         <option value="week" <?= $filterType === 'week' ? 'selected' : '' ?>>Past Week</option>
@@ -94,7 +94,7 @@ if ($startDate && $endDate) {
     <div class="table-responsive">
       <table class="table table-bordered table-striped" id="reportTable">
         <thead class="table-dark">
-          <tr>
+          <tr class="text-center">
             <th>S.No</th>
             <th>Order ID</th>
             <th>Date</th>
@@ -102,22 +102,28 @@ if ($startDate && $endDate) {
             <th>State</th>
             <th>Amount Received (₹)</th>
             <th>Revenue (₹)</th>
-            <th>GST %</th>
-            <th>GST Collected (₹)</th>
+            <th>SGST %</th>
+            <th>IGST %</th>
+            <th>SGST (₹)</th>
+            <th>IGST (₹)</th>
+            <th>Total GST (₹)</th>
           </tr>
         </thead>
         <tbody>
           <?php foreach ($reportData as $i => $row): ?>
-            <tr>
+            <tr class="text-center">
               <td><?= $i + 1 ?></td>
               <td><?= htmlspecialchars($row['orderId']) ?></td>
               <td><?= date('Y-m-d', strtotime($row['orderDate'])) ?></td>
               <td><?= htmlspecialchars($row['name']) ?></td>
               <td><?= htmlspecialchars($row['state']) ?></td>
-              <td><?= $row['billingAmount'] ?></td>
-              <td><?= $row['TotalASP'] ?></td>
-              <td>18%</td>
-              <td><?= $row['GST'] ?></td>
+              <td><?= round($row['billingAmount']) ?></td>
+              <td><?= round($row['TotalASP']) ?></td>
+              <td>9%</td>
+              <td>9%</td>
+              <td><?= round($row['GST']/2 )?></td>
+              <td><?= round($row['GST']/2 )?></td>
+              <td><?= round($row['GST'] )?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
