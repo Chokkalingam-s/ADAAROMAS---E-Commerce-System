@@ -119,8 +119,8 @@ $coupons = $conn->query("SELECT * FROM coupons ORDER BY couponId DESC")->fetchAl
   </div>
 </nav>
 
-<div class="container py-4">
-  <h3>Generate Coupon Code</h3>
+<div class="container py-3 text-center">
+  <h3 class="mb-4">Generate Coupon Code</h3>
   <form method="POST" class="row g-3 bg-white border p-4 rounded shadow-sm">
     <div class="col-md-4">
       <label>Flat Amount (₹)</label>

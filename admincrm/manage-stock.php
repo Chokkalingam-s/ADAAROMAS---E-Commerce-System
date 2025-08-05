@@ -87,9 +87,9 @@ foreach ($rows as &$row) {
   </div>
 </nav>
   
-  <div class="container-fluid mt-4">
+  <div class="container-fluid mt-4 text-center">
     <h3>Manage Stock & Inventory</h3>
-    <div class="row mb-3">
+    <div class="row mb-3 justify-content-center">
       <div class="col-md-4"><input type="text" id="searchInput" class="form-control" placeholder="Search products..."></div>
       <div class="col-md-3">
         <select id="filterCategory" class="form-select">
