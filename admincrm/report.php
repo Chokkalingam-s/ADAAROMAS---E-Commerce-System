@@ -110,7 +110,22 @@ if ($startDate && $endDate) {
           </tr>
         </thead>
         <tbody>
-          <?php foreach ($reportData as $i => $row): ?>
+          <?php 
+          $totalBillingAmount = 0;
+$totalRevenue = 0;
+$totalSGST = 0;
+$totalIGST = 0;
+$totalGST = 0;
+          foreach ($reportData as $row) {
+            $totalBillingAmount += $row['billingAmount'];
+            $totalRevenue += $row['TotalASP'];
+            $totalSGST += $row['GST'] / 2;
+            $totalIGST += $row['GST'] / 2;
+            $totalGST += $row['GST'];
+          }                                
+          foreach ($reportData as $i => $row): 
+          
+          ?>
             <tr class="text-center">
               <td><?= $i + 1 ?></td>
               <td><?= htmlspecialchars($row['orderId']) ?></td>
@@ -127,6 +142,18 @@ if ($startDate && $endDate) {
             </tr>
           <?php endforeach; ?>
         </tbody>
+                <tfoot class="table-dark">
+            <tr class="text-center">
+                <td colspan="5" class="fw-bold">Total</td>
+                <td class="fw-bold">Rs. <?= $totalBillingAmount ?></td>
+                <td class="fw-bold">Rs. <?= $totalRevenue ?></td>
+                <td>-</td>
+                <td>-</td>
+                <td class="fw-bold">Rs. <?= $totalSGST ?></td>
+                <td class="fw-bold">Rs. <?= $totalIGST ?></td>
+                <td class="fw-bold">Rs.  <?= $totalGST ?></td>
+            </tr>
+        </tfoot>
       </table>
     </div>
     <button onclick="downloadExcel()" class="btn btn-success me-2">Download Excel</button>
