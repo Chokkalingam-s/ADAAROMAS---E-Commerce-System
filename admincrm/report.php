@@ -163,6 +163,12 @@ $totalGST = 0;
   <?php endif; ?>
 </div>
 
+<?php
+// Format dates for JavaScript use
+$formattedStartDate = date('Y-m-d', strtotime($startDate));
+$formattedEndDate = date('Y-m-d', strtotime($endDate));
+?>
+
 <script>
 function toggleCustomDates(val) {
   const fields = document.querySelectorAll('.custom-date-fields');
@@ -180,17 +186,13 @@ function getFormattedDate(date) {
 // Get report range from PHP
 const urlParams = new URLSearchParams(window.location.search);
 const filter = urlParams.get('filter') || 'today';
-let start, end;
 
-if (filter === 'custom') {
-  start = urlParams.get('start') || new Date().toISOString().slice(0, 10);
-  end = urlParams.get('end') || new Date().toISOString().slice(0, 10);
-} else {
-  start = new Date().toISOString().slice(0, 10);
-  end = new Date().toISOString().slice(0, 10);
-}
+
+
 
 // Generate proper label with uppercase brand name
+const start = "<?php echo $formattedStartDate; ?>";
+const end = "<?php echo $formattedEndDate; ?>";
 const startLabel = getFormattedDate(start);
 const endLabel = getFormattedDate(end);
 const brandName = "ADA AROMAS";
