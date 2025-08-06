@@ -440,7 +440,7 @@ console.log("Create Order Response:", resp);
             console.log("💳 Coupon Sent to Server:", appliedCoupon?.couponCode);
 
   const options = {
-    key: "rzp_test_XymxxA8kk9Jv4x",
+    key: "rzp_test_bSYra6WoLaVMY4",
     amount: resp.amount,
     currency: resp.currency,
     name: "ADA Aromas",
