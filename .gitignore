@@ -1,2 +1,3 @@
 README.md
 config/db.php
+config/email_config.php
