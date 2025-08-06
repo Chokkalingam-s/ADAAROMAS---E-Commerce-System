@@ -4,29 +4,59 @@ header('Content-Type: application/json');
 
 $rating = (int)$_POST['rating'];
 $feedback = trim($_POST['feedback']);
-$name = trim($_POST['name']);
 $phoneNo = trim($_POST['phoneNo']);
+$orderId = trim($_POST['orderId']);
 $productId = (int)$_POST['productId'];
 
-if (!$rating || !$feedback || !$name || !$phoneNo || !$productId) {
-  echo json_encode(['success' => false, 'message' => 'All fields required']);
+if (!$rating || !$feedback || !$phoneNo || !$orderId || !$productId) {
+  echo json_encode(['success' => false, 'message' => 'All fields are required.']);
   exit;
 }
 
-// Check if user exists
+// Step 1: Validate user
 $userStmt = $conn->prepare("SELECT userId FROM users WHERE phoneNo = ?");
 $userStmt->execute([$phoneNo]);
 $user = $userStmt->fetch();
-
 if (!$user) {
-  echo json_encode(['success' => false, 'message' => 'Registered Mobile Number has not bought any product.']);
+  echo json_encode(['success' => false, 'message' => 'This mobile number is not registered.']);
+  exit;
+}
+$userId = $user['userId'];
+
+// Step 2: Check order ownership
+$orderCheck = $conn->prepare("SELECT * FROM orders WHERE orderId = ? AND userId = ? AND status IN ('Confirmed', 'Delivered')");
+$orderCheck->execute([$orderId, $userId]);
+$order = $orderCheck->fetch();
+if (!$order) {
+  echo json_encode(['success' => false, 'message' => 'Wrong Order ID. Check your email for the correct one.']);
   exit;
 }
 
-$userId = $user['userId'];
+// Step 3: Check if product (variant) belongs to this order
+$productCheck = $conn->prepare("
+  SELECT COUNT(*) FROM order_details 
+  WHERE orderId = ? AND productId = ?
+");
+$productCheck->execute([$orderId, $productId]);
+$hasProduct = $productCheck->fetchColumn();
+if (!$hasProduct) {
+  echo json_encode(['success' => false, 'message' => 'This product is not part of the order.']);
+  exit;
+}
 
-// Check if this user purchased this product
-// Step 1: Get all productIds with same name and category (same product across sizes)
+// Step 4: Prevent duplicate review
+$duplicateCheck = $conn->prepare("SELECT COUNT(*) FROM reviews WHERE orderId = ? AND productId = ?");
+$duplicateCheck->execute([$orderId, $productId]);
+if ($duplicateCheck->fetchColumn()) {
+  echo json_encode(['success' => false, 'message' => 'You have already reviewed this product for this order.']);
+  exit;
+}
+
+// Step 5: Insert review
+$ins = $conn->prepare("INSERT INTO reviews (productId, userId, orderId, feedback) VALUES (?, ?, ?, ?)");
+$ins->execute([$productId, $userId, $orderId, $feedback]);
+
+// Step 6: Update average rating & review count across variants
 $nameCatStmt = $conn->prepare("SELECT name, category FROM products WHERE productId = ?");
 $nameCatStmt->execute([$productId]);
 $nameCat = $nameCatStmt->fetch();
@@ -35,47 +65,18 @@ $relatedStmt = $conn->prepare("SELECT productId FROM products WHERE name = ? AND
 $relatedStmt->execute([$nameCat['name'], $nameCat['category']]);
 $relatedIds = $relatedStmt->fetchAll(PDO::FETCH_COLUMN);
 
-if (!$relatedIds) {
-  echo json_encode(['success' => false, 'message' => 'Product reference error.']);
-  exit;
-}
-
-// Step 2: Check if user bought any variant (any size) of this product
-$placeholders = rtrim(str_repeat('?,', count($relatedIds)), ',');
-$check = $conn->prepare("
-  SELECT COUNT(*) FROM orders o 
-  JOIN order_details od ON o.orderId = od.orderId
-  WHERE o.userId = ? AND od.productId IN ($placeholders) AND o.status IN ('Confirmed', 'Delivered')
-");
-$check->execute(array_merge([$userId], $relatedIds));
-$purchased = $check->fetchColumn();
-
-if (!$purchased) {
-  echo json_encode(['success' => false, 'message' => 'Oops! You haven\'t bought this product (any size) or it\'s not delivered yet.']);
-  exit;
-}
-
-
-// Insert review
-$ins = $conn->prepare("INSERT INTO reviews (productId, userId, feedback) VALUES (?, ?, ?)");
-$ins->execute([$productId, $userId, $feedback]);
-
-// Update average rating & review count
 foreach ($relatedIds as $pid) {
-    // Fetch current rating and count
-    $prodStmt = $conn->prepare("SELECT rating, noOfRatings FROM products WHERE productId = ?");
-    $prodStmt->execute([$pid]);
-    $prod = $prodStmt->fetch();
+  $prodStmt = $conn->prepare("SELECT rating, noOfRatings FROM products WHERE productId = ?");
+  $prodStmt->execute([$pid]);
+  $prod = $prodStmt->fetch();
 
-    if (!$prod) continue;
+  $oldRating = $prod['rating'];
+  $oldCount = $prod['noOfRatings'];
+  $newCount = $oldCount + 1;
+  $newRating = round((($oldRating * $oldCount) + $rating) / $newCount, 2);
 
-    $oldRating = $prod['rating'];
-    $oldCount = $prod['noOfRatings'];
-    $newCount = $oldCount + 1;
-    $newRating = round((($oldRating * $oldCount) + $rating) / $newCount, 2);
-
-    // Update product entry
-    $update = $conn->prepare("UPDATE products SET rating = ?, noOfRatings = ?, reviewCount = reviewCount + 1 WHERE productId = ?");
-    $update->execute([$newRating, $newCount, $pid]);
+  $update = $conn->prepare("UPDATE products SET rating = ?, noOfRatings = ?, reviewCount = reviewCount + 1 WHERE productId = ?");
+  $update->execute([$newRating, $newCount, $pid]);
 }
+
 echo json_encode(['success' => true, 'message' => 'Thank you for your review!']);

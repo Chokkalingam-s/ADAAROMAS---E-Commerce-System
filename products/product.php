@@ -775,38 +775,39 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     </button>
 
     <div class="collapse" id="reviewFormWrap">
-      <form id="reviewForm" class="review-form">
-        <h4 class="review-form-title">Share Your Experience</h4>
-        
-        <div class="form-group">
-          <label class="form-label">Rating</label>
-          <div class="rating-stars">
-            <?php for ($i = 1; $i <= 5; $i++): ?>
-              <span class="star" data-value="<?= $i ?>">★</span>
-            <?php endfor; ?>
-          </div>
-          <input type="hidden" name="rating" id="rating" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Your Review</label>
-          <textarea name="feedback" class="form-control" rows="3" placeholder="Share your thoughts about this product..." required></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Your Name</label>
-          <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Mobile Number</label>
-          <input type="text" name="phoneNo" class="form-control" placeholder="Enter your mobile number" required pattern="\d{10}">
-        </div>
-        
-        <input type="hidden" name="productId" value="<?= $productId ?>">
-        <button type="submit" class="submit-review-btn">Submit Review</button>
-        <div id="reviewMsg" class="mt-3"></div>
-      </form>
+<form id="reviewForm" class="review-form"> 
+  <h4 class="review-form-title">Share Your Experience</h4>
+
+  <div class="form-group">
+    <label class="form-label">Rating</label>
+    <div class="rating-stars">
+      <?php for ($i = 1; $i <= 5; $i++): ?>
+        <span class="star" data-value="<?= $i ?>">★</span>
+      <?php endfor; ?>
+    </div>
+    <input type="hidden" name="rating" id="rating" required>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Your Review</label>
+    <textarea name="feedback" class="form-control" rows="3" placeholder="Share your thoughts about this product..." required></textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Mobile Number</label>
+    <input type="text" name="phoneNo" class="form-control" placeholder="Enter your registered mobile number" required pattern="\d{10}">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Order ID</label>
+    <input type="text" name="orderId" class="form-control" placeholder="Enter your Order ID" required>
+  </div>
+
+  <input type="hidden" name="productId" value="<?= $productId ?>">
+  <button type="submit" class="submit-review-btn">Submit Review</button>
+  <div id="reviewMsg" class="mt-3"></div>
+</form>
+
     </div>
   </div>
 </div>
