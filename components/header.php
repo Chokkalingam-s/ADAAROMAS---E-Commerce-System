@@ -513,7 +513,7 @@ color: #d35400 !important;
 
 @media (max-width: 576px) {
   .navbar-brand {
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
   }
   
   .nav-sidebar {
@@ -805,7 +805,8 @@ body {
 <!-- Navigation Sidebar -->
 <div id="navSidebar" class="nav-sidebar">
   <div class="nav-sidebar-header">
-    <div class="nav-sidebar-title">ADA AROMAS</div>
+    <img src="assets/adalogo.png" alt="ADA AROMAS Logo" style="width:42px; height: auto; border-radius: 50%;"> </img>
+    <div class="nav-sidebar-title">ADAAROMAS</div>
     <button class="nav-close-btn" onclick="toggleNavSidebar()" aria-label="Close">
       <i class="bi bi-x-lg"></i>
     </button>
@@ -859,7 +860,9 @@ body {
 <!-- Professional Navbar -->
 <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
   <div class="container">
-    <a class="navbar-brand" href="/adaaromas/index.php">ADA AROMAS</a>
+    <a class="navbar-brand" href="/adaaromas/index.php">
+    <img src="assets/adalogo.png" alt="ADA AROMAS Logo" style="width: 40px; height: auto; border-radius: 50%;"> </img>
+    ADAAROMAS</a>
     
     <!-- Mobile Navigation Controls -->
     <div class="mobile-nav-controls">
