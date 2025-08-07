@@ -240,7 +240,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         <input type="text" name="asp" id="asp" class="form-control" style="color:OrangeRed;" readonly required>
       </div>
 
-      <div class="col-3 col-md-2">
+      <div class="col-6 col-md-2">
         <label class="form-label" style="color:dark-gray;">
           <span class="d-none d-md-inline">Gst added ASP (₹)</span>
           <span class="d-inline d-md-none">Gst+SP (₹)</span>
@@ -254,7 +254,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <!-- Row 8: Display Margin | Display Price -->
-      <div class="col-3 col-md-2">
+      <div class="col-6 col-md-2">
         <label class="form-label">DISP MARGIN (%)</label>
         <select name="displayMargin" id="displayMargin" class="form-select" required>
           <option value="">Select</option>
@@ -270,14 +270,30 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
 
-      <div class="col-3 col-md-2">
+      <div class="col-6 col-md-2">
         <label class="form-label">DISPLAY PRICE (₹)</label>
         <input type="text" name="mrp" id="mrp" class="form-control" readonly required>
       </div>
 
       <!-- Row 9: Description -->
-      <div class="col-12">
-        <label class="form-label">DESCRIPTION / NOTES</label>
+       <!-- Row 8.5: Fragrance Notes (only for Perfume/Attar) -->
+<div id="fragranceNotes" class="row g-3 d-none">
+  <div class="col-md-3">
+    <label class="form-label">TOP NOTE</label>
+    <input type="text" name="topNode" class="form-control" placeholder="E.g., Citrus, Bergamot">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">MIDDLE NOTE</label>
+    <input type="text" name="middleNode" class="form-control" placeholder="E.g., Jasmine, Rose">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">BASE NOTE</label>
+    <input type="text" name="baseNode" class="form-control" placeholder="E.g., Amber, Musk">
+  </div>
+</div>
+
+      <div class="col-6 col-md-3 ">
+        <label class="form-label">DESCRIPTION</label>
         <textarea name="description" rows="3" class="form-control" required></textarea>
       </div>
 
@@ -492,6 +508,23 @@ function calculatePrices() {
   document.getElementById("mrp").value = mrp;
   document.getElementById("revenue").value = totalRevenue;
 }
+
+document.getElementById("category").addEventListener("change", function () {
+  const selected = this.value;
+
+  const notesSection = document.getElementById("fragranceNotes");
+
+  if (selected === "Perfume" || selected === "Attar") {
+    notesSection.classList.remove("d-none");
+  } else {
+    notesSection.classList.add("d-none");
+    // Clear values
+    document.querySelector("[name='topNode']").value = '';
+    document.querySelector("[name='middleNode']").value = '';
+    document.querySelector("[name='baseNode']").value = '';
+  }
+});
+
 </script>
 
 </body>
