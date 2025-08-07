@@ -98,6 +98,61 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   transition: transform 0.3s ease;
 }
 
+.giftIcon{
+  font-size: 1.2rem;
+}
+.product-title-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.2rem;
+  flex-wrap: nowrap;
+}
+
+.gift-sticker {
+  background: #ffe066;
+  color: #2d3748;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  animation: blink 1.5s infinite;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  margin-left: 0.5rem;
+}
+
+/* Sticky behavior for mobile */
+@media (max-width: 768px) {
+  .product-title-wrapper {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .gift-sticker {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.6rem;
+    line-height: 1;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+
+
+
 .product-main-image:hover {
   transform: scale(1.02);
 }
@@ -621,7 +676,13 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Product Details Section -->
     <div class="col-lg-7">
       <div class="product-details-section">
-        <h1 class="product-title1"><?= htmlspecialchars($product['name']) ?></h1>
+        <div class="product-title-wrapper">
+  <h1 class="product-title1"><?= htmlspecialchars($product['name']) ?></h1>
+  <div class="gift-sticker">
+    <span class="giftIcon" >🎁</span> <span>Freebies & Gifts <br>On Every Order</span>
+  </div>
+</div>
+
         <p class="product-description"><?= htmlspecialchars($product['description']) ?></p>
         
         <!-- <div class="price-section">
