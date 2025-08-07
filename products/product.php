@@ -681,9 +681,26 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
       </button>
     </h2>
     <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#productInfoAccordion">
-      <div class="accordion-body">
-        <?= $product['description'] ?? 'Detailed description will be added soon.' ?>
-      </div>
+<div class="accordion-body">
+  <?php if (!empty($product['topNode']) || !empty($product['middleNode']) || !empty($product['baseNode'])): ?>
+    
+    <?php if (!empty($product['topNode'])): ?>
+      <p><strong>Top Notes:</strong> <?= htmlspecialchars($product['topNode']) ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($product['middleNode'])): ?>
+      <p><strong>Middle Notes:</strong> <?= htmlspecialchars($product['middleNode']) ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($product['baseNode'])): ?>
+      <p><strong>Base Notes:</strong> <?= htmlspecialchars($product['baseNode']) ?></p>
+    <?php endif; ?>
+
+  <?php else: ?>
+    <?= $product['description'] ?? 'Detailed description will be added soon.' ?>
+  <?php endif; ?>
+</div>
+
     </div>
   </div>
   
