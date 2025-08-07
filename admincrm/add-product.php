@@ -233,20 +233,28 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
       </div>
 
       <div class="col-3 col-md-3">
-        <label class="form-label" style="color:orange;">
+        <label class="form-label" style="color:OrangeRed;">
           <span class="d-none d-md-inline">Actual Sales Price (₹)</span>
           <span class="d-inline d-md-none">Actual SP (₹)</span>
         </label>
-        <input type="text" name="asp" id="asp" class="form-control" style="color:orange;" readonly required>
+        <input type="text" name="asp" id="asp" class="form-control" style="color:OrangeRed;" readonly required>
       </div>
 
-      <div class="col-3 col-md-3">
+      <div class="col-3 col-md-2">
+        <label class="form-label" style="color:dark-gray;">
+          <span class="d-none d-md-inline">Gst added ASP (₹)</span>
+          <span class="d-inline d-md-none">Gst+SP (₹)</span>
+        </label>
+        <input type="text" name="gasp" id="gasp" class="form-control" style="color:dark-gray;" readonly required>
+      </div>
+
+      <div class="col-12 col-md-3">
         <label class="form-label" style="color:green;">REVENUE (₹)</label>
         <input type="text" name="revenue" id="revenue" class="form-control" style="color:green;" readonly required>
       </div>
 
       <!-- Row 8: Display Margin | Display Price -->
-      <div class="col-6 col-md-3">
+      <div class="col-3 col-md-2">
         <label class="form-label">DISP MARGIN (%)</label>
         <select name="displayMargin" id="displayMargin" class="form-select" required>
           <option value="">Select</option>
@@ -262,7 +270,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         </select>
       </div>
 
-      <div class="col-6 col-md-3">
+      <div class="col-3 col-md-2">
         <label class="form-label">DISPLAY PRICE (₹)</label>
         <input type="text" name="mrp" id="mrp" class="form-control" readonly required>
       </div>
@@ -474,11 +482,13 @@ function calculatePrices() {
   const totalCost = cost + courier + box + packing + shelf + bottle + marketing;
   const msp = totalCost;
   const asp = roundToNearest50(msp + margin/100*msp);
+  const gasp = (asp * 1.18); // Adding 18% GST
   const mrp = roundToNearest50(asp + (asp * dispMargin / 100));
   const totalRevenue = asp - msp
 
   document.getElementById("msp").value = msp;
   document.getElementById("asp").value = asp;
+  document.getElementById("gasp").value = gasp;
   document.getElementById("mrp").value = mrp;
   document.getElementById("revenue").value = totalRevenue;
 }
