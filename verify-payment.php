@@ -159,17 +159,37 @@ $formattedTotalPaid = number_format($totalPaid, 2);
 // Add after product table
 $mail->Body .= "
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan='3' style='padding:10px;border:1px solid #ddd;text-align:right;'><strong>Total Product Value:</strong></td>
+        <td style='padding:10px;border:1px solid #ddd;'>₹{$formattedProductValue}</td>
+      </tr>
+      <tr>
+        <td colspan='3' style='padding:10px;border:1px solid #ddd;text-align:right;'><strong>GST (18%):</strong></td>
+        <td style='padding:10px;border:1px solid #ddd;'>₹{$formattedGST}</td>
+      </tr>";
+
+if ($discount > 0) {
+  $mail->Body .= "
+      <tr>
+        <td colspan='3' style='padding:10px;border:1px solid #ddd;text-align:right;'><strong>Estimated Total:</strong></td>
+        <td style='padding:10px;border:1px solid #ddd;'>₹{$formattedEstimatedTotal}</td>
+      </tr>
+      <tr>
+        <td colspan='3' style='padding:10px;border:1px solid #ddd;text-align:right;'><strong style='color:green;'>Discount:</strong></td>
+        <td style='padding:10px;border:1px solid #ddd;color:green;'>– ₹{$formattedDiscount}</td>
+      </tr>";
+}
+
+$mail->Body .= "
+      <tr>
+        <td colspan='3' style='padding:10px;border:1px solid #ddd;text-align:right;'><strong>Total Paid:</strong></td>
+        <td style='padding:10px;border:1px solid #ddd;'>₹{$formattedTotalPaid}</td>
+      </tr>
+    </tfoot>
     </table>
 
-    <div style='margin-top:30px;font-size:16px;border-top:1px solid #ccc;padding-top:15px;'>
-      <h3 style='margin-bottom:10px;'>Order Summary</h3>
-      <p><strong>Total Product Value:</strong> ₹{$formattedProductValue}</p>
-      <p><strong>GST (18%):</strong> ₹{$formattedGST}</p>
-      <p><strong>Estimated Total:</strong> ₹{$formattedEstimatedTotal}</p>
-      <p><strong style='color:green;'>Discount:</strong> – ₹{$formattedDiscount}</p>
-      <p><strong>Total Paid:</strong> ₹{$formattedTotalPaid}</p>
-      <p><strong>Transaction ID:</strong> {$paymentId}</p>
-    </div>
+    <p style='margin-top:15px;font-size:15px;'><strong>Transaction ID:</strong> {$paymentId}</p>
 
     <div style='margin-top:25px;text-align:center;'>
       <span style='font-size:18px;font-weight:bold;color:#e60073;animation:blinker 1.2s linear infinite;display:inline-block;'>
@@ -178,7 +198,7 @@ $mail->Body .= "
     </div>
 
     <style>
-    @keyframes blinker {  
+    @keyframes blinker {
       50% { opacity: 0; }
     }
     </style>
@@ -187,7 +207,7 @@ $mail->Body .= "
       <a href='{$orderLink}' style='padding:12px 25px;background:#000;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;'>View Full Order Details</a>
     </div>
 
-    <p style='font-size:14px;color:#888;'>If you have any questions,  email to <a href='mailto:{$emailConfig['from_email']}' style='color:#888;text-decoration:underline;'>{$emailConfig['from_email']}</a> and we’ll get back to you shortly.</p>
+    <p style='font-size:14px;color:#888;'>If you have any questions, email to <a href='mailto:{$emailConfig['from_email']}' style='color:#888;text-decoration:underline;'>{$emailConfig['from_email']}</a> and we’ll get back to you shortly.</p>
     <p style='font-size:14px;color:#888;'>– Team ADA Aromas</p>
   </div>
 
@@ -196,6 +216,7 @@ $mail->Body .= "
     <a href='#' style='color:#fff;text-decoration:underline;margin:0 5px;'>ADA AROMAS</a> 
   </div>
 </div>";
+
 
 
   $mail->send();} catch (Exception $e) {
