@@ -35,10 +35,35 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php include "components/header.php"; ?>
 
+<style>
+  .blink {
+    animation: blinker 1.5s linear infinite;
+  }
+  @keyframes blinker {
+    50% { opacity: 0.5; }
+  }
+  .status-pending {
+    color: #ffc107; /* yellow */
+  }
+  .status-confirmed {
+    color: #28a745; /* green */
+  }
+  .status-delivered {
+    color: #6c757d; /* grey */
+  }
+  .status-cancelled {
+    color: #dc3545; /* red */
+  }
+</style>
+
 <div class="container py-5">
   <div class="text-center">
     <h2 class="text-success"><i class="bi bi-bag-check-fill"></i> Thank You for Your Order!</h2>
-    <p>Your order <strong>#<?= $orderId ?></strong> has been successfully placed and is currently <strong><?= $order['status'] ?></strong>.</p>
+    <p>Your order <strong>#<?= $orderId ?></strong> has been successfully placed and is currently 
+  <strong class="blink status-<?= strtolower($order['status']) ?>">
+    <?= $order['status'] ?>
+  </strong>.
+</p>
     <p>A confirmation email has been sent to <strong><?= $order['email'] ?></strong>.</p>
   </div>
 
