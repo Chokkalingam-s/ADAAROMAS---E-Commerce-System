@@ -43,7 +43,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     50% { opacity: 0.5; }
   }
   .status-pending {
-    color: #ffc107; /* yellow */
+    color: #ffbf00ff; /* yellow */
   }
   .status-confirmed {
     color: #28a745; /* green */
