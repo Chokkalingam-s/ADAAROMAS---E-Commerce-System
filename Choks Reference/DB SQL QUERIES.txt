@@ -112,6 +112,14 @@ ALTER TABLE orders
 
 ALTER TABLE orders ADD COLUMN remarks TEXT DEFAULT NULL;
 
+//queries ragav lap
+
 ALTER TABLE products ADD COLUMN backImage VARCHAR(255) AFTER image;
 
 ALTER TABLE reviews ADD COLUMN orderId INT;
+
+ALTER TABLE products
+ADD COLUMN topNode TEXT,
+ADD COLUMN middleNode TEXT,
+ADD COLUMN baseNode TEXT;
+
