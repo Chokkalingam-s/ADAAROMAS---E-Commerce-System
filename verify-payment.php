@@ -142,14 +142,46 @@ foreach ($cart as $item) {
         </tr>";
 }
 
+// Compute details
+$totalProductValue = $totalASP;
+$gstAmount = $gst;
+$estimatedTotal = $totalProductValue + $gstAmount;
+$discount = $estimatedTotal - $total;
+$totalPaid = $total;
+
+// Format values
+$formattedProductValue = number_format($totalProductValue, 2);
+$formattedGST = number_format($gstAmount, 2);
+$formattedEstimatedTotal = number_format($estimatedTotal, 2);
+$formattedDiscount = number_format($discount, 2);
+$formattedTotalPaid = number_format($totalPaid, 2);
+
+// Add after product table
 $mail->Body .= "
-      </tbody>
+    </tbody>
     </table>
 
-    <div style='margin-top:20px;font-size:16px;'>
-      <p><strong>Total Paid:</strong> ₹{$totalPrice}</p>
+    <div style='margin-top:30px;font-size:16px;border-top:1px solid #ccc;padding-top:15px;'>
+      <h3 style='margin-bottom:10px;'>Order Summary</h3>
+      <p><strong>Total Product Value:</strong> ₹{$formattedProductValue}</p>
+      <p><strong>GST (18%):</strong> ₹{$formattedGST}</p>
+      <p><strong>Estimated Total:</strong> ₹{$formattedEstimatedTotal}</p>
+      <p><strong style='color:green;'>Discount:</strong> – ₹{$formattedDiscount}</p>
+      <p><strong>Total Paid:</strong> ₹{$formattedTotalPaid}</p>
       <p><strong>Transaction ID:</strong> {$paymentId}</p>
     </div>
+
+    <div style='margin-top:25px;text-align:center;'>
+      <span style='font-size:18px;font-weight:bold;color:#e60073;animation:blinker 1.2s linear infinite;display:inline-block;'>
+        🎁 Product will be delivered with exciting FREEBIES & GIFTS! 🎁
+      </span>
+    </div>
+
+    <style>
+    @keyframes blinker {  
+      50% { opacity: 0; }
+    }
+    </style>
 
     <div style='text-align:center;margin:30px 0;'>
       <a href='{$orderLink}' style='padding:12px 25px;background:#000;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;'>View Full Order Details</a>
@@ -164,6 +196,7 @@ $mail->Body .= "
     <a href='#' style='color:#fff;text-decoration:underline;margin:0 5px;'>ADA AROMAS</a> 
   </div>
 </div>";
+
 
   $mail->send();} catch (Exception $e) {
   error_log("Email not sent. Error: {$mail->ErrorInfo}");
