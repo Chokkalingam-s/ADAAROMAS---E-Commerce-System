@@ -277,25 +277,33 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
       <!-- Row 9: Description -->
        <!-- Row 8.5: Fragrance Notes (only for Perfume/Attar) -->
-<div id="fragranceNotes" class="row g-3 d-none">
-  <div class="col-md-3">
+<!-- Row: Fragrance Notes + Description -->
+<div id="fragranceNotes" class="row g-3">
+  <!-- TOP NOTE -->
+  <div class="col-6 col-md-3">
     <label class="form-label">TOP NOTE</label>
-    <input type="text" name="topNode" class="form-control" placeholder="E.g., Citrus, Bergamot">
+    <input type="text" name="topNode" class="form-control" placeholder="E.g., Citrus, Bergamot" disabled>
   </div>
-  <div class="col-md-3">
+
+  <!-- MIDDLE NOTE -->
+  <div class="col-6 col-md-3">
     <label class="form-label">MIDDLE NOTE</label>
-    <input type="text" name="middleNode" class="form-control" placeholder="E.g., Jasmine, Rose">
+    <input type="text" name="middleNode" class="form-control" placeholder="E.g., Jasmine, Rose" disabled>
   </div>
-  <div class="col-md-3">
+
+  <!-- BASE NOTE -->
+  <div class="col-6 col-md-3">
     <label class="form-label">BASE NOTE</label>
-    <input type="text" name="baseNode" class="form-control" placeholder="E.g., Amber, Musk">
+    <input type="text" name="baseNode" class="form-control" placeholder="E.g., Amber, Musk" disabled>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="col-6 col-md-3">
+    <label class="form-label">DESCRIPTION</label>
+    <textarea name="description" rows="3" class="form-control" required></textarea>
   </div>
 </div>
 
-      <div class="col-6 col-md-3 ">
-        <label class="form-label">DESCRIPTION</label>
-        <textarea name="description" rows="3" class="form-control" required></textarea>
-      </div>
 
     </div>
 
@@ -511,19 +519,21 @@ function calculatePrices() {
 
 document.getElementById("category").addEventListener("change", function () {
   const selected = this.value;
+  const enableNotes = selected === "Perfume" || selected === "Attar";
 
-  const notesSection = document.getElementById("fragranceNotes");
+  // Toggle enabled/disabled state
+  document.querySelector("[name='topNode']").disabled = !enableNotes;
+  document.querySelector("[name='middleNode']").disabled = !enableNotes;
+  document.querySelector("[name='baseNode']").disabled = !enableNotes;
 
-  if (selected === "Perfume" || selected === "Attar") {
-    notesSection.classList.remove("d-none");
-  } else {
-    notesSection.classList.add("d-none");
-    // Clear values
+  // Optional: clear values when disabled
+  if (!enableNotes) {
     document.querySelector("[name='topNode']").value = '';
     document.querySelector("[name='middleNode']").value = '';
     document.querySelector("[name='baseNode']").value = '';
   }
 });
+
 
 </script>
 
