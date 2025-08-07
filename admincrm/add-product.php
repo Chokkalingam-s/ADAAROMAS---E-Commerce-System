@@ -375,9 +375,9 @@ document.addEventListener("click", (e) => {
 
 // Category to sizes
 const sizes = {
-  "Perfume": [30, 50, 100],
-  "Attar": [6, 12, 18, 24, 36],
-  "Essence Oil": [30, 60, 90],
+  "Perfume": [30, 50, 100 ,10, 20],
+  "Attar": [6, 12, 10, 20],
+  "Essence Oil": [30],
   "Diffuser": []
 };
 
