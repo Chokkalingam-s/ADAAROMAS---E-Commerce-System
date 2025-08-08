@@ -597,7 +597,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   }
   
   .product-main-image {
-    height: 250px;
+    height: 450px;
   }
   
   .size-info {
@@ -624,7 +624,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
   .product-main-image {
   width: 100%;
-  height: 38vh;
+  height: 50vh;
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -645,6 +645,12 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   .size-price {
     align-items: flex-end;
   }
+
+  @media (max-width: 768px) {
+    .carousel-item img {
+        max-height: 380px;
+    }
+}
 </style>
 
 <div class="product-container">
