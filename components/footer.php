@@ -1,6 +1,6 @@
 </div>
 <!-- Footer -->
-<footer class="bg-dark text-light text-center py-3" style="margin-top: max(2rem, calc(100vh - 100%));">
+<footer class="bg-dark text-light text-center py-3" style="">
   <p class="mb-0">© 2025 ADA Aromas. All Rights Reserved.</p>
 </footer>
 <!-- Add to header.php -->
