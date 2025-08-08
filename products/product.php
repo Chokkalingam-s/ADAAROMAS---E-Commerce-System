@@ -609,6 +609,20 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   .product-title1 {
     font-size: 1.5rem;
   }
+
+    .add-to-cart-btn {
+    width: 100%;
+    background: #fff;
+    color: #2c2c2c;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.65rem;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1px;
+  }
   
   .product-main-image {
     height: 450px;
