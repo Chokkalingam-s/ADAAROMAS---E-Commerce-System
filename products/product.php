@@ -651,26 +651,71 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="row">
     <!-- Product Image Section -->
     <div class="col-lg-5">
-      <div class="product-image-section">
-        <img src="<?= '../' . $product['image'] ?>" class="product-main-image" alt="<?= htmlspecialchars($product['name']) ?>">
-        
-        <!-- Rating Display Below Image -->
-        <div class="image-rating-section">
-          <div class="image-rating-title">Customer Rating</div>
-          <div class="image-rating-display">
-            <div class="image-stars">
-              <?php
-              $fullStars = floor($avgRating);
-              for ($i = 1; $i <= 5; $i++) {
-                echo $i <= $fullStars ? '★' : '☆';
-              }
-              ?>
-            </div>
-            <span class="image-rating-score"><?= $avgRating ?>/5</span>
-            <span style="font-size: 0.8rem; color: #a0aec0;">(<?= $totalReviews ?> reviews)</span>
-          </div>
-        </div>
+<div class="product-image-section">
+
+<div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+
+    <!-- First image -->
+    <div class="carousel-item active">
+      <img src="<?= '../' . $product['image'] ?>" class="d-block w-100 product-main-image" alt="<?= htmlspecialchars($product['name']) ?>">
+    </div>
+
+    <!-- Second image -->
+    <?php if (!empty($product['backImage'])): ?>
+      <div class="carousel-item">
+        <img src="<?= '../' . $product['backImage'] ?>" class="d-block w-100 product-main-image" alt="<?= htmlspecialchars($product['name']) ?> - Back View">
       </div>
+    <?php endif; ?>
+
+    <!-- Third image (static) -->
+    <div class="carousel-item">
+      <img src="staticImage.png" class="d-block w-100 product-main-image" alt="Static Image">
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+
+  <!-- Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <?php if (!empty($product['backImage'])): ?>
+      <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    <?php else: ?>
+      <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <?php endif; ?>
+  </div>
+</div>
+
+
+  <!-- Rating Display Below Images -->
+  <div class="image-rating-section">
+    <div class="image-rating-title">Customer Rating</div>
+    <div class="image-rating-display">
+      <div class="image-stars">
+        <?php
+        $fullStars = floor($avgRating);
+        for ($i = 1; $i <= 5; $i++) {
+          echo $i <= $fullStars ? '★' : '☆';
+        }
+        ?>
+      </div>
+      <span class="image-rating-score"><?= $avgRating ?>/5</span>
+      <span style="font-size: 0.8rem; color: #a0aec0;">(<?= $totalReviews ?> reviews)</span>
+    </div>
+  </div>
+</div>
+
     </div>
 
     <!-- Product Details Section -->
