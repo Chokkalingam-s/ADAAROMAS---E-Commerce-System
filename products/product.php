@@ -160,8 +160,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 .image-rating-section {
   background: white;
   border-radius: 8px;
-  padding: 1rem;
-  margin-top: 1rem;
+  padding: 0rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   text-align: center;
 }
@@ -210,6 +209,13 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
   color: #718096;
   margin-bottom: 1rem;
   line-height: 1.4;
+}
+.product-disclaimer {
+  color: #e63946; /* red */
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-top: 0.75rem;
+  text-align: center;
 }
 
 .price-section {
@@ -591,6 +597,14 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     margin-top: 1rem;
     max-height: none;
   }
+
+  .product-disclaimer {
+  color: #e63946; /* red */
+  font-size: 0.70rem;
+  font-style: italic;
+  margin-top: 0.75rem;
+  text-align: center;
+}
   
   .product-title1 {
     font-size: 1.5rem;
@@ -702,6 +716,11 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endif; ?>
   </div>
 </div>
+
+  <!-- Disclaimer -->
+  <p class="product-disclaimer">
+    Disclaimer: The Actual Design of Bottle may Vary from the one shown.
+  </p>
 
 
   <!-- Rating Display Below Images -->
