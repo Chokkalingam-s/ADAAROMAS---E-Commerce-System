@@ -136,9 +136,9 @@ $totalGST = 0;
               <td><?= round($row['TotalASP']) ?></td>
               <td>9%</td>
               <td>9%</td>
-              <td><?= round($row['GST']/2 )?></td>
-              <td><?= round($row['GST']/2 )?></td>
-              <td><?= round($row['GST'] )?></td>
+              <td><?= round($row['GST']/2 ,2)?></td>
+              <td><?= round($row['GST']/2 ,2)?></td>
+              <td><?= round($row['GST'],2 )?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
