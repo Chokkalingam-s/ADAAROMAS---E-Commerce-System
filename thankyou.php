@@ -109,6 +109,122 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
 
+  <?php
+require 'vendor/autoload.php'; // For PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+if (isset($_POST['cancelOrder'])) {
+    $orderId = intval($_POST['orderId']);
+    $enteredCode = strtoupper(trim($_POST['cancelCode']));
+
+    // Fetch order and user details
+    $stmt = $conn->prepare("
+        SELECT o.*, u.name AS userName, u.email AS userEmail, u.phoneNo, u.address, u.city, u.state, u.pincode
+        FROM orders o
+        JOIN users u ON o.userId = u.userId
+        WHERE o.orderId = ?
+    ");
+    $stmt->execute([$orderId]);
+    $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$order) {
+        echo "<p style='color:red;'>Order not found.</p>";
+    } elseif ($order['cancelCode'] !== $enteredCode) {
+        echo "<p style='color:red;'>Invalid cancellation code.</p>";
+    } else {
+        // Update order status
+        $conn->prepare("UPDATE orders SET status = 'Cancelled' WHERE orderId = ?")
+             ->execute([$orderId]);
+
+        // Fetch cart items
+$stmtOD = $conn->prepare("
+    SELECT od.*, p.name, p.asp 
+    FROM order_details od
+    JOIN products p ON od.productId = p.productId
+    WHERE od.orderId = ?
+");
+$stmtOD->execute([$orderId]);
+$items = $stmtOD->fetchAll(PDO::FETCH_ASSOC);
+
+
+        // Build product list HTML
+$productListHTML = "<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse;width:100%;'>
+    <tr><th>Product</th><th>Qty</th><th>Size</th><th>Price</th></tr>";
+
+foreach ($items as $item) {
+    $productListHTML .= "<tr>
+        <td>{$item['name']}</td>
+        <td>{$item['quantity']}</td>
+        <td>{$item['size']}</td>
+        <td>₹" . number_format($item['asp'] * $item['quantity'], 2) . "</td>
+    </tr>";
+}
+$productListHTML .= "</table>";
+
+
+        // Send cancellation email
+        $mail = new PHPMailer(true);
+        $config = require 'config/email_config.php';
+        
+        try {
+            $mail->isSMTP();
+            $mail->Host = $config['smtp_host'];
+            $mail->SMTPAuth = true;
+            $mail->Username = $config['smtp_username'];
+            $mail->Password = $config['smtp_password'];
+            $mail->SMTPSecure = $config['smtp_secure'];
+            $mail->Port = $config['smtp_port'];
+
+            $mail->setFrom($config['from_email'], $config['from_name']);
+            $mail->addAddress('Adaaromas@rudraksha.org.in');
+            $mail->addBCC('chokka7878@gmail.com');
+            $mail->addReplyTo($order['userEmail'], $order['userName']);
+
+            $mail->isHTML(true);
+            $mail->Subject = "Cancellation of Order - ID: {$orderId}";
+
+            $mail->Body = "
+                <h2>Order Cancelled</h2>
+                <p><strong>Order ID:</strong> {$orderId}</p>
+                <p><strong>Transaction ID:</strong> {$order['transactionId']}</p>
+                <p><strong>User:</strong> {$order['userName']} ({$order['userEmail']}, {$order['phoneNo']})</p>
+                <p><strong>Address:</strong> {$order['address']}, {$order['city']}, {$order['state']} - {$order['pincode']}</p>
+                <p><strong>Order Date:</strong> {$order['orderDate']}</p>
+                <p><strong>Billing Amount:</strong> ₹" . number_format($order['billingAmount'], 2) . "</p>
+                <h3>Products:</h3>
+                {$productListHTML}
+                <p style='color:red;font-weight:bold;'>This order has been cancelled by the customer.</p>
+            ";
+
+            $mail->send();
+            echo "<p style='color:green;'>Order cancelled and email notification sent to the company.</p>";
+        } catch (Exception $e) {
+            echo "<p style='color:red;'>Order cancelled, but email could not be sent: {$mail->ErrorInfo}</p>";
+        }
+    }
+}
+?>
+
+<?php
+// Assuming you already have $orderId from the URL or session
+$orderId = $_GET['orderId'] ?? null;
+?>
+
+<?php if ($orderId): ?>
+<div style="margin-top:20px;">
+  <h3>Cancel Your Order</h3>
+  <form method="POST" action="">
+    <input type="hidden" name="orderId" value="<?= htmlspecialchars($orderId) ?>">
+    <label for="cancelCode">Enter Cancellation Code:</label><br>
+    <input type="text" id="cancelCode" name="cancelCode" required style="padding:8px;margin-top:5px;">
+    <button type="submit" name="cancelOrder" style="padding:8px 15px;background:#d9534f;color:#fff;border:none;border-radius:4px;cursor:pointer;">
+      Cancel Order
+    </button>
+  </form>
+</div>
+<?php endif; ?>
+
   <div class="text-center mt-5">
     <a href="index.php" class="btn btn-outline-success">Continue Shopping</a>
   </div>
