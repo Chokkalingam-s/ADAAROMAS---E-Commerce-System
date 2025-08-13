@@ -54,6 +54,14 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
   .status-cancelled {
     color: #dc3545; /* red */
   }
+
+  .btn-outline-success
+  {
+    border-color: #28a745;
+    color: #28a745;
+    width: 100%;
+    /* center of the page */
+  }
 </style>
 
 <div class="container py-5">
@@ -117,23 +125,37 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $orderId = $_GET['orderId'] ?? null;
 ?>
 
+<?php
+// Assuming you already have $orderId from the URL or session
+$orderId = $_GET['orderId'] ?? null;
+?>
+
 <?php if ($orderId): ?>
-<div style="margin-top:20px;">
-  <h3>Cancel Your Order</h3>
-  <form id="cancelForm">
-    <input type="hidden" name="orderId" value="<?= htmlspecialchars($orderId) ?>">
-    <label for="cancelCode">Enter Cancellation Code:</label><br>
-    <input type="text" id="cancelCode" name="cancelCode" required style="padding:8px;margin-top:5px;">
-    <button type="submit" name="cancelOrder" style="padding:8px 15px;background:#d9534f;color:#fff;border:none;border-radius:4px;cursor:pointer;">
-      Cancel Order
-    </button>
-  </form>
+<div class="row mt-5 align-items-center">
+  <?php if (strtolower($order['status']) !== 'cancelled'): ?>
+    <div class="col-12 col-md-4 d-flex justify-content-md-end justify-content-center mb-3 mb-md-0">
+      <form id="cancelForm" class="d-inline-block">
+        <input type="hidden" name="orderId" value="<?= htmlspecialchars($orderId) ?>">
+        <label for="cancelCode">Enter Cancellation Code:</label><br>
+        <input type="text" id="cancelCode" name="cancelCode" required style="padding:8px;margin-top:5px;">
+        <button type="submit" name="cancelOrder" style="padding:8px 15px;background:#d9534f;color:#fff;border:none;border-radius:4px;cursor:pointer;">
+          Cancel Order
+        </button>
+      </form>
+    </div>
+    <div class="col-12 col-md-4 d-flex justify-content-center mb-3 mb-md-0">
+      <a href="index.php" class="btn btn-outline-success">Continue Shopping</a>
+    </div>
+    <div class="col-12 col-md-4"></div>
+  <?php else: ?>
+    <div class="col-12 col-md-4"></div>
+    <div class="col-12 col-md-4 d-flex justify-content-center mb-3 mb-md-0">
+      <a href="index.php" class="btn btn-outline-success">Continue Shopping</a>
+    </div>
+    <div class="col-12 col-md-4"></div>
+  <?php endif; ?>
 </div>
 <?php endif; ?>
-
-  <div class="text-center mt-5">
-    <a href="index.php" class="btn btn-outline-success">Continue Shopping</a>
-  </div>
 </div>
 <script>
 document.getElementById('cancelForm')?.addEventListener('submit', function(e) {
