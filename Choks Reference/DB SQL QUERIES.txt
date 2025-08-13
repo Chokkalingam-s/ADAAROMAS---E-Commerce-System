@@ -123,3 +123,7 @@ ADD COLUMN topNode TEXT,
 ADD COLUMN middleNode TEXT,
 ADD COLUMN baseNode TEXT;
 
+ALTER TABLE orders
+ADD cancelCode TEXT;
+
+
