@@ -914,6 +914,12 @@ body {
             Diffuser
           </a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link <?= $currentPage === 'faqs.php' ? 'active' : '' ?>" href="/adaaromas/faqs.php">
+            FAQs
+          </a>
+        </li>
         
         <li class="nav-item">
           <a class="nav-link cart-icon-wrapper" href="javascript:void(0)" onclick="toggleCartSidebar()">
