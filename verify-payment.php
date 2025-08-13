@@ -56,8 +56,13 @@ foreach ($cart as $item) {
 $gst = round($totalASP * 0.18);  // 18% GST
 $totalProfit = $totalProfit - $gst;
 $loss = 0;
-$stmt = $conn->prepare("INSERT INTO orders (userId, transactionId, billingAmount, TotalASP, GST, PROFIT, LOSS) VALUES (?, ?, ?, ?, ?, ?, ?)");
-$stmt->execute([$userId, $paymentId, $total, $totalASP, $gst, $totalProfit, $loss]);
+$cancelCode = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 8));
+$stmt = $conn->prepare("
+    INSERT INTO orders (userId, transactionId, billingAmount, TotalASP, GST, PROFIT, LOSS, cancelCode) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+"); 
+$stmt->execute([$userId, $paymentId, $total, $totalASP, $gst, $totalProfit, $loss, $cancelCode]);
+
 $newOrderId = $conn->lastInsertId();
 
 // For each cart item: store details & reduce stock
@@ -203,9 +208,14 @@ $mail->Body .= "
     }
     </style>
 
-    <div style='text-align:center;margin:30px 0;'>
-      <a href='{$orderLink}' style='padding:12px 25px;background:#000;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;'>View Full Order Details</a>
-    </div>
+<div style='text-align:center;margin:30px 0;'>
+  <a href='{$orderLink}' style='padding:12px 25px;background:#000;color:#fff;border-radius:6px;text-decoration:none;font-weight:bold;'>View Full Order Details</a>
+  <p style='margin-top:10px;font-size:14px;color:#555;'>
+    Use this code to cancel your order if needed: 
+    <strong style='color:#d9534f;'>{$cancelCode}</strong>
+  </p>
+</div>
+
 
     <p style='font-size:14px;color:#888;'>If you have any questions, email to <a href='mailto:{$emailConfig['from_email']}' style='color:#888;text-decoration:underline;'>{$emailConfig['from_email']}</a> and we’ll get back to you shortly.</p>
     <p style='font-size:14px;color:#888;'>– Team ADA Aromas</p>
