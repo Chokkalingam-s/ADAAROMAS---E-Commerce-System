@@ -518,7 +518,6 @@
         </small>
         <div id="couponRequestStatus" class="status-message"></div>
       </div>
-
       <div class="mt-auto">
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <button id="rzp-button1" class="btn w-100">
@@ -527,6 +526,21 @@
         <div class="discount-info" id="discountInfo" style="display: none;"></div>
       </div>
     </div>
+
+          <div class="mt-3 p-3 border rounded bg-light">
+  <label class="form-label fw-bold">Admin Options</label>
+  <div>
+    <input type="checkbox" id="isAdmin" /> I am Admin
+  </div>
+  <div id="adminPanel" style="display:none; margin-top:10px;">
+    <input type="password" id="adminPassword" placeholder="Enter admin password" class="form-control mb-2" />
+    <button type="button" id="verifyAdminBtn" class="btn btn-sm btn-primary">Verify</button>
+    <div id="adminType" style="display:none; margin-top:10px;">
+      <label><input type="radio" name="adminMode" value="admin_order"> Admin Order</label><br>
+      <label><input type="radio" name="adminMode" value="admin_gift"> Admin Gift</label>
+    </div>
+  </div>
+</div>
   </div>
 </div>
 

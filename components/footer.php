@@ -8,6 +8,56 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+  let adminMode = null;
+
+// Show password panel when checkbox is ticked
+document.getElementById('isAdmin').addEventListener('change', function() {
+  document.getElementById('adminPanel').style.display = this.checked ? 'block' : 'none';
+});
+
+// Verify password
+document.getElementById('verifyAdminBtn').addEventListener('click', function() {
+  const pass = document.getElementById('adminPassword').value.trim();
+  if (pass === "atuldevaroraorder") {
+    alert("✅ Admin Verified");
+    document.getElementById('adminType').style.display = 'block';
+  } else {
+    alert("❌ Wrong password");
+  }
+});
+
+// Store admin mode selection
+document.querySelectorAll('input[name="adminMode"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    adminMode = this.value;
+    renderCheckoutOrder();
+  });
+});
+
+// Modify GST in renderCheckoutOrder if admin gift
+const originalRender = renderCheckoutOrder;
+renderCheckoutOrder = function() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  let total = cart.reduce((sum, p) => sum + p.price * p.quantity, 0);
+  let gst = (adminMode === "admin_gift") ? 0 : Math.round(total * 0.18);
+  let grandTotal = total + gst;
+
+  // Call original render logic
+  originalRender();
+
+  // Overwrite totals if admin mode is on
+  if (adminMode) {
+    document.querySelector("#checkoutOrderSummary").innerHTML += `
+      <div class="alert alert-info mt-2">Admin Mode: ${adminMode.replace("_", " ").toUpperCase()}</div>
+    `;
+    document.getElementById('totalPrice').innerText = grandTotal;
+    discountedTotal = grandTotal;
+    cartTotal = grandTotal;
+  }
+};
+
+</script>
 
 <!-- cart.php script -->
 <script>
@@ -424,9 +474,36 @@ document.getElementById('rzp-button1').onclick = async function(e){
   const finalAmount = parseFloat(document.getElementById("totalPrice").textContent);
   const code = document.getElementById('couponCode').value.trim().toUpperCase();
 
+
+
   console.log("🛒 Cart:", cart);
 console.log("👤 User:", user);
-console.log("💰 Final Amount:", finalAmount);
+console.log("💰 Final Amount:", finalAmount);if (adminMode) {
+    // Directly store order without payment
+    const resp = await fetch('verify-payment.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        razorpay_order_id: "ADMIN-ORDER",
+        razorpay_payment_id: "ADMIN-PAYMENT",
+        razorpay_signature: "ADMIN-MODE",
+        cart,
+        finalAmount,
+        user,
+        userId: null,
+        couponCode: code || null,
+        adminMode
+      })
+    }).then(r => r.json());
+
+    if (resp.success && resp.orderId) {
+      localStorage.removeItem('cart');
+      window.location.href = "thankyou.php?orderId=" + resp.orderId;
+    } else {
+      alert("Failed to place admin order");
+    }
+    return;
+  }
 
 
 const resp = await fetch('create-order.php', {

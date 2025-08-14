@@ -12,6 +12,11 @@ $orderId = $data['razorpay_order_id'];
 $paymentId = $data['razorpay_payment_id'];
 $signature = $data['razorpay_signature'];
 
+if (!empty($data['adminMode'])) {
+    // Skip Razorpay verification for admin
+    $paymentId = "ADMIN-" . strtoupper($data['adminMode']);
+} else {
+
 $api = new Api($keyId, $keySecret);
 try {
   $api->utility->verifyPaymentSignature([
@@ -21,6 +26,7 @@ try {
   ]);
 } catch (Exception $e) {
   echo json_encode(['success'=>false]); exit;
+}
 }
 
 if (!empty($data['couponCode'])) {
@@ -53,7 +59,7 @@ foreach ($cart as $item) {
 }
 
 
-$gst = round($totalASP * 0.18);  // 18% GST
+$gst = (!empty($data['adminMode']) && $data['adminMode'] === 'admin_gift') ? 0 : round($totalASP * 0.18);
 $totalProfit = $totalProfit - $gst;
 $loss = 0;
 $cancelCode = strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 8));
