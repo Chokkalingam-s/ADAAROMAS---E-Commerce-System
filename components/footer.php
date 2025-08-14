@@ -478,32 +478,47 @@ document.getElementById('rzp-button1').onclick = async function(e){
 
   console.log("🛒 Cart:", cart);
 console.log("👤 User:", user);
-console.log("💰 Final Amount:", finalAmount);if (adminMode) {
-    // Directly store order without payment
-    const resp = await fetch('verify-payment.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        razorpay_order_id: "ADMIN-ORDER",
-        razorpay_payment_id: "ADMIN-PAYMENT",
-        razorpay_signature: "ADMIN-MODE",
-        cart,
-        finalAmount,
-        user,
-        userId: null,
-        couponCode: code || null,
-        adminMode
-      })
-    }).then(r => r.json());
+console.log("💰 Final Amount:", finalAmount);
 
-    if (resp.success && resp.orderId) {
-      localStorage.removeItem('cart');
-      window.location.href = "thankyou.php?orderId=" + resp.orderId;
-    } else {
-      alert("Failed to place admin order");
-    }
+if (adminMode) {
+  // Step 1: Create user and get userId
+  const createUserResp = await fetch('create-order.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ cart, user, finalAmount })
+  }).then(r => r.json());
+
+  if (!createUserResp.userId) {
+    alert("Failed to create user for admin order");
     return;
   }
+
+  // Step 2: Skip Razorpay and directly store order
+  const verifyResp = await fetch('verify-payment.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      razorpay_order_id: "ADMIN-ORDER",
+      razorpay_payment_id: "ADMIN-PAYMENT",
+      razorpay_signature: "ADMIN-MODE",
+      cart,
+      finalAmount,
+      user,
+      userId: createUserResp.userId,
+      couponCode: code || null,
+      adminMode
+    })
+  }).then(r => r.json());
+
+  if (verifyResp.success && verifyResp.orderId) {
+    localStorage.removeItem('cart');
+    window.location.href = "thankyou.php?orderId=" + verifyResp.orderId;
+  } else {
+    alert("Failed to place admin order");
+  }
+  return;
+}
+
 
 
 const resp = await fetch('create-order.php', {

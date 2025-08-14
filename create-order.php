@@ -19,7 +19,6 @@ $total = (isset($input['finalAmount']) && is_numeric($input['finalAmount']) && $
     ? (float)$input['finalAmount']
     : array_sum(array_map(fn($p)=>$p['asp']*$p['quantity'],$cart));
 
-
 if ($total <= 0) exit(json_encode(['error'=>"Cart empty"]));
 
 $fullname = trim($userData['firstName'].' '.$userData['lastName']);
@@ -29,7 +28,27 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE userId=LAST_INSERT_ID(us
 $stmt->execute([$fullname, $userData['phone'], $userData['email'], $userData['state'], $userData['district'], $address, $userData['city'], $userData['pincode']]);
 $userId = $conn->lastInsertId();
 
-$api = new Api($keyId, $keySecret);
-$order = $api->order->create(['amount'=>$total*100,'currency'=>'INR','receipt'=>'order_'.time()]);
+// ✅ If admin mode, skip Razorpay order creation and return only userId + totals
+if (!empty($input['adminMode'])) {
+    echo json_encode([
+        'userId'   => $userId,
+        'amount'   => $total,
+        'currency' => 'INR'
+    ]);
+    exit;
+}
 
-echo json_encode(['id'=>$order->id,'amount'=>$order->amount,'currency'=>$order->currency,'userId'=>$userId]);
+// Normal Razorpay flow
+$api = new Api($keyId, $keySecret);
+$order = $api->order->create([
+    'amount'   => $total * 100,
+    'currency' => 'INR',
+    'receipt'  => 'order_' . time()
+]);
+
+echo json_encode([
+    'id'       => $order->id,
+    'amount'   => $order->amount,
+    'currency' => $order->currency,
+    'userId'   => $userId
+]);
