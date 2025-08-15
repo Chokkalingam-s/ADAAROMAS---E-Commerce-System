@@ -58,6 +58,10 @@ foreach ($cart as $item) {
     }
 }
 
+if (!empty($data['adminMode']) && $data['adminMode'] === 'admin_gift') {
+    $total = $totalASP; // billingAmount should be totalASP for admin_gift
+}
+
 
 $gst = (!empty($data['adminMode']) && $data['adminMode'] === 'admin_gift') ? 0 : round($totalASP * 0.18);
 $totalProfit = $totalProfit - $gst;
