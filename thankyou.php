@@ -69,7 +69,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <h2 class="text-success"><i class="bi bi-bag-check-fill"></i> Thank You for Your Order!</h2>
     <p>Your order <strong>#<?= $orderId ?></strong> has been successfully placed and is currently 
 <strong id="orderStatus" class="blink status-<?= strtolower($order['status']) ?>">
-    <?= $order['status'] ?>
+    <?= strtoupper($order['status']) ?>
 </strong>
 
 </p>
@@ -113,7 +113,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
       <div class="alert alert-info mt-4">
         <strong>Delivery Policy:</strong><br>
-        Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>5–6 business days</strong>.<br>
+             Orders are <strong>Shipped</strong> within <strong>24 Business Hours</strong>, and Expected to be <strong>Delivered</strong> within <strong>3-4 Working Days</strong>.
       </div>
     </div>
   </div>
