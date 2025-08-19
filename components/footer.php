@@ -1,7 +1,7 @@
 </div>
 <!-- Footer -->
 <footer class="bg-dark text-light text-center py-3" style="">
-  <p class="mb-0">© 2025 ADA Aromas. All Rights Reserved.</p>
+  <p class="mb-0">© <?= date('Y') ?>  ADA Aromas. All Rights Reserved.</p>
 </footer>
 <!-- Add to header.php -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
