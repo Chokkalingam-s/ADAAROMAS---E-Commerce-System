@@ -76,6 +76,8 @@ include('./config/db.php');
     color: #555;
     line-height: 1.6;
     transition: max-height 0.4s ease, padding 0.3s ease;
+    /* justify the text alignment */
+    text-align: justify;
 }
 
 .accordion.active .accordion-body {
@@ -93,14 +95,14 @@ include('./config/db.php');
         <div class="accordion-header">Q1. What is the Quality of the Product?</div>
         <div class="accordion-body">
             We are using Premium Quality Perfumery Oils under the strict supervision of a Professional Perfumer, 
-            who has rich experience in designing FRESH or REPLICA of existing perfumes to perfection.
+            who has a rich experience in designing FRESH or A REPLICA of existing perfumes to perfection.
         </div>
     </div>
 
     <div class="accordion">
         <div class="accordion-header">Q2. What is the final Product Quality Category in our Perfumes?</div>
         <div class="accordion-body">
-            We only design <b>PARFUM</b> with the highest oil concentration (20%–30%) as per global quality standards 
+            We only design <b>PARFUM</b> with the highest oil concentration <b><span style="color: #58c733ff;">(20% – 30%)</span></b> as per global quality standards 
             for long-lasting fragrance and high modulation impact.
         </div>
     </div>
@@ -108,8 +110,8 @@ include('./config/db.php');
     <div class="accordion">
         <div class="accordion-header">Q3. Do we have specific bottles for each quantity?</div>
         <div class="accordion-body">
-            Yes, we offer all Perfumes / Attars / Essence Oils in <b>6ML, 12ML, 30ML, 50ML, and 100ML</b>. 
-            The quality remains premium across all, though bottle design may vary since we use only <b>Indian-made glass bottles</b>, 
+            Yes, we offer all Perfumes / Attars / Essence Oils in <b>6 ML, 12 ML, 30 ML, 50 ML, and 100 ML</b>. 
+            The quality remains premium across every product, although, the actual design, color, and shape of the bottle may vary, cause we use only <b>Indian-made glass bottles</b>, 
             not imported Chinese bottles.
         </div>
     </div>
@@ -119,7 +121,7 @@ include('./config/db.php');
         <div class="accordion-body">
             Our company is owned by <b>Mr. Atul Dev Arora</b>, who also runs the <b>RUDRAKSHAA WELFARE FOUNDATION</b>, 
             a Section 8 Non-Profit Organisation under the Ministry of Corporate Affairs, Govt. of India. 
-            ADAAROMAS is designed to <b>raise funds</b> for 15 philanthropic projects aligned with <b>UNSDG guidelines</b> 
+            ADAAROMAS is designed to <b>raise funds</b> for 15 <b>Philanthropic Projects</b> aligned with <b>UNSDG guidelines</b> 
             (<a href="https://www.rudraksha.org.in" target="_blank">www.rudraksha.org.in</a>).
         </div>
     </div>
@@ -127,17 +129,17 @@ include('./config/db.php');
     <div class="accordion">
         <div class="accordion-header">Q5. What are we contributing towards?</div>
         <div class="accordion-body">
-            The funds raised support <b>education, environmental protection, healthcare, food distribution, sports, 
-            animal care, women empowerment, spiritual programs, orphanages, old-age support, acid attack victim care, 
-            cremation of unclaimed bodies</b> and more, all approved by the Government and Courts of India.
+            The funds raised support <b>Education, Environmental Protection, Healthcare, Food Distribution, Sports, 
+            Animal Care, Women Empowerment, Spiritual Programs, Orphanages, Old-age Support, Acid Attack Victim Care, 
+            Cremation of Unclaimed Bodies</b> and more, all approved by the Government of India.
         </div>
     </div>
 
     <div class="accordion">
-        <div class="accordion-header">Q6. Are our revenue margins high compared to other brands?</div>
+        <div class="accordion-header">Q6. Are our revenue margins as high compared to other brands?</div>
         <div class="accordion-body">
             <b>No.</b> Our mission is to deliver <b>premium quality at the lowest possible cost</b>. 
-            A majority of revenue is reinvested into philanthropic projects after clearing all dues and taxes, 
+            A majority of revenue is reinvested into <b>Philanthropic Projects</b> after clearing all dues and taxes, 
             as per the Ministry of Corporate Affairs and the Court of Law.
         </div>
     </div>
