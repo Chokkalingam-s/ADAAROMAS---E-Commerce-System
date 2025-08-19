@@ -732,9 +732,9 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
   <!-- Disclaimer -->
-  <p class="product-disclaimer">
+  <!-- <p class="product-disclaimer">
     Disclaimer: The Actual Design of Bottle may Vary from the one shown.
-  </p>
+  </p> -->
 
 
   <!-- Rating Display Below Images -->
@@ -857,7 +857,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
     </h2>
     <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#productInfoAccordion">
       <div class="accordion-body">
-        Orders are shipped within <strong>24–48 hours</strong> and delivered in <strong>3-5 business days</strong>.
+        Orders are <strong>Shipped</strong> within <strong>24 Business Hours</strong>, and Expected to be <strong>Delivered</strong> within <strong>3-4 Working Days</strong>.
       </div>
     </div>
   </div>
