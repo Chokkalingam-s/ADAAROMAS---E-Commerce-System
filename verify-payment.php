@@ -112,7 +112,7 @@ try {
   $mail->addAddress($data['user']['email'], $data['user']['name']);  // ✅ Correct access
 
   $mail->isHTML(true);
-  $mail->Subject = 'Order Confirmation - ADA Aromas';
+  $mail->Subject = 'Order Confirmation - ADA AROMAS';
   
   $productList = '';
   foreach ($cart as $item) {
