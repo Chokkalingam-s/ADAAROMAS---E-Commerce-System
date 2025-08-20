@@ -70,6 +70,68 @@ foreach ($sizeData as $row) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
 
+    body {
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2, h4 {
+  font-weight: 600;
+  color: #343a40;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+canvas {
+  max-height: 350px !important;
+}
+
+.table {
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 0.9rem;
+}
+
+.table th {
+  background: #343a40;
+  color: #fff;
+  font-weight: 500;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+  border-radius: 20px;
+  padding: 5px 12px;
+  border: 1px solid #ced4da;
+}
+
+.dataTables_wrapper .dataTables_length select {
+  border-radius: 20px;
+  padding: 4px 8px;
+  border: 1px solid #ced4da;
+}
+
+@media (min-width: 992px) {
+  .row-charts {
+    display: flex;
+    gap: 20px;
+  }
+  .row-charts > div {
+    flex: 1;
+  }
+}
+
+
   </style>
 </head>
 <body>
@@ -93,70 +155,76 @@ foreach ($sizeData as $row) {
 </nav>
 
 <div class="container mt-4">
-  <h2 class="mb-4">Cancellation Survey</h2>
+  <h2 class="mb-4">📊 Cancellation Survey</h2>
 
-  <!-- Row for charts -->
-  <div class="row">
-    <div class="col-md-6">
+  <!-- Charts Row -->
+  <div class="row-charts mb-4">
+    <div class="card">
+      <h5 class="mb-3">Cancelled Products Share</h5>
       <canvas id="pieChart"></canvas>
     </div>
-    <div class="col-md-6">
+    <div class="card">
+      <h5 class="mb-3">Cancelled Products Count</h5>
       <canvas id="barChart"></canvas>
     </div>
   </div>
 
-<!-- Summary Table -->
-<h4 class="mt-5">Summary of Cancelled Products</h4>
-<table id="summaryTable" class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Product</th>
-      <th>Category</th>
-      <th>Total Cancelled</th>
-      <th>Available Sizes & Prices</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach($summaryData as $row): 
-      $key = $row['name'] . '|' . $row['category'];
-      $sizes = isset($productSizes[$key]) ? implode("<br>", $productSizes[$key]) : 'N/A';
-    ?>
-      <tr>
-        <td><?= htmlspecialchars($row['name']) ?></td>
-        <td><?= htmlspecialchars($row['category']) ?></td>
-        <td><?= $row['totalCancelled'] ?></td>
-        <td><?= $sizes ?></td>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>
-
+  <!-- Summary Table -->
+  <div class="card">
+    <h4>Summary of Cancelled Products</h4>
+    <table id="summaryTable" class="table table-bordered table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Total Cancelled</th>
+          <th>Available Sizes & Prices</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($summaryData as $row): 
+          $key = $row['name'] . '|' . $row['category'];
+          $sizes = isset($productSizes[$key]) ? implode("<br>", $productSizes[$key]) : 'N/A';
+        ?>
+          <tr>
+            <td><?= htmlspecialchars($row['name']) ?></td>
+            <td><?= htmlspecialchars($row['category']) ?></td>
+            <td><?= $row['totalCancelled'] ?></td>
+            <td><?= $sizes ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 
   <!-- Detailed Sizes Table -->
-  <h4 class="mt-5">Details by Size</h4>
-  <table id="detailTable" class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Category</th>
-        <th>Size</th>
-        <th>Cancelled Qty</th>
-        <th>ASP</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach($detailData as $row): ?>
+  <div class="card">
+    <h4>Details by Size</h4>
+    <table id="detailTable" class="table table-bordered table-striped mt-3">
+      <thead>
         <tr>
-          <td><?= htmlspecialchars($row['name']) ?></td>
-          <td><?= htmlspecialchars($row['category']) ?></td>
-          <td><?= $row['size'] ?></td>
-          <td><?= $row['qtyCancelled'] ?></td>
-          <td><?= number_format($row['asp'],2) ?></td>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Size</th>
+          <th>Cancelled Qty</th>
+          <th>ASP</th>
         </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <?php foreach($detailData as $row): ?>
+          <tr>
+            <td><?= htmlspecialchars($row['name']) ?></td>
+            <td><?= htmlspecialchars($row['category']) ?></td>
+            <td><?= $row['size'] ?> ML</td>
+            <td><?= $row['qtyCancelled'] ?></td>
+            <td>₹<?= number_format($row['asp'],2) ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 </div>
+
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
