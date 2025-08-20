@@ -82,6 +82,7 @@ foreach ($rows as &$row) {
       <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
       <li class="nav-item"><a class="nav-link" href="stats.php">Stats</a></li>
       <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
+      <li class="nav-item"><a class="nav-link" href="cancel.php">Cancellation Survey</a></li>
       <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
     </ul>
   </div>
