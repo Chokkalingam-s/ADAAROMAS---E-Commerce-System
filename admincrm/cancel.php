@@ -8,8 +8,7 @@ $sql_summary = "
   SELECT 
     p.name, 
     p.category, 
-    SUM(od.quantity) AS totalCancelled, 
-    AVG(p.asp) AS avgASP
+    SUM(od.quantity) AS totalCancelled
   FROM orders o
   JOIN order_details od ON o.orderId = od.orderId
   JOIN products p ON od.productId = p.productId
@@ -17,9 +16,20 @@ $sql_summary = "
   GROUP BY p.name, p.category
   ORDER BY totalCancelled DESC
 ";
-
 $stmt = $conn->query($sql_summary);
 $summaryData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$sql_sizes = "
+  SELECT 
+    p.name, 
+    p.category, 
+    ps.size, 
+    p.asp
+  FROM products p
+  JOIN product_stock ps ON ps.productId = p.productId
+";
+$stmt3 = $conn->query($sql_sizes);
+$sizeData = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+
 
 // === Fetch cancelled product details (sizes, asp etc.) ===
 $sql_details = "
@@ -39,6 +49,16 @@ $sql_details = "
 
 $stmt2 = $conn->query($sql_details);
 $detailData = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+$productSizes = [];
+foreach ($sizeData as $row) {
+  $key = $row['name'] . '|' . $row['category'];
+  if (!isset($productSizes[$key])) {
+    $productSizes[$key] = [];
+  }
+  $productSizes[$key][] = $row['size'] . " ML – ₹" . number_format($row['asp'],2);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -85,29 +105,32 @@ $detailData = $stmt2->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
 
-  <!-- Summary Table -->
-  <h4 class="mt-5">Summary of Cancelled Products</h4>
-  <table id="summaryTable" class="table table-bordered table-striped">
-    <thead>
+<!-- Summary Table -->
+<h4 class="mt-5">Summary of Cancelled Products</h4>
+<table id="summaryTable" class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Category</th>
+      <th>Total Cancelled</th>
+      <th>Available Sizes & Prices</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach($summaryData as $row): 
+      $key = $row['name'] . '|' . $row['category'];
+      $sizes = isset($productSizes[$key]) ? implode("<br>", $productSizes[$key]) : 'N/A';
+    ?>
       <tr>
-        <th>Product</th>
-        <th>Category</th>
-        <th>Total Cancelled</th>
-        <th>ASP</th>
+        <td><?= htmlspecialchars($row['name']) ?></td>
+        <td><?= htmlspecialchars($row['category']) ?></td>
+        <td><?= $row['totalCancelled'] ?></td>
+        <td><?= $sizes ?></td>
       </tr>
-    </thead>
-    <tbody>
-      <?php foreach($summaryData as $row): ?>
-        <tr>
-          <td><?= htmlspecialchars($row['name']) ?></td>
-          <td><?= htmlspecialchars($row['category']) ?></td>
-          <td><?= $row['totalCancelled'] ?></td>
-          <td><?= number_format($row['avgASP']) ?></td>
+    <?php endforeach; ?>
+  </tbody>
+</table>
 
-        </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
 
   <!-- Detailed Sizes Table -->
   <h4 class="mt-5">Details by Size</h4>
