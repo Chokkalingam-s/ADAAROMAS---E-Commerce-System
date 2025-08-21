@@ -56,7 +56,7 @@ foreach ($sizeData as $row) {
   if (!isset($productSizes[$key])) {
     $productSizes[$key] = [];
   }
-  $productSizes[$key][] = $row['size'] . " ML – ₹" . number_format($row['asp'],2);
+  $productSizes[$key][] = $row['size'] . " ML – ₹" . number_format($row['asp']);
 }
 
 ?>
@@ -217,7 +217,7 @@ canvas {
             <td><?= htmlspecialchars($row['category']) ?></td>
             <td><?= $row['size'] ?> ML</td>
             <td><?= $row['qtyCancelled'] ?></td>
-            <td>₹<?= number_format($row['asp'],2) ?></td>
+            <td>₹<?= number_format($row['asp']) ?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
