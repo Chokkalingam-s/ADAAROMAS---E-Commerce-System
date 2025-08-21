@@ -209,7 +209,7 @@ $mail->Body .= "
 
     <div style='margin-top:25px;text-align:center;'>
       <span style='font-size:18px;font-weight:bold;color:#e60073;animation:blinker 1.2s linear infinite;display:inline-block;'>
-        🎁 Product will be delivered with exciting FREEBIES & GIFTS! 🎁
+        🎁 Assured FREE GIFT with Your Order!🎁
       </span>
     </div>
 
