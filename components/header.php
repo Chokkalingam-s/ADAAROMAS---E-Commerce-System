@@ -806,7 +806,9 @@ body {
 <div id="navSidebar" class="nav-sidebar">
   <div class="nav-sidebar-header">
     <img src="/adaaromas/assets/adalogo.png" alt="ADA AROMAS Logo" style="width:42px; height: auto; border-radius: 50%;"> </img>
-    <div class="nav-sidebar-title">ADAAROMAS</div>
+    <div class="nav-sidebar-title">
+  <img src="/adaaromas/assets/adaname.png" alt="ADA AROMAS Logo" style="height:27px; width:auto;">
+</div>
     <button class="nav-close-btn" onclick="toggleNavSidebar()" aria-label="Close">
       <i class="bi bi-x-lg"></i>
     </button>
@@ -860,9 +862,10 @@ body {
 <!-- Professional Navbar -->
 <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
   <div class="container">
-    <a class="navbar-brand" href="/adaaromas/index.php">
-    <img src="/adaaromas/assets/adalogo.png" alt="ADA AROMAS Logo" style="width: 40px; height: auto; border-radius: 50%;"> </img>
-    ADAAROMAS</a>
+<a class="navbar-brand" href="/adaaromas/index.php">
+  <img src="/adaaromas/assets/adalogo.png" alt="ADA AROMAS Logo" style="width: 40px; height: auto; border-radius: 50%;">
+  <img src="/adaaromas/assets/adaname.png" alt="ADAAROMAS" style="height: 32px; width: auto; margin-left: 8px;">
+</a>
     
     <!-- Mobile Navigation Controls -->
     <div class="mobile-nav-controls">
