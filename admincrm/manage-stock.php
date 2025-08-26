@@ -55,11 +55,19 @@ foreach ($rows as &$row) {
       top: 0; left: 0;
       width: 100%; height: 100%;
     }
-    /* Highlight low stock rows */
-    .low-stock-row {
-      background-color: #f8d7da !important;
-    }
-  </style>
+/* Force low-stock rows to display light red even with .table-striped */
+.table.table-striped > tbody > tr.low-stock-row > td,
+.table.table-striped > tbody > tr.low-stock-row > th {
+  background-color: #f8d7da !important;     /* visible color */
+  --bs-table-accent-bg: #f8d7da !important;  /* override Bootstrap stripe var */
+}
+
+/* Optional: if you use .table-hover, keep red on hover too */
+.table.table-hover > tbody > tr.low-stock-row:hover > * {
+  background-color: #f5c2c7 !important;
+}
+
+</style>
 </head>
 <body class="bg-light">
 
@@ -108,13 +116,14 @@ foreach ($rows as &$row) {
         </thead>
         <tbody id="stockTableBody">
           <?php foreach ($rows as $r): ?>
-          <tr 
-            data-id="<?= $r['stockId'] ?>" 
-            data-name="<?= strtolower($r['name']) ?>" 
-            data-category="<?= strtolower($r['category']) ?>" 
-            data-stock="<?= $r['stockInHand'] ?>"
-            class="<?= ($r['stockInHand'] <= 3 ? 'low-stock-row' : '') ?>"
-          >
+<tr 
+  data-id="<?= $r['stockId'] ?>" 
+  data-name="<?= strtolower($r['name']) ?>" 
+  data-category="<?= strtolower($r['category']) ?>" 
+  data-stock="<?= $r['stockInHand'] ?>"
+  class="<?= ($r['stockInHand'] <= 3 ? 'low-stock-row' : '') ?>"
+>
+
             <td><img src="../<?= $r['image'] ?>" class="img-thumb"></td>
             <td><?= htmlspecialchars($r['name']) ?></td>
             <td><?= htmlspecialchars($r['size']) ?> ml</td>
