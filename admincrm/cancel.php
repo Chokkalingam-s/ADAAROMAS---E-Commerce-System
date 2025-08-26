@@ -198,7 +198,7 @@ canvas {
   </div>
 
   <!-- Detailed Sizes Table -->
-  <div class="card">
+  <!-- <div class="card">
     <h4>Details by Size</h4>
     <table id="detailTable" class="table table-bordered table-striped mt-3">
       <thead>
@@ -222,7 +222,7 @@ canvas {
         <?php endforeach; ?>
       </tbody>
     </table>
-  </div>
+  </div> -->
 </div>
 
 

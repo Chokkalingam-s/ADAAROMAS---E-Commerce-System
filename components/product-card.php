@@ -297,6 +297,14 @@
       // Detect if current page is inside products/ folder or not
       $prefix = (strpos($_SERVER['PHP_SELF'], '/products/') !== false) ? '' : 'products/';
       ?>
+
+      <?php
+// Fetch product info at the top (before rendering the HTML card)
+$infoStmt = $conn->prepare("SELECT name, category FROM products WHERE productId = ?");
+$infoStmt->execute([$productId]);
+$prodInfo = $infoStmt->fetch(PDO::FETCH_ASSOC);
+?>
+
       
 <a href="<?= $prefix ?>product.php?id=<?= $productId ?>">
   <div class="product-image-wrapper">
