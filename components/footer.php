@@ -88,41 +88,24 @@ function addToCart(product) {
   const essenceItems = getEssenceOilItems(cart);
   const index = cart.findIndex(p => p.title === product.title);
 
-  if (isEssenceOil(product)) {
+if (isEssenceOil(product)) {
     if (index !== -1) {
-      // If already in cart
-      if (essenceItems.length === 1) {
-        // Only one EO in cart → must stay ≥ 3
-        if (cart[index].quantity < 3) cart[index].quantity = 3;
-        else cart[index].quantity += 1;
-      } else {
-        // Two EO products in cart → max 1 for this one
-        if (cart[index].quantity >= 1) {
-          alert("❌ Second Essence Oil cannot exceed 1 unit.");
-        } else {
-          cart[index].quantity = 1;
-        }
-      }
+        // EO already in cart → increment quantity
+        cart[index].quantity += 1;
     } else {
-      // New Essence Oil product being added
-      if (essenceItems.length === 0) {
-        // First EO product → add 3
-        cart.push({ ...product, quantity: 3 });
-      } else if (essenceItems.length === 1) {
-        // Second EO product → only 1
-        cart.push({ ...product, quantity: 1 });
-      } else {
-        alert("❌ You cannot add more than 2 different Essence Oils.");
-      }
+        // New EO product being added
+        const quantity = (essenceItems.length === 0) ? 3 : 1; // First EO → 3, others → 1
+        cart.push({ ...product, quantity });
     }
-  } else {
+} else {
     // Normal products (no restrictions)
     if (index !== -1) {
-      cart[index].quantity += 1;
+        cart[index].quantity += 1;
     } else {
-      cart.push({ ...product, quantity: 1 });
+        cart.push({ ...product, quantity: 1 });
     }
-  }
+}
+
 
   saveCart(cart);
   renderCart();
