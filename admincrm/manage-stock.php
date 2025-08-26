@@ -1,4 +1,4 @@
-<?php
+<?php 
 include('../config/db.php');
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
@@ -21,7 +21,6 @@ foreach ($rows as &$row) {
     $row['stockInHand'] = intval($row['stockInHand']);
     $row['damagestock'] = intval($row['damagestock']);
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,56 +36,51 @@ foreach ($rows as &$row) {
       .hide-mobile { display:none!important; }
     }
     .editable-margin {
-  position: relative;
-  height: 38px;
-}
-
-.editable-margin input,
-.editable-margin select {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.editable-display-margin {
-  position: relative;
-  height: 38px;
-}
-
-.editable-display-margin input,
-.editable-display-margin select {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-
+      position: relative;
+      height: 38px;
+    }
+    .editable-margin input,
+    .editable-margin select {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .editable-display-margin {
+      position: relative;
+      height: 38px;
+    }
+    .editable-display-margin input,
+    .editable-display-margin select {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    /* Highlight low stock rows */
+    .low-stock-row {
+      background-color: #f8d7da !important;
+    }
   </style>
 </head>
 <body class="bg-light">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-  <a class="navbar-brand" href="../admincrm">ADA AROMAS Admin</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="adminNav">
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item"><a class="nav-link " href="add-product.php">Add Product</a></li>
-      <li class="nav-item"><a class="nav-link active" href="manage-stock.php">Manage Stock</a></li>
-      <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
-      <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
-      <li class="nav-item"><a class="nav-link" href="stats.php">Stats</a></li>
-      <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
-      <li class="nav-item"><a class="nav-link" href="cancel.php">Cancellation Survey</a></li>
-      <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
-    </ul>
-  </div>
-</nav>
+      <a class="navbar-brand" href="../admincrm">ADA AROMAS Admin</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="adminNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link " href="add-product.php">Add Product</a></li>
+          <li class="nav-item"><a class="nav-link active" href="manage-stock.php">Manage Stock</a></li>
+          <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
+          <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="stats.php">Stats</a></li>
+          <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
+          <li class="nav-item"><a class="nav-link" href="cancel.php">Cancellation Survey</a></li>
+          <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
   
   <div class="container-fluid mt-4 text-center">
     <h3>Manage Stock & Inventory</h3>
@@ -99,7 +93,11 @@ foreach ($rows as &$row) {
           <option>Essence Oil</option><option>Diffuser</option>
         </select>
       </div>
+      <div class="col-md-2">
+        <button id="lowStockBtn" class="btn btn-warning w-100">Low Stock Products</button>
+      </div>
     </div>
+
     <div class="table-responsive">
       <table class="table table-striped table-bordered align-middle">
         <thead class="table-light">
@@ -110,7 +108,13 @@ foreach ($rows as &$row) {
         </thead>
         <tbody id="stockTableBody">
           <?php foreach ($rows as $r): ?>
-          <tr data-id="<?= $r['stockId'] ?>" data-name="<?= strtolower($r['name']) ?>" data-category="<?= strtolower($r['category']) ?>">
+          <tr 
+            data-id="<?= $r['stockId'] ?>" 
+            data-name="<?= strtolower($r['name']) ?>" 
+            data-category="<?= strtolower($r['category']) ?>" 
+            data-stock="<?= $r['stockInHand'] ?>"
+            class="<?= ($r['stockInHand'] <= 3 ? 'low-stock-row' : '') ?>"
+          >
             <td><img src="../<?= $r['image'] ?>" class="img-thumb"></td>
             <td><?= htmlspecialchars($r['name']) ?></td>
             <td><?= htmlspecialchars($r['size']) ?> ml</td>
@@ -118,28 +122,29 @@ foreach ($rows as &$row) {
             <td><input type="number" class="form-control form-control-sm costPrice" value="<?= $r['costPrice'] ?>"></td>
             <td><input type="text" class="form-control form-control-sm msp" value="<?= $r['msp'] ?>" readonly></td>
             <td>
-                <div class="editable-margin" style="position: relative; height: 38px;">
-                    <input type="text" class="form-control form-control-sm margin" value="<?= $r['margin'] ?>" readonly style="position:absolute; top:0; left:0; width:100%; height:100%;">
-                    <select class="form-select form-select-sm margin-select d-none" style="position:absolute; top:0; left:0; width:100%; height:100%;">
-                    <option value="200">200</option>
-                    <option value="300">300</option>
-                    <option value="400">400</option>
-                    <option value="500">500</option>
+                <div class="editable-margin">
+                    <input type="text" class="form-control form-control-sm margin" value="<?= $r['margin'] ?>" readonly>
+                    <select class="form-select form-select-sm margin-select d-none">
+                      <option value="200">200</option>
+                      <option value="300">300</option>
+                      <option value="400">400</option>
+                      <option value="500">500</option>
                     </select>
                 </div>
-                </td>
+            </td>
             <td><input type="text" class="form-control form-control-sm asp" value="<?= $r['asp'] ?>" readonly></td>
             <td>
-  <div class="editable-display-margin" style="position: relative; height: 38px;">
-    <input type="text" class="form-control form-control-sm displayMargin" value="<?= round((($r['mrp'] - $r['asp']) / $r['asp']) * 100 / 5) * 5 ?>" readonly style="position:absolute; top:0; left:0; width:100%; height:100%;">
-    <select class="form-select form-select-sm displayMargin-select d-none" style="position:absolute; top:0; left:0; width:100%; height:100%;">
-      <?php for($i=40; $i<=75; $i+=5): ?>
-        <option value="<?= $i ?>"><?= $i ?></option>
-      <?php endfor; ?>
-    </select>
-  </div>
-</td>
-<td><input type="text" class="form-control form-control-sm mrp" value="<?= $r['mrp'] ?>" readonly></td>
+              <div class="editable-display-margin">
+                <input type="text" class="form-control form-control-sm displayMargin" 
+                       value="<?= round((($r['mrp'] - $r['asp']) / $r['asp']) * 100 / 5) * 5 ?>" readonly>
+                <select class="form-select form-select-sm displayMargin-select d-none">
+                  <?php for($i=40; $i<=75; $i+=5): ?>
+                    <option value="<?= $i ?>"><?= $i ?></option>
+                  <?php endfor; ?>
+                </select>
+              </div>
+            </td>
+            <td><input type="text" class="form-control form-control-sm mrp" value="<?= $r['mrp'] ?>" readonly></td>
             <td><input type="text" class="form-control form-control-sm revenue" value="<?= $r['revenue'] ?>" readonly></td>
             <td><input type="number" class="form-control form-control-sm stockInHand" value="<?= $r['stockInHand'] ?>"></td>
             <td><input type="number" class="form-control form-control-sm damagestock" value="<?= $r['damagestock'] ?>"></td>
@@ -380,8 +385,35 @@ document.querySelectorAll('.editable-margin').forEach(container => {
   });
 });
 
+function filterTable() {
+  const term = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.getElementById('filterCategory').value.toLowerCase();
+  document.querySelectorAll('#stockTableBody tr').forEach(tr => {
+    const name = tr.dataset.name;
+    const category = tr.dataset.category;
+    tr.style.display = (name.includes(term) && (cat === "" || category === cat)) ? '' : 'none';
+  });
+}
+document.getElementById('searchInput').addEventListener('input', filterTable);
+document.getElementById('filterCategory').addEventListener('change', filterTable);
 
-
+// New: Low stock button filter
+let lowStockMode = false;
+document.getElementById('lowStockBtn').addEventListener('click', () => {
+  lowStockMode = !lowStockMode;
+  document.getElementById('lowStockBtn').classList.toggle('btn-danger', lowStockMode);
+  document.getElementById('lowStockBtn').classList.toggle('btn-warning', !lowStockMode);
+  document.getElementById('lowStockBtn').innerText = lowStockMode ? "Show All Products" : "Low Stock Products";
+  
+  document.querySelectorAll('#stockTableBody tr').forEach(tr => {
+    const stock = parseInt(tr.dataset.stock);
+    if (lowStockMode) {
+      tr.style.display = (stock <= 3) ? '' : 'none';
+    } else {
+      tr.style.display = '';
+    }
+  });
+});
 </script>
 
 </body>
