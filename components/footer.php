@@ -384,7 +384,7 @@ function updateCheckoutQuantityEncoded(encodedTitle, change) {
     const totalAfter = eoItems.reduce((s, it) => s + it.quantity, 0);
     const moreThanOneCount = eoItems.filter(it => it.quantity > 1).length;
 
-    if (eoItems.length === 1 && eoItems[0].quantity < 3) {
+    if (eoItems.length === 1 && eoItems[0].quantity < 3 ) {
       alert("❌ Minimum 3 units required for Essence Oil.");
       item.quantity = Math.max(item.quantity, 3);
     } else {
@@ -414,7 +414,7 @@ function removeFromCheckoutEncoded(encodedTitle) {
   if (isEssenceOil(item)) {
     const remaining = cart.filter(p => p.title !== title);
     const remainingEOCount = getEssenceOilItems(remaining).reduce((s, i) => s + i.quantity, 0);
-    if (remainingEOCount < 3) {
+    if (remainingEOCount < 3 && remainingEOCount > 0) {
       alert("❌ Cannot remove this Essence Oil — minimum 3 Essence Oil units are required across the cart.");
       return;
     }
