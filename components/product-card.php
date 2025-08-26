@@ -319,7 +319,8 @@
               size: "<?= $size ?>",
               price: <?= $price ?>,
               mrp: <?= $mrp ?>,
-              image: "<?= $absImage ?>"
+              image: "<?= $absImage ?>",
+              category: "<?= addslashes($prodInfo['category']) ?>" 
             })'>
             + Add to cart
           </button>

@@ -75,14 +75,55 @@ function saveCart(cart) {
   updateCartCount();
 }
 
+// Helper: detect essence oil
+function isEssenceOil(product) {
+  return product.category && product.category.toLowerCase() === "essence oil";
+}
+function getEssenceOilItems(cart) {
+  return cart.filter(p => isEssenceOil(p));
+}
+
 function addToCart(product) {
   const cart = getCart();
+  const essenceItems = getEssenceOilItems(cart);
   const index = cart.findIndex(p => p.title === product.title);
-  if (index !== -1) {
-    cart[index].quantity += 1;
+
+  if (isEssenceOil(product)) {
+    if (index !== -1) {
+      // If already in cart
+      if (essenceItems.length === 1) {
+        // Only one EO in cart → must stay ≥ 3
+        if (cart[index].quantity < 3) cart[index].quantity = 3;
+        else cart[index].quantity += 1;
+      } else {
+        // Two EO products in cart → max 1 for this one
+        if (cart[index].quantity >= 1) {
+          alert("❌ Second Essence Oil cannot exceed 1 unit.");
+        } else {
+          cart[index].quantity = 1;
+        }
+      }
+    } else {
+      // New Essence Oil product being added
+      if (essenceItems.length === 0) {
+        // First EO product → add 3
+        cart.push({ ...product, quantity: 3 });
+      } else if (essenceItems.length === 1) {
+        // Second EO product → only 1
+        cart.push({ ...product, quantity: 1 });
+      } else {
+        alert("❌ You cannot add more than 2 different Essence Oils.");
+      }
+    }
   } else {
-    cart.push({ ...product, quantity: 1 });
+    // Normal products (no restrictions)
+    if (index !== -1) {
+      cart[index].quantity += 1;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
   }
+
   saveCart(cart);
   renderCart();
 }
@@ -97,8 +138,32 @@ function updateQuantity(title, change) {
   const cart = getCart();
   const item = cart.find(p => p.title === title);
   if (!item) return;
+
+  const essenceItems = getEssenceOilItems(cart);
   item.quantity += change;
-  if (item.quantity < 1) item.quantity = 1;
+
+  if (isEssenceOil(item)) {
+    if (essenceItems.length === 1) {
+      // Only one EO product → must stay ≥ 3
+      if (item.quantity < 3) {
+        alert("❌ Minimum 3 units required for this Essence Oil.");
+        item.quantity = 3;
+      }
+    } else if (essenceItems.length === 2) {
+      // Two EO products → total must be ≥ 3
+      const totalEO = essenceItems.reduce((sum, p) => sum + (p.title === item.title ? item.quantity : p.quantity), 0);
+      if (totalEO < 3) {
+        alert("❌ Minimum 3 units of Essence Oil required across both.");
+        item.quantity -= change;
+      }
+      // Second EO cannot exceed 1
+      const otherEO = essenceItems.find(p => p.title !== item.title);
+
+    }
+  } else {
+    if (item.quantity < 1) item.quantity = 1;
+  }
+
   saveCart(cart);
   renderCart();
 }
@@ -158,7 +223,6 @@ function renderCart() {
     container.appendChild(itemDiv);
   });
 
- 
   totalSpan.textContent = `₹${total.toLocaleString()}`;
 }
 
@@ -170,12 +234,13 @@ function renderRecommendations() {
   }
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
   renderRecommendations();
 });
 </script>
+
+
 
 <!--Enable Payment button script -->
 <script>
@@ -212,11 +277,10 @@ let discountedTotal = 0;
 let appliedCoupon = null;
 
 function renderCheckoutOrder() {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const cart = getCart();
   const summary = document.getElementById("checkoutOrderSummary");
   const totalPriceDisplay = document.getElementById("totalPrice");
   const discountInfo = document.getElementById("discountInfo");
-  
   if (!summary) return;
 
   if (cart.length === 0) {
@@ -226,53 +290,46 @@ function renderCheckoutOrder() {
         <p class="text-muted">No items in cart.</p>
         <small>Add some beautiful fragrances to continue</small>
       </div>`;
-    totalPriceDisplay.innerText = "0";
-    discountInfo.style.display = "none";
+    if (totalPriceDisplay) totalPriceDisplay.innerText = "0";
+    if (discountInfo) discountInfo.style.display = "none";
     return;
   }
 
   let total = 0;
   let savings = 0;
-  
+
   const itemsHtml = cart.map(p => {
     total += p.price * p.quantity;
-    savings += (p.mrp - p.price) * p.quantity;
-    
+    savings += ( (p.mrp||0) - (p.price||0) ) * p.quantity;
+    const safeTitle = encodeURIComponent(p.title);
+    const sizeText = (p.size && !isNaN(p.size)) ? p.size + " ml" : (p.size ? p.size : "");
     return `
       <div class='order-item'>
         <div class="d-flex align-items-start">
           <div class="product-image-placeholder">
-            <img src="${p.image}" alt="${p.title}">
+            <img src="${p.image || ''}" alt="${p.title}">
           </div>
           <div class="flex-grow-1">
             <div class="d-flex justify-content-between align-items-start">
               <div>
                 <strong style="color: var(--deep-purple);">
-  ${p.title}
-  ${
-    (p.size > 1)
-      ? `<span class="ms-2 text-muted small">${p.size} ml</span>`
-      : (p.size ? `<span class="ms-2 text-muted small">${p.size}</span>` : "")
-  }
-</strong>
-                <div class="quantity-controls">
-                  <button class="quantity-btn" onclick="updateCheckoutQuantity('${p.title}', -1)">-</button>
+                  ${p.title} ${sizeText ? `<span class="ms-2 text-muted small">${sizeText}</span>` : ""}
+                </strong>
+                <div class="quantity-controls" style="margin-top:6px;">
+                  <button class="quantity-btn" onclick="updateCheckoutQuantityEncoded('${safeTitle}', -1)">-</button>
                   <span class="mx-2 fw-bold">${p.quantity}</span>
-                  <button class="quantity-btn" onclick="updateCheckoutQuantity('${p.title}', 1)">+</button>
+                  <button class="quantity-btn" onclick="updateCheckoutQuantityEncoded('${safeTitle}', 1)">+</button>
                 </div>
                 <div class="mt-1">
                   <small class="text-muted">
-                    <s class="text-danger">₹${p.mrp}</s> 
+                    ${p.mrp ? `<s class="text-danger">₹${p.mrp}</s>` : ""} 
                     <span class="text-success fw-bold">₹${p.price}</span>
                   </small>
                 </div>
               </div>
               <div class="text-end">
                 <div class="fw-bold" style="color: var(--deep-purple);">₹${p.price * p.quantity}</div>
-      
-             <button class="btn btn-sm btn-outline-danger mt-5" onclick="removeFromCheckout('${p.title}')">
-              Skip x
-            </button>
+                <button class="btn btn-sm btn-outline-danger mt-3" onclick="removeFromCheckoutEncoded('${safeTitle}')">Skip x</button>
               </div>
             </div>
           </div>
@@ -280,67 +337,104 @@ function renderCheckoutOrder() {
       </div>`;
   }).join("");
 
-  let gst = Math.round(total * 0.18);
-let grandTotal = total + gst;
+  const gst = Math.round(total * 0.18);
+  const grandTotal = total + gst;
 
-
-summary.innerHTML = itemsHtml + `
-  <div class="order-total mt-3">
-    <div class="total-row">
-      <span>Subtotal:</span>
-      <span>₹${total}</span>
+  summary.innerHTML = itemsHtml + `
+    <div class="order-total mt-3">
+      <div class="total-row">
+        <span>Subtotal:</span>
+        <span>₹${total}</span>
+      </div>
+      <div class="total-row savings-text">
+        <span>Total Savings:</span>
+        <span>₹${savings}</span>
+      </div>
+      <div class="total-row">
+        <span>GST (18%):</span>
+        <span>₹${gst}</span>
+      </div>
+      <div class="total-row final-amount">
+        <strong>Total:</strong>
+        <strong>₹${grandTotal}</strong>
+      </div>
     </div>
-    <div class="total-row savings-text">
-      <span>Total Savings:</span>
-      <span>₹${savings}</span>
-    </div>
-    <div class="total-row">
-      <span>GST (18%):</span>
-      <span>₹${gst}</span>
-    </div>
-    <div class="total-row final-amount">
-      <strong>Total:</strong>
-      <strong>₹${grandTotal}</strong>
-    </div>
-  </div>
-`;
+  `;
 
+  cartTotal = grandTotal;
+  discountedTotal = grandTotal;
 
-cartTotal = grandTotal;
-discountedTotal = grandTotal;
-
-  
-  // If coupon is already applied, re-apply
   if (appliedCoupon) applyDiscount(appliedCoupon);
-  else totalPriceDisplay.innerText = cartTotal;
+  else if (totalPriceDisplay) totalPriceDisplay.innerText = cartTotal;
 }
 
-function updateCheckoutQuantity(title, change) {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+/* Update quantity from checkout */
+function updateCheckoutQuantityEncoded(encodedTitle, change) {
+  const title = decodeURIComponent(encodedTitle);
+  const cart = getCart();
   const item = cart.find(p => p.title === title);
   if (!item) return;
 
   item.quantity += change;
   if (item.quantity < 1) item.quantity = 1;
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+  // Validate EO rules (same logic as cart)
+  if (isEssenceOil(item)) {
+    const eoItems = getEssenceOilItems(cart);
+    const totalAfter = eoItems.reduce((s, it) => s + it.quantity, 0);
+    const moreThanOneCount = eoItems.filter(it => it.quantity > 1).length;
+
+    if (eoItems.length === 1 && eoItems[0].quantity < 3) {
+      alert("❌ Minimum 3 units required for Essence Oil.");
+      item.quantity = Math.max(item.quantity, 3);
+    } else {
+      if (moreThanOneCount > 1) {
+
+      } else if (totalAfter < 3) {
+        alert("❌ Combined Essence Oil quantity must be at least 3.");
+        item.quantity -= change; // rollback
+        if (item.quantity < 1) item.quantity = 1;
+      }
+    }
+  }
+
+  saveCart(cart);
   renderCheckoutOrder();
-  if (typeof renderCart === 'function') renderCart();
+  renderCart();
   window.dispatchEvent(new Event("storage"));
 }
 
-function removeFromCheckout(title) {
-  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+/* Remove from checkout (with EO checks) */
+function removeFromCheckoutEncoded(encodedTitle) {
+  const title = decodeURIComponent(encodedTitle);
+  let cart = getCart();
+  const item = cart.find(p => p.title === title);
+  if (!item) return;
+
+  if (isEssenceOil(item)) {
+    const remaining = cart.filter(p => p.title !== title);
+    const remainingEOCount = getEssenceOilItems(remaining).reduce((s, i) => s + i.quantity, 0);
+    if (remainingEOCount < 3) {
+      alert("❌ Cannot remove this Essence Oil — minimum 3 Essence Oil units are required across the cart.");
+      return;
+    }
+  }
+
   cart = cart.filter(p => p.title !== title);
-  localStorage.setItem("cart", JSON.stringify(cart));
+  saveCart(cart);
   renderCheckoutOrder();
-  if (typeof renderCart === 'function') renderCart();
+  renderCart();
   window.dispatchEvent(new Event("storage"));
 }
 
+/* --- Storage listener so pages sync --- */
 window.addEventListener("storage", function (e) {
-  if (e.key === "cart") renderCheckoutOrder();
+  if (e.key === "cart") {
+    renderCart();
+    renderCheckoutOrder();
+  }
 });
+
 
 async function requestCoupon(e) {
   e.preventDefault();
@@ -600,7 +694,6 @@ if (verifyResp.success && verifyResp.orderId) {
 
 });
 </script>
-
 
 </body>
 </html>
