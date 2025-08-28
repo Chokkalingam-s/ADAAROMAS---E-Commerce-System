@@ -38,10 +38,14 @@
               <input type="email" name="email" class="form-control" placeholder="Email" required>
             </div>
             <div class="col-md-6">
-              <input type="text" name="state" class="form-control" placeholder="State" required>
+              <select id="state" name="state" class="form-control" required>
+                <option value="">Select State</option>
+              </select>
             </div>
             <div class="col-md-6">
-              <input type="text" name="district" class="form-control" placeholder="District" required>
+              <select id="district" name="district" class="form-control" required>
+                <option value="">Select District</option>
+              </select>
             </div>
             <div class="col-md-6">
               <input type="text" name="address1" class="form-control" placeholder="House No, Street, Area" required>
@@ -75,6 +79,47 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  let stateSelect = document.getElementById("state");
+  let districtSelect = document.getElementById("district");
+
+  // Load JSON dynamically
+  fetch("/adaaromas/state.json") // <-- adjust path if different
+    .then(response => response.json())
+    .then(data => {
+      let states = data.states;
+
+      // Populate states
+      states.forEach(s => {
+        let option = document.createElement("option");
+        option.value = s.state;
+        option.textContent = s.state;
+        stateSelect.appendChild(option);
+      });
+
+      // On state change, populate districts
+      stateSelect.addEventListener("change", function() {
+        let selectedState = this.value;
+        districtSelect.innerHTML = '<option value="">Select District</option>'; // Reset
+
+        if (selectedState) {
+          let selectedStateObj = states.find(s => s.state === selectedState);
+          if (selectedStateObj) {
+            selectedStateObj.districts.forEach(d => {
+              let option = document.createElement("option");
+              option.value = d;
+              option.textContent = d;
+              districtSelect.appendChild(option);
+            });
+          }
+        }
+      });
+    })
+    .catch(err => console.error("Failed to load states.json", err));
+});
+</script>
+
 <script>
   let adminMode = null;
 
