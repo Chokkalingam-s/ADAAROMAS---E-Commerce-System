@@ -924,11 +924,12 @@ body {
           </a>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'customize.php' ? 'active' : '' ?>" href="/adaaromas/customize.php">
-            Customize
-          </a>
-        </li>
+<li class="nav-item">
+  <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#customizeModal">
+    Customize
+  </a>
+</li>
+
         
         <li class="nav-item">
           <a class="nav-link cart-icon-wrapper" href="javascript:void(0)" onclick="toggleCartSidebar()">

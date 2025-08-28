@@ -1,4 +1,71 @@
 </div>
+
+<!-- Customize Modal -->
+<div class="modal fade" id="customizeModal" tabindex="-1" aria-labelledby="customizeLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <form id="customizeForm" enctype="multipart/form-data" method="POST" action="customize.php">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="customizeLabel">Customize Your Perfume Order</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Need Description -->
+          <div class="mb-3">
+            <label class="form-label">Elaborate Your Need</label>
+            <textarea class="form-control" name="description" rows="4" maxlength="300" placeholder="Describe your custom perfume needs..."></textarea>
+          </div>
+
+          <!-- Upload Image -->
+          <div class="mb-3">
+            <label class="form-label">Reference Image (Optional)</label>
+            <input type="file" class="form-control" name="image" accept="image/*">
+          </div>
+
+          <!-- User Details -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <input type="text" name="firstName" class="form-control" placeholder="First Name" required>
+            </div>
+            <div class="col-md-6">
+              <input type="text" name="lastName" class="form-control" placeholder="Last Name" required>
+            </div>
+            <div class="col-md-6">
+              <input type="text" name="phoneNo" class="form-control" placeholder="Phone (10 digits)" pattern="\d{10}" required>
+            </div>
+            <div class="col-md-6">
+              <input type="email" name="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="col-md-6">
+              <input type="text" name="state" class="form-control" placeholder="State" required>
+            </div>
+            <div class="col-md-6">
+              <input type="text" name="district" class="form-control" placeholder="District" required>
+            </div>
+            <div class="col-md-6">
+              <input type="text" name="address1" class="form-control" placeholder="House No, Street, Area" required>
+            </div>
+            <div class="col-md-6">
+              <input type="text" name="address2" class="form-control" placeholder="Apartment, Landmark (Optional)">
+            </div>
+            <div class="col-md-4">
+              <input type="text" name="city" class="form-control" placeholder="City" required>
+            </div>
+            <div class="col-md-4">
+              <input type="text" name="pincode" class="form-control" placeholder="Pincode" pattern="\d{6}" required>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-dark w-100">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer class="bg-dark text-light text-center py-3" style="">
   <p class="mb-0">© <?= date('Y') ?>  ADAAROMAS. All Rights Reserved.</p>
