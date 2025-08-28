@@ -127,3 +127,18 @@ ALTER TABLE orders
 ADD cancelCode TEXT;
 
 
+-- Add isCustomized column to orders
+ALTER TABLE orders 
+ADD COLUMN isCustomized TINYINT(1) DEFAULT 0;
+
+-- Create customize table
+CREATE TABLE customize (
+  customizeId INT AUTO_INCREMENT PRIMARY KEY,
+  orderId INT NOT NULL,
+  description TEXT,
+  imageUrl VARCHAR(255),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (orderId) REFERENCES orders(orderId) ON DELETE CASCADE
+);
+
+
