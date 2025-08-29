@@ -76,6 +76,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
       <li class="nav-item"><a class="nav-link" href="manage-stock.php">Manage Stock</a></li>
       <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
       <li class="nav-item"><a class="nav-link active" href="orders.php">Orders</a></li>
+      <li class="nav-item"><a class="nav-link" href="customize-orders.php">Customize Orders</a></li>
       <li class="nav-item"><a class="nav-link" href="stats.php">Stats</a></li>
       <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
       <li class="nav-item"><a class="nav-link" href="cancel.php">Cancellation Survey</a></li>
