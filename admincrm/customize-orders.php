@@ -106,16 +106,20 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Right: User Details in tabular format -->
     <div class="col-md-6">
       <table class="table table-sm table-bordered">
-        <tbody>
-          <tr><th>Name</th><td><?= $user['name'] ?></td></tr>
-          <tr><th>Phone No</th><td><?= $user['phoneNo'] ?></td></tr>
-          <tr><th>Email</th><td><?= $user['email'] ?></td></tr>
-          <tr><th>State</th><td><?= $user['state'] ?></td></tr>
-          <tr><th>District</th><td><?= $user['district'] ?></td></tr>
-          <tr><th>City</th><td><?= $user['city'] ?></td></tr>
-          <tr><th>Pincode</th><td><?= $user['pincode'] ?></td></tr>
-          <tr><th>Address</th><td><?= $user['address'] ?></td></tr>
-        </tbody>
+<tbody>
+  <tr><th>Name</th><td colspan="3"><?= $user['name'] ?></td></tr>
+  <tr><th>Phone</th><td colspan="3"><?= $user['phoneNo'] ?></td></tr>
+  <tr><th>Email</th><td colspan="3"><?= $user['email'] ?></td></tr>
+  <tr>
+    <th>State</th><td><?= $user['state'] ?></td>
+    <th>District</th><td><?= $user['district'] ?></td>
+  </tr>
+  <tr>
+    <th>City</th><td><?= $user['city'] ?></td>
+    <th>Pincode</th><td><?= $user['pincode'] ?></td>
+  </tr>
+  <tr><th>Address</th><td colspan="3"><?= $user['address'] ?></td></tr>
+</tbody>
       </table>
     </div>
   </div>
