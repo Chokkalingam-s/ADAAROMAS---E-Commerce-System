@@ -79,6 +79,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/main.js"></script>
+
+<!-- State Json -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   let stateSelect = document.getElementById("state");
@@ -120,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+<!-- Admin Mode Script -->
 <script>
   let adminMode = null;
 
@@ -649,8 +652,6 @@ function applyDiscount(coupon) {
 <!-- razorpay script -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-
-
 
 document.getElementById('rzp-button1').onclick = async function(e){
   e.preventDefault();
