@@ -32,6 +32,18 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     .user-details p { margin:0; padding:2px 0; }
     .save-btn { margin-top:10px; }
+
+    /* Billing row responsive */
+@media (max-width: 767px) {
+  .billing-form .row > .col-md {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .billing-form .remarks {
+    margin-top: 10px;
+  }
+}
+
   </style>
 </head>
 <body class="bg-light">
@@ -79,34 +91,60 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <!-- body -->
-        <div class="order-body">
-          <h6>Customize Request</h6>
-          <p><?= htmlspecialchars($custom['description']) ?></p>
-          <?php if($custom['imageUrl']): ?>
-            <img src="<?= $custom['imageUrl'] ?>" class="img-fluid rounded mb-3" style="max-width:250px">
-          <?php endif; ?>
+<!-- body -->
+<div class="order-body">
+  <h6>Customize Request & User Details</h6>
+  <div class="row">
+    <!-- Left: Description + Image -->
+    <div class="col-md-6">
+      <p><?= htmlspecialchars($custom['description']) ?></p>
+<?php if($custom['imageUrl']): ?>
+  <img src="/adaaromas/<?= ltrim($custom['imageUrl'], '/') ?>" class="img-fluid rounded mb-3" style="max-width:250px">
+<?php endif; ?>
+    </div>
 
-          <h6>User Details</h6>
-          <div class="user-details mb-3">
-            <p><strong>Name:</strong> <?= $user['name'] ?></p>
-            <p><strong>Phone:</strong> <?= $user['phoneNo'] ?> &nbsp;|&nbsp;<strong>Email:</strong> <?= $user['email'] ?></p>
-            <p><strong>State:</strong> <?= $user['state'] ?> &nbsp; | <strong>District:</strong> <?= $user['district'] ?> &nbsp;</p>
-            <p><strong>City:</strong> <?= $user['city'] ?> &nbsp; | <strong>Pincode:</strong> <?= $user['pincode'] ?></p>
-            <p><strong>Address:</strong> <?= $user['address'] ?></p>
-          </div>
+    <!-- Right: User Details in tabular format -->
+    <div class="col-md-6">
+      <table class="table table-sm table-bordered">
+        <tbody>
+          <tr><th>Name</th><td><?= $user['name'] ?></td></tr>
+          <tr><th>Phone No</th><td><?= $user['phoneNo'] ?></td></tr>
+          <tr><th>Email</th><td><?= $user['email'] ?></td></tr>
+          <tr><th>State</th><td><?= $user['state'] ?></td></tr>
+          <tr><th>District</th><td><?= $user['district'] ?></td></tr>
+          <tr><th>City</th><td><?= $user['city'] ?></td></tr>
+          <tr><th>Pincode</th><td><?= $user['pincode'] ?></td></tr>
+          <tr><th>Address</th><td><?= $user['address'] ?></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-          <h6>Billing Details</h6>
-          <form class="billing-form" data-id="<?= $order['orderId'] ?>">
-            <div class="billing-inputs">
-              <input type="number" class="form-control asp" name="TotalASP" placeholder="Total ASP" value="<?= $order['TotalASP'] ?>">
-              <input type="number" class="form-control gst" name="GST" placeholder="GST (18%)" value="<?= $order['GST'] ?>" readonly>
-              <input type="number" step="0.01" class="form-control billing" name="billingAmount" placeholder="Billing Amount" value="<?= $order['billingAmount'] ?>">
-              <input type="number" class="form-control profit" name="PROFIT" placeholder="Profit" value="<?= $order['PROFIT'] ?>">
-            </div>
-            <textarea class="form-control mt-2 remarks" name="remarks" placeholder="Remarks"><?= $order['remarks'] ?></textarea>
-            <button type="submit" class="btn btn-success btn-sm save-btn">Save Billing Details</button>
-          </form>
-        </div>
+  <h6>Billing Details</h6>
+  <form class="billing-form" data-id="<?= $order['orderId'] ?>">
+    <div class="row g-2 align-items-center">
+      <!-- Inputs row -->
+      <div class="col-md">
+        <input type="number" class="form-control asp" name="TotalASP" placeholder="Total ASP" value="<?= $order['TotalASP'] ?>">
+      </div>
+      <div class="col-md">
+        <input type="number" class="form-control gst" name="GST" placeholder="GST (18%)" value="<?= $order['GST'] ?>" readonly>
+      </div>
+      <div class="col-md">
+        <input type="number" step="0.01" class="form-control billing" name="billingAmount" placeholder="Billing Amount" value="<?= $order['billingAmount'] ?>">
+      </div>
+      <div class="col-md">
+        <input type="number" class="form-control profit" name="PROFIT" placeholder="Profit" value="<?= $order['PROFIT'] ?>">
+      </div>
+      <!-- Remarks (desktop inline, mobile below) -->
+      <div class="col-md">
+        <textarea class="form-control remarks" name="remarks" placeholder="Remarks"><?= $order['remarks'] ?></textarea>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success btn-sm mt-2">Save Billing Details</button>
+  </form>
+</div>
+
       </div>
     <?php endforeach; ?>
   </div>
