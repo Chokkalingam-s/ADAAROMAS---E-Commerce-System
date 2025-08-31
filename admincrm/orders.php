@@ -50,8 +50,8 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   border-radius: 5px;
   padding: 15px;
   margin-bottom: 20px;
-  width: 35%;
-  left:35%;
+  width: 50%;
+  left:25%;
   position: relative;
   
 }
@@ -62,6 +62,13 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     left: 0;
   }
 }
+
+/* Order type highlights */
+.card-header.normal { background-color: #fff; }                /* Online */
+.card-header.admin-order { background-color: #f5deb3; }        /* Light brown */
+.card-header.admin-gift { background-color: #fffacd; }         /* Light yellow */
+.card-header.cod { background-color: #d4edda; }                /* Light green */
+
 </style>
 </head>
 <body class="bg-light">
@@ -88,23 +95,37 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 <div class="container py-4">
   <h2 class="mb-4">All Orders</h2>
 
-  <div class="card mb-4 shadow-sm p-3 filter-card">
-    <form id="filterForm" class="row g-3 align-items-center">
-      <div class="col-auto">
-        <label for="statusFilter" class="form-label fw-bold mb-0">Filter by Status:</label>
-      </div>
-      <div class="col-auto">
-        <select id="statusFilter" class="form-select">
-          <option value="All">All</option>
-          <option value="Pending">Pending</option>
-          <option value="Confirmed">Confirmed</option>
-          <option value="Cancelled">Cancelled</option>
-          <option value="Delivered">Delivered</option>
-          <option value="Replaced">Replaced</option>
-        </select>
-      </div>
-    </form>
-  </div>
+<div class="card mb-4 shadow-sm p-3 filter-card">
+  <form id="filterForm" class="row g-3 align-items-center">
+    <div class="col-auto">
+      <label for="statusFilter" class="form-label fw-bold mb-0">Filter by Status:</label>
+    </div>
+    <div class="col-auto">
+      <select id="statusFilter" class="form-select">
+        <option value="All">All</option>
+        <option value="Pending">Pending</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Cancelled">Cancelled</option>
+        <option value="Delivered">Delivered</option>
+        <option value="Replaced">Replaced</option>
+      </select>
+    </div>
+
+    <div class="col-auto">
+      <label for="typeFilter" class="form-label fw-bold mb-0">Order Type:</label>
+    </div>
+    <div class="col-auto">
+      <select id="typeFilter" class="form-select">
+        <option value="All">All</option>
+        <option value="normal">Online Payment</option>
+        <option value="cod">CashOnDelivery</option>
+        <option value="admin-order">Admin Order</option>
+        <option value="admin-gift">Admin Gift</option>
+      </select>
+    </div>
+  </form>
+</div>
+
 <div class="row">
   <?php foreach ($orders as $orderId => $items): 
     $first = $items[0];
@@ -115,7 +136,21 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   ?>
     <div class="col-lg-4 mb-4">
       <div class="card shadow-sm border-light">
-        <div class="card-header d-flex justify-content-between align-items-center toggle-card">
+ <?php
+  $txn = $first['transactionId'];
+  $typeClass = 'normal';
+  if ($txn === 'CashOnDelivery') {
+    $typeClass = 'cod';
+  } elseif ($txn === 'ADMIN-ADMIN_ORDER') {
+    $typeClass = 'admin-order';
+  } elseif ($txn === 'ADMIN-ADMIN_GIFT') {
+    $typeClass = 'admin-gift';
+  }
+?>
+<div class="card-header d-flex justify-content-between align-items-center toggle-card <?= $typeClass ?>" 
+     data-status="<?= $first['status'] ?>" 
+     data-type="<?= $typeClass ?>">
+
           <div> 
             <strong>Order #<?= $displayId ?></strong> |
             <span class="status-badge bg-<?= $first['status'] ?>"><?= $first['status'] ?></span> |
@@ -285,21 +320,29 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
   });
 </script>
 <script>
-  document.getElementById('statusFilter').addEventListener('change', function () {
-    const selected = this.value;
-    const allCards = document.querySelectorAll('.col-lg-4');
+function applyFilters() {
+  const statusSel = document.getElementById('statusFilter').value;
+  const typeSel = document.getElementById('typeFilter').value;
 
-    allCards.forEach(col => {
-      const statusBadge = col.querySelector('.status-badge');
-      const status = statusBadge ? statusBadge.textContent.trim() : '';
+  document.querySelectorAll('.col-lg-4').forEach(col => {
+    const header = col.querySelector('.card-header');
+    const status = header.getAttribute('data-status');
+    const type = header.getAttribute('data-type');
 
-      if (selected === 'All' || status === selected) {
-        col.classList.remove('d-none');
-      } else {
-        col.classList.add('d-none');
-      }
-    });
+    const statusMatch = (statusSel === 'All' || status === statusSel);
+    const typeMatch = (typeSel === 'All' || type === typeSel);
+
+    if (statusMatch && typeMatch) {
+      col.classList.remove('d-none');
+    } else {
+      col.classList.add('d-none');
+    }
   });
+}
+
+document.getElementById('statusFilter').addEventListener('change', applyFilters);
+document.getElementById('typeFilter').addEventListener('change', applyFilters);
+
 </script>
 
 
