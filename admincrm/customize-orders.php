@@ -22,22 +22,28 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .order-body { display:none; padding:15px; }
     .order-body.active { display:block; }
 
-    /* Billing form responsive */
-    .billing-inputs { display:flex; flex-wrap:wrap; gap:10px; }
-    .billing-inputs .form-control { min-width:120px; }
 
-    @media (max-width: 767px) {
-      .billing-inputs { flex-direction:column; }
-    }
 
     .user-details p { margin:0; padding:2px 0; }
     .save-btn { margin-top:10px; }
 
-    /* Billing row responsive */
+.billing-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.billing-inputs .input-wrap {
+  min-width: 120px;
+  flex: 1 1 0;
+}
 @media (max-width: 767px) {
-  .billing-form .row > .col-md {
-    flex: 0 0 100%;
-    max-width: 100%;
+  .billing-inputs {
+    flex-direction: row !important; /* force row on mobile */
+    gap: 8px;
+  }
+  .billing-inputs .input-wrap {
+    min-width: 0;
+    flex: 1 1 0;
   }
   .billing-form .remarks {
     margin-top: 10px;
@@ -124,29 +130,32 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
 
-  <h6>Billing Details</h6>
-  <form class="billing-form" data-id="<?= $order['orderId'] ?>">
-    <div class="row g-2 align-items-center">
-      <!-- Inputs row -->
-      <div class="col-md">
-        <input type="number" class="form-control asp" name="TotalASP" placeholder="Total ASP" value="<?= $order['TotalASP'] ?>">
-      </div>
-      <div class="col-md">
-        <input type="number" class="form-control gst" name="GST" placeholder="GST (18%)" value="<?= $order['GST'] ?>" readonly>
-      </div>
-      <div class="col-md">
-        <input type="number" step="0.01" class="form-control billing" name="billingAmount" placeholder="Billing Amount" value="<?= $order['billingAmount'] ?>">
-      </div>
-      <div class="col-md">
-        <input type="number" class="form-control profit" name="PROFIT" placeholder="Profit" value="<?= $order['PROFIT'] ?>">
-      </div>
-      <!-- Remarks (desktop inline, mobile below) -->
-      <div class="col-md">
-        <textarea class="form-control remarks" name="remarks" placeholder="Remarks"><?= $order['remarks'] ?></textarea>
-      </div>
+<h6>Billing Details</h6>
+<form class="billing-form" data-id="<?= $order['orderId'] ?>">
+  <div class="billing-inputs d-flex flex-row flex-wrap g-2 align-items-center">
+    <div class="input-wrap">
+      <label for="asp-<?= $order['orderId'] ?>" class="form-label mb-1">Total ASP</label>
+      <input type="number" class="form-control asp" id="asp-<?= $order['orderId'] ?>" name="TotalASP" placeholder="Total ASP" value="<?= $order['TotalASP'] ?>">
     </div>
-    <button type="submit" class="btn btn-success btn-sm mt-2">Save Billing Details</button>
-  </form>
+    <div class="input-wrap">
+      <label for="gst-<?= $order['orderId'] ?>" class="form-label mb-1">GST (18%)</label>
+      <input type="number" class="form-control gst" id="gst-<?= $order['orderId'] ?>" name="GST" placeholder="GST (18%)" value="<?= $order['GST'] ?>" readonly>
+    </div>
+    <div class="input-wrap">
+      <label for="billing-<?= $order['orderId'] ?>" class="form-label mb-1">Billing Amount</label>
+      <input type="number" step="0.01" class="form-control billing" id="billing-<?= $order['orderId'] ?>" name="billingAmount" placeholder="Billing Amount" value="<?= $order['billingAmount'] ?>">
+    </div>
+    <div class="input-wrap">
+      <label for="profit-<?= $order['orderId'] ?>" class="form-label mb-1">Profit</label>
+      <input type="number" class="form-control profit" id="profit-<?= $order['orderId'] ?>" name="PROFIT" placeholder="Profit" value="<?= $order['PROFIT'] ?>">
+    </div>
+  </div>
+  <div class="mt-2">
+    <label for="remarks-<?= $order['orderId'] ?>" class="form-label mb-1">Remarks</label>
+    <textarea class="form-control remarks" id="remarks-<?= $order['orderId'] ?>" name="remarks" placeholder="Remarks"><?= $order['remarks'] ?></textarea>
+  </div>
+  <button type="submit" class="btn btn-success btn-sm mt-2">Save Billing Details</button>
+</form>
 </div>
 
       </div>
