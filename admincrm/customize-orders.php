@@ -4,119 +4,152 @@ session_start();
 date_default_timezone_set('Asia/Kolkata');
 if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
-// Fetch all customized orders
-$stmt = $conn->prepare("SELECT * FROM orders WHERE isCustomized = 1 ORDER BY orderDate DESC");
+// Fetch customized orders
+$stmt = $conn->prepare("SELECT * FROM orders WHERE isCustomized=1 ORDER BY orderDate DESC");
 $stmt->execute();
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Customize Orders - Admin CRM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .order-card { cursor:pointer; transition:all 0.3s; border-radius:10px; }
-    .order-card:hover { transform:scale(1.02); }
-    .expanded { background:#fff; border:2px solid #0d6efd; }
-    .order-details { display:none; padding:15px; border-top:1px solid #ddd; }
-    .form-label { font-weight:600; }
+    .order-card { border:1px solid #ddd; border-radius:10px; margin-bottom:15px; background:#fff; }
+    .order-header { cursor:pointer; padding:12px; background:#f8f9fa; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center; }
+    .order-body { display:none; padding:15px; }
+    .order-body.active { display:block; }
+
+    /* Billing form responsive */
+    .billing-inputs { display:flex; flex-wrap:wrap; gap:10px; }
+    .billing-inputs .form-control { min-width:120px; }
+
+    @media (max-width: 767px) {
+      .billing-inputs { flex-direction:column; }
+    }
+
+    .user-details p { margin:0; padding:2px 0; }
+    .save-btn { margin-top:10px; }
   </style>
 </head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-  <a class="navbar-brand" href="../admincrm">ADA AROMAS Admin</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="adminNav">
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item"><a class="nav-link" href="add-product.php">Add Product</a></li>
-      <li class="nav-item"><a class="nav-link" href="manage-stock.php">Manage Stock</a></li>
-      <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
-      <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
-      <li class="nav-item"><a class="nav-link active" href="customize-orders.php">Customize Orders</a></li>
-      <li class="nav-item"><a class="nav-link" href="stats.php">Stats</a></li>
-      <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
-      <li class="nav-item"><a class="nav-link" href="cancel.php">Cancellation Survey</a></li>
-      <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
-    </ul>
-  </div>
-</nav>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+    <a class="navbar-brand" href="../admincrm">ADA AROMAS Admin</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="adminNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="add-product.php">Add Product</a></li>
+        <li class="nav-item"><a class="nav-link" href="manage-stock.php">Manage Stock</a></li>
+        <li class="nav-item"><a class="nav-link" href="generate-coupon.php">Generate Coupon</a></li>
+        <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link active" href="customize-orders.php">Customize Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="stats.php">Stats</a></li>
+        <li class="nav-item"><a class="nav-link" href="report.php">Report</a></li>
+        <li class="nav-item"><a class="nav-link" href="cancel.php">Cancellation Survey</a></li>
+        <li class="nav-item"><a class="nav-link text-danger" href="logout.php">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
 
-<div class="container my-4">
-  <h3 class="mb-4">Customized Orders</h3>
+  <div class="container my-4">
+    <h3 class="mb-3">Customized Orders</h3>
+    <?php foreach($orders as $order): ?>
+      <?php
+        $cstmt = $conn->prepare("SELECT * FROM customize WHERE orderId=?");
+        $cstmt->execute([$order['orderId']]);
+        $custom = $cstmt->fetch(PDO::FETCH_ASSOC);
 
-  <?php foreach($orders as $order): ?>
-    <div class="card shadow-sm mb-3 order-card" data-order-id="<?= $order['orderId'] ?>">
-      <div class="card-body d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="mb-1">Order #<?= $order['orderId'] ?></h5>
-          <small class="text-muted">Date: <?= date("d M Y, h:i A", strtotime($order['orderDate'])) ?></small>
-        </div>
-        <div>
-          <select class="form-select status-dropdown" data-order-id="<?= $order['orderId'] ?>" style="width:160px;">
-            <?php 
-              $statuses = ['Pending','Confirmed','Replaced','Delivered','Cancelled'];
-              foreach($statuses as $s) {
-                $selected = ($s == $order['status']) ? "selected" : "";
-                echo "<option value='$s' $selected>$s</option>";
-              }
-            ?>
+        $ustmt = $conn->prepare("SELECT * FROM users WHERE userId=?");
+        $ustmt->execute([$order['userId']]);
+        $user = $ustmt->fetch(PDO::FETCH_ASSOC);
+      ?>
+      <div class="order-card" data-id="<?= $order['orderId'] ?>">
+        <!-- header -->
+        <div class="order-header">
+          <span><strong>Order #<?= $order['orderId'] ?></strong></span>
+          <select class="form-select form-select-sm status-dropdown" data-id="<?= $order['orderId'] ?>" style="width:auto">
+            <?php foreach(['Pending','Confirmed','Replaced','Delivered','Cancelled'] as $st): ?>
+              <option value="<?= $st ?>" <?= $order['status']==$st?'selected':'' ?>><?= $st ?></option>
+            <?php endforeach; ?>
           </select>
         </div>
-      </div>
-      <div class="order-details" id="details-<?= $order['orderId'] ?>"></div>
-    </div>
-  <?php endforeach; ?>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- body -->
+        <div class="order-body">
+          <h6>Customize Request</h6>
+          <p><?= htmlspecialchars($custom['description']) ?></p>
+          <?php if($custom['imageUrl']): ?>
+            <img src="<?= $custom['imageUrl'] ?>" class="img-fluid rounded mb-3" style="max-width:250px">
+          <?php endif; ?>
+
+          <h6>User Details</h6>
+          <div class="user-details mb-3">
+            <p><strong>Name:</strong> <?= $user['name'] ?></p>
+            <p><strong>Phone:</strong> <?= $user['phoneNo'] ?> &nbsp;|&nbsp;<strong>Email:</strong> <?= $user['email'] ?></p>
+            <p><strong>State:</strong> <?= $user['state'] ?> &nbsp; | <strong>District:</strong> <?= $user['district'] ?> &nbsp;</p>
+            <p><strong>City:</strong> <?= $user['city'] ?> &nbsp; | <strong>Pincode:</strong> <?= $user['pincode'] ?></p>
+            <p><strong>Address:</strong> <?= $user['address'] ?></p>
+          </div>
+
+          <h6>Billing Details</h6>
+          <form class="billing-form" data-id="<?= $order['orderId'] ?>">
+            <div class="billing-inputs">
+              <input type="number" class="form-control asp" name="TotalASP" placeholder="Total ASP" value="<?= $order['TotalASP'] ?>">
+              <input type="number" class="form-control gst" name="GST" placeholder="GST (18%)" value="<?= $order['GST'] ?>" readonly>
+              <input type="number" step="0.01" class="form-control billing" name="billingAmount" placeholder="Billing Amount" value="<?= $order['billingAmount'] ?>">
+              <input type="number" class="form-control profit" name="PROFIT" placeholder="Profit" value="<?= $order['PROFIT'] ?>">
+            </div>
+            <textarea class="form-control mt-2 remarks" name="remarks" placeholder="Remarks"><?= $order['remarks'] ?></textarea>
+            <button type="submit" class="btn btn-success btn-sm save-btn">Save Billing Details</button>
+          </form>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function(){
-
-  // Expand/Collapse order card
-  $(".order-card").click(function(e){
-    if($(e.target).hasClass("status-dropdown")) return; // prevent toggle if dropdown clicked
-    let orderId = $(this).data("order-id");
-    let details = $("#details-" + orderId);
-
-    if(details.is(":visible")){
-      details.slideUp();
-      $(this).removeClass("expanded");
-    } else {
-      $(".order-details").slideUp();
-      $(".order-card").removeClass("expanded");
-      details.html("<div class='text-center py-3'>Loading...</div>").slideDown();
-      $(this).addClass("expanded");
-
-      // fetch order details
-      $.post("update_customize_order.php", { action: "fetch", orderId: orderId }, function(data){
-        details.html(data);
-      });
-    }
+$(function(){
+  // toggle only when header clicked
+  $(".order-header").on("click", function(e){
+    $(this).siblings(".order-body").toggleClass("active");
   });
 
-  // Update status instantly
+  // prevent card closing when inside inputs
+  $(".order-body").on("click", function(e){
+    e.stopPropagation();
+  });
+
+  // status change
   $(".status-dropdown").change(function(){
-    let orderId = $(this).data("order-id");
+    let id = $(this).data("id");
     let status = $(this).val();
-    $.post("update_customize_order.php", { action: "update_status", orderId: orderId, status: status }, function(res){
-      alert(res);
-    });
+    $.post("update-status-customize.php", {orderId:id, status:status});
   });
 
-  // Save billing details
-  $(document).on("submit", ".billing-form", function(e){
+  // auto calculate GST + billing
+  $(".asp").on("input", function(){
+    let asp = parseFloat($(this).val())||0;
+    let gst = (asp * 0.18).toFixed(0);
+    let billing = (asp + parseFloat(gst)).toFixed(2);
+    let parent = $(this).closest(".billing-form");
+    parent.find(".gst").val(gst);
+    parent.find(".billing").val(billing);
+  });
+
+  // save billing details
+  $(".billing-form").submit(function(e){
     e.preventDefault();
-    let form = $(this);
-    $.post("update_customize_order.php", form.serialize(), function(res){
-      alert(res);
+    let id = $(this).data("id");
+    let data = $(this).serialize()+"&orderId="+id;
+    $.post("save-billing.php", data, function(){
+      alert("Billing details updated");
     });
   });
-
 });
 </script>
 </body>
