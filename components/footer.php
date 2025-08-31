@@ -651,18 +651,78 @@ function applyDiscount(coupon) {
 
 <!-- razorpay script -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+  let isCOD = false;
 
-document.getElementById('rzp-button1').onclick = async function(e){
-  e.preventDefault();
-  const cart = JSON.parse(localStorage.getItem('cart')||'[]');
-  if (!cart.length) return alert('Cart empty');
+  const totalPriceEl = document.getElementById("totalPrice");
+  const codOption = document.getElementById("codOption");
+  const codInfo = document.getElementById("codInfo");
 
-  const form = document.getElementById('billingForm');
-  const formData = new FormData(form);
-  const user = Object.fromEntries(formData);
-  const finalAmount = parseFloat(document.getElementById("totalPrice").textContent);
-  const code = document.getElementById('couponCode').value.trim().toUpperCase();
+  let baseTotal = parseFloat(totalPriceEl.textContent) || 0;
+
+  // Toggle COD
+  codOption.addEventListener("change", function() {
+    isCOD = this.checked;
+    if (isCOD) {
+      totalPriceEl.textContent = (baseTotal + 50);
+      codInfo.style.display = "block";
+    } else {
+      totalPriceEl.textContent = baseTotal;
+      codInfo.style.display = "none";
+    }
+  });
+
+  document.getElementById('rzp-button1').onclick = async function(e){
+    e.preventDefault();
+    const cart = JSON.parse(localStorage.getItem('cart')||'[]');
+    if (!cart.length) return alert('Cart empty');
+
+    const form = document.getElementById('billingForm');
+    const formData = new FormData(form);
+    const user = Object.fromEntries(formData);
+    const finalAmount = parseFloat(totalPriceEl.textContent);
+    const code = document.getElementById('couponCode').value.trim().toUpperCase();
+
+    // COD flow
+    if (isCOD) {
+      const createUserResp = await fetch('create-order.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart, user, finalAmount })
+      }).then(r => r.json());
+
+      if (!createUserResp.userId) {
+        alert("Failed to create user for COD order");
+        return;
+      }
+
+      const verifyResp = await fetch('verify-payment.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          razorpay_order_id: "CashOnDelivery",
+          razorpay_payment_id: "CashOnDelivery",
+          razorpay_signature: "CashOnDelivery",
+          cart,
+          finalAmount,
+          userId: createUserResp.userId,
+          user: {
+            id: createUserResp.userId,
+            name: user.firstName + ' ' + user.lastName,
+            email: user.email
+          },
+          couponCode: code || null
+        })
+      }).then(r => r.json());
+
+      if (verifyResp.success && verifyResp.orderId) {
+        localStorage.removeItem('cart');
+        window.location.href = "thankyou.php?orderId=" + verifyResp.orderId;
+      } else {
+        alert("Failed to place COD order");
+      }
+      return;
+    }
 
 
 
@@ -790,6 +850,7 @@ if (verifyResp.success && verifyResp.orderId) {
 
 });
 </script>
+
 
 </body>
 </html>

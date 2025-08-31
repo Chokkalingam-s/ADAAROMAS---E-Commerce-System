@@ -518,13 +518,23 @@
         </small>
         <div id="couponRequestStatus" class="status-message"></div>
       </div>
-      <div class="mt-auto">
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-        <button id="rzp-button1" class="btn w-100">
-          Pay ₹<span id="totalPrice">0</span>
-        </button>
-        <div class="discount-info" id="discountInfo" style="display: none;"></div>
-      </div>
+<div class="mt-auto">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <button id="rzp-button1" class="btn w-100">
+    Pay ₹<span id="totalPrice">0</span>
+  </button>
+  <div class="form-check mt-2">
+    <input class="form-check-input" type="checkbox" id="codOption">
+    <label class="form-check-label" for="codOption">
+      Cash on Delivery (+₹50)
+    </label>
+  </div>
+  <small class="text-muted" id="codInfo" style="display:none;">
+    + Additional ₹50 for Cash On Delivery
+  </small>
+  <div class="discount-info" id="discountInfo" style="display: none;"></div>
+</div>
+
     </div>
 
           <div class="mt-3 p-3 border rounded bg-light">

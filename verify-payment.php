@@ -13,21 +13,25 @@ $paymentId = $data['razorpay_payment_id'];
 $signature = $data['razorpay_signature'];
 
 if (!empty($data['adminMode'])) {
-    // Skip Razorpay verification for admin
+    // Admin order
     $paymentId = "ADMIN-" . strtoupper($data['adminMode']);
+} elseif ($orderId === "CashOnDelivery") {
+    // ✅ COD flow
+    $paymentId = "CashOnDelivery";
 } else {
+    // Razorpay verification as before
+    $api = new Api($keyId, $keySecret);
+    try {
+      $api->utility->verifyPaymentSignature([
+        'razorpay_order_id' => $orderId,
+        'razorpay_payment_id' => $paymentId,
+        'razorpay_signature' => $signature
+      ]);
+    } catch (Exception $e) {
+      echo json_encode(['success'=>false]); exit;
+    }
+}
 
-$api = new Api($keyId, $keySecret);
-try {
-  $api->utility->verifyPaymentSignature([
-    'razorpay_order_id' => $orderId,
-    'razorpay_payment_id' => $paymentId,
-    'razorpay_signature' => $signature
-  ]);
-} catch (Exception $e) {
-  echo json_encode(['success'=>false]); exit;
-}
-}
 
 if (!empty($data['couponCode'])) {
     $couponCode = $data['couponCode'];
