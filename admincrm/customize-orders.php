@@ -21,12 +21,13 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .order-header { cursor:pointer; padding:12px; background:#f8f9fa; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center; }
     .order-body { display:none; padding:15px; }
     .order-body.active { display:block; }
-
-
-
     .user-details p { margin:0; padding:2px 0; }
     .save-btn { margin-top:10px; }
-
+    .order-pending    { background: #fffbe6; }   /* light yellow */
+.order-cancelled  { background: #ffeaea; }   /* light red */
+.order-delivered  { background: #f2f2f2; color: #222; } /* light black/grey */
+.order-replaced   { background: #e6f0ff; }   /* light blue */
+.order-confirmed  { background: #eaffea; }   /* light green */
 .billing-inputs {
   display: flex;
   flex-wrap: wrap;
@@ -85,9 +86,9 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $ustmt->execute([$order['userId']]);
         $user = $ustmt->fetch(PDO::FETCH_ASSOC);
       ?>
-      <div class="order-card" data-id="<?= $order['orderId'] ?>">
+<div class="order-card order-<?= strtolower($order['status']) ?>" data-id="<?= $order['orderId'] ?>">
         <!-- header -->
-        <div class="order-header">
+        <div class="order-header order-<?= strtolower($order['status']) ?>">
           <span><strong>Order #<?= $order['orderId'] ?></strong></span>
           <select class="form-select form-select-sm status-dropdown" data-id="<?= $order['orderId'] ?>" style="width:auto">
             <?php foreach(['Pending','Confirmed','Replaced','Delivered','Cancelled'] as $st): ?>
@@ -201,6 +202,23 @@ $(function(){
       alert("Billing details updated");
     });
   });
+});
+
+$(".status-dropdown").change(function(){
+  let id = $(this).data("id");
+  let status = $(this).val();
+  $.post("update-status-customize.php", {orderId:id, status:status});
+
+  // Change card and header color instantly
+  let card = $(this).closest(".order-card");
+  let header = card.find(".order-header");
+  let statuses = ["pending","confirmed","replaced","delivered","cancelled"];
+  statuses.forEach(st => {
+    card.removeClass("order-" + st);
+    header.removeClass("order-" + st);
+  });
+  card.addClass("order-" + status.toLowerCase());
+  header.addClass("order-" + status.toLowerCase());
 });
 </script>
 </body>
