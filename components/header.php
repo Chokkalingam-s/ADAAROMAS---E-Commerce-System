@@ -805,9 +805,9 @@ body {
 <!-- Navigation Sidebar -->
 <div id="navSidebar" class="nav-sidebar">
   <div class="nav-sidebar-header">
-    <img src="/adaaromas/assets/adalogo.png" alt="ADA AROMAS Logo" style="width:42px; height: auto; border-radius: 50%;"> </img>
+    <img src="../assets/adalogo.png" alt="ADA AROMAS Logo" style="width:42px; height: auto; border-radius: 50%;"> </img>
     <div class="nav-sidebar-title">
-  <img src="/adaaromas/assets/adaname.png" alt="ADA AROMAS Logo" style="height:27px; width:auto;">
+  <img src="../assets/adaname.png" alt="ADA AROMAS Logo" style="height:27px; width:auto;">
 </div>
     <button class="nav-close-btn" onclick="toggleNavSidebar()" aria-label="Close">
       <i class="bi bi-x-lg"></i>
@@ -817,7 +817,7 @@ body {
   <div class="nav-sidebar-body">
     <ul class="nav-sidebar-menu">
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" href="/adaaromas/index.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" href="../index.php">
           <i class="bi bi-house"></i>
           Home
         </a>
@@ -829,28 +829,28 @@ body {
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
         <div class="collapse nav-sidebar-dropdown-menu" id="perfumeSubmenu">
-          <a class="nav-sidebar-dropdown-item" href="/adaaromas/products/perfume-men.php">For Him</a>
-          <a class="nav-sidebar-dropdown-item" href="/adaaromas/products/perfume-women.php">For Her</a>
-          <a class="nav-sidebar-dropdown-item" href="/adaaromas/products/perfume.php">All Collection</a>
+          <a class="nav-sidebar-dropdown-item" href="./products/perfume-men.php">For Him</a>
+          <a class="nav-sidebar-dropdown-item" href="./products/perfume-women.php">For Her</a>
+          <a class="nav-sidebar-dropdown-item" href="./products/perfume.php">All Collection</a>
         </div>
       </li>
       
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="/adaaromas/products/attar.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="./products/attar.php">
           <i class="bi bi-flower1"></i>
           Attar
         </a>
       </li>
       
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="/adaaromas/products/Essenceoil.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
           <i class="bi bi-droplet-half"></i>
           Essence Oil
         </a>
       </li>
       
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="/adaaromas/products/diffuser.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="./products/diffuser.php">
           <i class="bi bi-wind"></i>
           Diffuser
         </a>
@@ -862,9 +862,9 @@ body {
 <!-- Professional Navbar -->
 <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
   <div class="container">
-<a class="navbar-brand" href="/adaaromas/index.php">
-  <img src="/adaaromas/assets/adalogo.png" alt="ADA AROMAS Logo" style="width: 40px; height: auto; border-radius: 50%;">
-  <img src="/adaaromas/assets/adaname.png" alt="ADAAROMAS" style="height: 32px; width: auto; margin-left: 8px;">
+<a class="navbar-brand" href="../index.php">
+  <img src="../assets/adalogo.png" alt="ADA AROMAS Logo" style="width: 40px; height: auto; border-radius: 50%;">
+  <img src="../assets/adaname.png" alt="ADAAROMAS" style="height: 32px; width: auto; margin-left: 8px;">
 </a>
     
     <!-- Mobile Navigation Controls -->
@@ -894,32 +894,32 @@ body {
             Perfume
           </a>
           <ul class="dropdown-menu" aria-labelledby="perfumeDropdown">
-            <li><a class="dropdown-item" href="/adaaromas/products/perfume-men.php">For Him</a></li>
-            <li><a class="dropdown-item" href="/adaaromas/products/perfume-women.php">For Her</a></li>
-            <li><a class="dropdown-item" href="/adaaromas/products/perfume.php">All Collection</a></li>
+            <li><a class="dropdown-item" href="../products/perfume-men.php">For Him</a></li>
+            <li><a class="dropdown-item" href="../products/perfume-women.php">For Her</a></li>
+            <li><a class="dropdown-item" href="../products/perfume.php">All Collection</a></li>
           </ul>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="/adaaromas/products/attar.php">
+          <a class="nav-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="./products/attar.php">
             Attar
           </a>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="/adaaromas/products/Essenceoil.php">
+          <a class="nav-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
             Essence Oil
           </a>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="/adaaromas/products/diffuser.php">
+          <a class="nav-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="./products/diffuser.php">
             Diffuser
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'faqs.php' ? 'active' : '' ?>" href="/adaaromas/faqs.php">
+          <a class="nav-link <?= $currentPage === 'faqs.php' ? 'active' : '' ?>" href="./faqs.php">
             FAQs
           </a>
         </li>
@@ -1045,7 +1045,7 @@ try {
 
   
   <div class="cart-footer">
-    <a href="/adaaromas/checkout.php" class="btn btn-dark w-100">
+    <a href="./checkout.php" class="btn btn-dark w-100">
       <i class="bi bi-lock"></i> Checkout • <span id="cartTotal">₹0</span>
     </a>
   </div>
