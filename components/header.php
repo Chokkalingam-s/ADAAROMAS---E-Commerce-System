@@ -1045,7 +1045,8 @@ try {
 
   
   <div class="cart-footer">
-    <a href="./checkout.php" class="btn btn-dark w-100">
+    <!-- <a href="/adaaromas/checkout.php" class="btn btn-dark w-100"> -->
+    <a href="/checkout.php" class="btn btn-dark w-100">
       <i class="bi bi-lock"></i> Checkout • <span id="cartTotal">₹0</span>
     </a>
   </div>
