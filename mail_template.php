@@ -29,7 +29,7 @@ ob_start();
           <?php $size = isset($item['size']) ? strtoupper($item['size']) : 'N/A'; ?>
           <tr>
             <td style="padding:10px;border:1px solid #ddd;">
-              <img src="<?= $item['image'] ?? 'https://via.placeholder.com/60' ?>" alt="<?= $item['title'] ?>" style="width:60px;height:auto;vertical-align:middle;margin-right:8px;border-radius:6px;">
+<img src="https://adaaromas.co.in<?= preg_replace('/^\/adaaromas\//', '/', '/' . ltrim($item['image'], '/')) ?>" alt="<?= $item['title'] ?>" style="width:60px;height:auto;vertical-align:middle;margin-right:8px;border-radius:6px;">
               <?= $item['title'] ?>
             </td>
             <td style="padding:10px;border:1px solid #ddd;"><?= $item['quantity'] ?></td>
