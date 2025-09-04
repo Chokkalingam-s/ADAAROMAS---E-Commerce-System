@@ -825,7 +825,7 @@ body {
       
       <li class="nav-sidebar-dropdown">
         <button class="nav-sidebar-dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#perfumeSubmenu" aria-expanded="false">
-          <span><i class="bi bi-droplet"></i> Perfume</span>
+          <span><i class="bi bi-droplet"></i> PERFUMES</span>
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
         <div class="collapse nav-sidebar-dropdown-menu" id="perfumeSubmenu">
@@ -838,21 +838,21 @@ body {
       <li class="nav-sidebar-item">
         <a class="nav-sidebar-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="./products/attar.php">
           <i class="bi bi-flower1"></i>
-          Attar
+          ATTARS
         </a>
       </li>
       
       <li class="nav-sidebar-item">
         <a class="nav-sidebar-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
           <i class="bi bi-droplet-half"></i>
-          Essence Oil
+          ESSENCE OILS
         </a>
       </li>
       
       <li class="nav-sidebar-item">
         <a class="nav-sidebar-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="./products/diffuser.php">
           <i class="bi bi-wind"></i>
-          Diffuser
+          DIFFUSERS
         </a>
       </li>
     </ul>
@@ -891,7 +891,7 @@ body {
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle <?= in_array($currentPage, ['perfume-men.php', 'perfume-women.php']) ? 'active' : '' ?>"
              href="#" id="perfumeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Perfume
+            PERFUMES
           </a>
           <ul class="dropdown-menu" aria-labelledby="perfumeDropdown">
             <li><a class="dropdown-item" href="../products/perfume-men.php">For Him</a></li>
@@ -902,19 +902,19 @@ body {
         
         <li class="nav-item">
           <a class="nav-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="./products/attar.php">
-            Attar
+            ATTARS
           </a>
         </li>
         
         <li class="nav-item">
           <a class="nav-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
-            Essence Oil
+            ESSENCE OILS
           </a>
         </li>
         
         <li class="nav-item">
           <a class="nav-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="./products/diffuser.php">
-            Diffuser
+            DIFFUSERS
           </a>
         </li>
 
@@ -1030,7 +1030,7 @@ try {
     // Get image, rating, reviewCount, etc from base product
     $title = $p['name'];
     $basePath = (substr_count($_SERVER['PHP_SELF'], '/') > 2) ? "../" : "";
-    $image = $basePath . $p['image'];
+    $image = '/' . ltrim($p['image'], '/'); 
     $rating = $p['rating'];
     $reviews = $p['reviewCount'];
     $discount = ($mrp > $price) ? round((($mrp - $price) / $mrp) * 100) : 0;

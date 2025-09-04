@@ -295,8 +295,9 @@ function renderCart() {
 
     const itemDiv = document.createElement("div");
     itemDiv.className = "cart-item";
-    itemDiv.innerHTML = `
-      <img src="${item.image}" alt="${item.title}">
+    const cleanImage = item.image.replace(/^\/adaaromas\//, '/');
+itemDiv.innerHTML = `
+  <img src="${cleanImage}" alt="${item.title}">
       <div class="cart-info">
         <div class="cart-item-header">
           <div class="cart-item-left">

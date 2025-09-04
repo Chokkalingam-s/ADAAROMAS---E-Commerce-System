@@ -382,7 +382,9 @@ $prodInfo = $infoStmt->fetch(PDO::FETCH_ASSOC);
       </h5>
       
       <div class="product-pricing">
-        <span class="current-price">₹<?= $price ?><small class="onwards-text text-muted ms-1">Onwards</small></span>
+        <span class="current-price">₹<?= $price ?>
+        <!-- <small class="onwards-text text-muted ms-1">Onwards</small> -->
+      </span>
         <?php if ($mrp > $price): ?>
           <span class="original-price" style="text-decoration: line-through; color: red;">₹<?= $mrp ?></span>
         <?php endif; ?>
