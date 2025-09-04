@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let districtSelect = document.getElementById("district");
 
   // Load JSON dynamically
-  fetch("/state.json") // <-- adjust path if different
+  fetch("/state.json") // <-- adjust path if different for local /adaaromas would come
     .then(response => response.json())
     .then(data => {
       let states = data.states;

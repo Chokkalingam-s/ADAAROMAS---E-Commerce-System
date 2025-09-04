@@ -106,7 +106,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="col-md-6">
       <p><?= htmlspecialchars($custom['description']) ?></p>
 <?php if($custom['imageUrl']): ?>
-  <img src="/adaaromas/<?= ltrim($custom['imageUrl'], '/') ?>" class="img-fluid rounded mb-3" style="max-width:250px">
+  <img src="/<?= ltrim($custom['imageUrl'], '/') ?>" class="img-fluid rounded mb-3" style="max-width:250px">
 <?php endif; ?>
     </div>
 
