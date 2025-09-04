@@ -84,6 +84,8 @@ $newOrderId = $conn->lastInsertId();
 $stmtOD = $conn->prepare("INSERT INTO order_details (orderId, productId, quantity, size) VALUES (?, ?, ?, ?)");
 foreach ($cart as $item) {
   $stmtOD->execute([$newOrderId, $item['productId'], $item['quantity'], $item['size']]);
+    $stmtStock = $conn->prepare("UPDATE product_stock SET stockInHand = stockInHand - ? WHERE productId = ? AND size = ?");
+  $stmtStock->execute([$item['quantity'], $item['productId'], $item['size']]);
 }
 
 
