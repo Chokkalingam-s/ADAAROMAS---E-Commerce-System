@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p><strong>Phone:</strong> $phoneNo</p>
             <p><strong>Address:</strong> $address, $city, $district, $state - $pincode</p>
             <p><strong>Description:</strong> $description</p>
-            " . ($imageUrl ? "<p><strong>Reference Image:</strong><br><img src='http://yourdomain.com/$imageUrl' width='200'></p>" : "") . "
+            " . ($imageUrl ? "<p><strong>Reference Image:</strong><br><img src='http://adaaromas.co.in/$imageUrl' width='200'></p>" : "") . "
             <p>Status: Pending (Customized Order)</p>
         ";
 

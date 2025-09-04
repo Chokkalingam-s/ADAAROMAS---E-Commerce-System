@@ -123,7 +123,7 @@ try {
     $productList .= "<li>{$item['title']} - Qty: {$item['quantity']} - ₹{$item['price']} x {$item['quantity']}</li>";
   }
 
-$orderLink = "https://adaaromas.com/thankyou.php?orderId=$newOrderId";
+$orderLink = "https://adaaromas.co.in/thankyou.php?orderId=$newOrderId";
 $totalPrice = number_format($total, 2);
 
 include "mail_template.php";

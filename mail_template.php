@@ -85,7 +85,7 @@ ob_start();
   <!-- Footer -->
   <div style="background:#000;color:#fff;padding:15px;text-align:center;font-size:13px">
     Further Order Visit :
-    <a href="#" style="color:#fff;text-decoration:underline;margin:0 5px;">ADA AROMAS</a>
+    <a href="https://adaaromas.co.in" style="color:#fff;text-decoration:underline;margin:0 5px;">ADA AROMAS</a>
   </div>
 </div>
 
