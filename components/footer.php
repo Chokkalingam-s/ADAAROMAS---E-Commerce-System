@@ -374,6 +374,7 @@ function checkFormValidity() {
 let cartTotal = 0;
 let discountedTotal = 0;
 let appliedCoupon = null;
+let codCharge = 0;
 
 function renderCheckoutOrder() {
   const cart = getCart();
@@ -406,7 +407,7 @@ function renderCheckoutOrder() {
       <div class='order-item'>
         <div class="d-flex align-items-start">
           <div class="product-image-placeholder">
-            <img src="${p.image || ''}" alt="${p.title}">
+            <img src="${(p.image || '').replace(/^\/adaaromas\//, '/')}" alt="${p.title}">
           </div>
           <div class="flex-grow-1">
             <div class="d-flex justify-content-between align-items-start">
@@ -642,8 +643,10 @@ function applyDiscount(coupon) {
   let discount = 0;
   if (coupon.flatAmount > 0) discount = coupon.flatAmount;
   else if (coupon.percentage > 0) discount = (coupon.percentage / 100) * cartTotal;
-
-  discountedTotal = Math.max(0, cartTotal - discount);
+  
+  let codChecked = document.getElementById("codOption")?.checked;
+  let codFee = codChecked ? 50 : 0;
+  discountedTotal = Math.max(0, cartTotal - discount + codFee);
   document.getElementById('totalPrice').innerText = discountedTotal.toFixed(0);
   document.getElementById('discountInfo').innerText = `Coupon applied! You saved ₹${discount.toFixed(0)}.`;
   document.getElementById('discountInfo').style.display = 'block';
@@ -662,16 +665,20 @@ document.addEventListener("DOMContentLoaded", function () {
   let baseTotal = parseFloat(totalPriceEl.textContent) || 0;
 
   // Toggle COD
-  codOption.addEventListener("change", function() {
-    isCOD = this.checked;
-    if (isCOD) {
-      totalPriceEl.textContent = (baseTotal + 50);
-      codInfo.style.display = "block";
-    } else {
-      totalPriceEl.textContent = baseTotal;
-      codInfo.style.display = "none";
-    }
-  });
+codOption.addEventListener("change", function() {
+  isCOD = this.checked;
+  let codFee = isCOD ? 50 : 0;
+  let base = cartTotal;
+
+  // If coupon is applied, use discountedTotal logic
+  if (appliedCoupon) {
+    applyDiscount(appliedCoupon);
+  } else {
+    totalPriceEl.textContent = (base + codFee);
+    codInfo.style.display = isCOD ? "block" : "none";
+    discountedTotal = base + codFee;
+  }
+});
 
   document.getElementById('rzp-button1').onclick = async function(e){
     e.preventDefault();
