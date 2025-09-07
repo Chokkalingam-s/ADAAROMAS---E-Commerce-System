@@ -74,6 +74,22 @@ $reviewStmt->execute($relatedIds);
 $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
 
+$staticImage = '/assets/';
+switch (strtolower($product['category'])) {
+  case 'perfume':
+    $staticImage .= 'StaticImagePerfume.png';
+    break;
+  case 'attar':
+    $staticImage .= 'StaticImageAttar.png';
+    break;
+  case 'essence oil':
+    $staticImage .= 'StaticImageEO.png';
+    break;
+  default:
+    $staticImage .= 'StaticImage.png';
+}
+
+
 ?>
 
 <style>
@@ -702,10 +718,10 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
     <?php endif; ?>
 
-    <!-- Third image (static) -->
-    <div class="carousel-item">
-      <img src="../assets/StaticImage.png" class="d-block w-100 product-main-image" alt="Static Image">
-    </div>
+<!-- Third image (static) -->
+<div class="carousel-item">
+  <img src="<?= $staticImage ?>" class="d-block w-100 product-main-image" alt="Static Image">
+</div>
 
   </div>
 
