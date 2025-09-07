@@ -845,7 +845,7 @@ body {
       <li class="nav-sidebar-item">
         <a class="nav-sidebar-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
           <i class="bi bi-droplet-half"></i>
-          ESSENCE OILS
+          AROMA OILS
         </a>
       </li>
       
@@ -908,7 +908,7 @@ body {
         
         <li class="nav-item">
           <a class="nav-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
-            ESSENCE OILS
+            AROMA OILS
           </a>
         </li>
         
