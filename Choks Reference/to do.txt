@@ -1,5 +1,4 @@
-HIM , HER , Unisex
-
+TO DO:
 filters 5000
 price range - window increase
 
@@ -19,26 +18,24 @@ marketing no dropdown- input
 3rd image for essence oil ( would be shared )
 2nd image would be shared
 
-/products/products bug
-
 description 30ml in lemon grass
 
 aroma oil pricing
-
 lemon to lotus - 100
-
 mandarion to neroli - 110
 ( Super Premium Quality )
-
 midnight to after rain - 140
 ( Super LUXURY QUALITY AROMA FOR 140rs )
-
 ( Premium / super premium / super luxury and quality in royal blue in ui )
 
 Shipping Policy needed to be incorporated.
 ( refund and privacy would be shared )
 
 https://www.fragrantica.com/perfume/Giorgio-Armani/Acqua-di-Gio-410.html
+
+Done:
+> HIM , HER , Unisex
+> /products/products bug
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 attars

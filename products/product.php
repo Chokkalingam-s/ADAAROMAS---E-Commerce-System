@@ -704,7 +704,7 @@ $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Third image (static) -->
     <div class="carousel-item">
-      <img src="staticImage.png" class="d-block w-100 product-main-image" alt="Static Image">
+      <img src="../assets/StaticImage.png" class="d-block w-100 product-main-image" alt="Static Image">
     </div>
 
   </div>
