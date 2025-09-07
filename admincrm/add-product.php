@@ -149,7 +149,7 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
 
 <div class="col-6 col-md-2">
   <label class="form-label">BACK IMAGE</label>
-  <input type="file" name="backImage" accept="image/webp,image/png,image/jpeg" class="form-control" required>
+  <input type="file" name="backImage" accept="image/webp,image/png,image/jpeg" class="form-control" >
 </div>
 
 
@@ -172,43 +172,38 @@ if (!isset($_SESSION['admin_logged_in'])) header('Location: index.php');
         <input type="number" name="stock" id="stock" class="form-control" required>
       </div>
 
-      <!-- Row 5: Bottle | Box | Packing -->
-      <div class="col-4 col-md-2">
-        <label class="form-label">BOTTLE (₹)</label>
-        <div class="readonly-box" id="bottlePrice">0</div>
-      </div>
+<!-- Row 5: Bottle | Box | Packing -->
+<div class="col-4 col-md-2">
+  <label class="form-label">BOTTLE (₹)</label>
+  <input type="number" name="bottlePrice" id="bottlePrice" class="form-control" value="0" required>
+</div>
 
-      <div class="col-4 col-md-2">
-        <label class="form-label">BOX (₹)</label>
-        <div class="readonly-box">200</div>
-      </div>
+<div class="col-4 col-md-2">
+  <label class="form-label">BOX (₹)</label>
+  <input type="number" name="boxPrice" id="boxPrice" class="form-control" value="0" required>
+</div>
 
-      <div class="col-4 col-md-2">
-        <label class="form-label">PACKING (₹)</label>
-        <div class="readonly-box">10</div>
-      </div>
+<div class="col-4 col-md-2">
+  <label class="form-label">PACKING (₹)</label>
+  <input type="number" name="packingPrice" id="packingPrice" class="form-control" value="0" required>
+</div>
 
-      <!-- Row 6: Shelf | Courier | Marketing -->
-      <div class="col-4 col-md-2">
-        <label class="form-label">SHELF (₹)</label>
-        <div class="readonly-box">30</div>
-      </div>
+<!-- Row 6: Shelf | Courier | Marketing -->
+<div class="col-4 col-md-2">
+  <label class="form-label">SHELF (₹)</label>
+  <input type="number" name="shelfPrice" id="shelfPrice" class="form-control" value="0" required>
+</div>
 
-      <div class="col-4 col-md-2">
-        <label class="form-label">COURIER (₹)</label>
-        <div class="readonly-box">60</div>
-      </div>
+<div class="col-4 col-md-2">
+  <label class="form-label">COURIER (₹)</label>
+  <input type="number" name="courierPrice" id="courierPrice" class="form-control" value="0" required>
+</div>
 
-      <div class="col-4 col-md-2">
-        <label class="form-label">MARKETING(₹)</label>
-        <select id="marketingCost" class="form-select">
-          <option>100</option>
-          <option>50</option>
-          <option>150</option>
-          <option>200</option>
-          <option>250</option>
-        </select>
-      </div>
+<div class="col-4 col-md-2">
+  <label class="form-label">MARKETING(₹)</label>
+  <input type="number" name="marketingCost" id="marketingCost" class="form-control" value="0" required>
+</div>
+
 
       <!-- Row 7: MSP | Margin | ASP | Revenue -->
       <div class="col-3 col-md-3">
@@ -472,46 +467,45 @@ document.getElementById("costPrice").addEventListener("input", calculatePrices);
 document.getElementById("margin").addEventListener("change", calculatePrices);
 document.getElementById("displayMargin").addEventListener("change", calculatePrices);
 
-["costPrice", "margin", "displayMargin", "category", "size", "marketingCost"].forEach(id => {
+["costPrice", "margin", "displayMargin", "category", "size", "marketingCost", 
+ "bottlePrice", "boxPrice", "packingPrice", "shelfPrice", "courierPrice"]
+.forEach(id => {
   document.getElementById(id).addEventListener("change", calculatePrices);
   document.getElementById(id).addEventListener("input", calculatePrices);
 });
+
 
 
 function calculatePrices() {
   const cost = parseFloat(document.getElementById("costPrice").value || 0);
   const margin = parseFloat(document.getElementById("margin").value || 0);
   const dispMargin = parseFloat(document.getElementById("displayMargin").value || 0);
-  const revenue = parseFloat(document.getElementById("revenue").value || 0);
-    const marketing = parseFloat(document.getElementById("marketingCost").value || 0);
+  const marketing = parseFloat(document.getElementById("marketingCost").value || 0);
 
-  const category = document.getElementById("category").value;
-  const size = parseInt(document.getElementById("size").value || 0);
+  // Manual entry values
+  const bottle = parseFloat(document.getElementById("bottlePrice").value || 0);
+  const box = parseFloat(document.getElementById("boxPrice").value || 0);
+  const packing = parseFloat(document.getElementById("packingPrice").value || 0);
+  const shelf = parseFloat(document.getElementById("shelfPrice").value || 0);
+  const courier = parseFloat(document.getElementById("courierPrice").value || 0);
 
-  let bottle = 0;
-  if (category === "Perfume") {
-    if (size === 30) bottle = 30;
-    else if (size === 50) bottle = 50;
-    else if (size === 100) bottle = 60;
-  } else if (category === "Attar") {
-    bottle = 20;
-  } else if (category === "Essence Oil") {
-    bottle = 30;
-  }
-  document.getElementById("bottlePrice").innerText = bottle;
-    // Fixed charges
-  const courier = 60;
-  const box = 200;
-  const packing = 10;
-  const shelf = 30;
-
-  const totalCost = cost + courier + box + packing + shelf + bottle + marketing;
+  // Total Cost (MSP)
+  const totalCost = cost + bottle + box + packing + shelf + courier + marketing;
   const msp = totalCost;
-  const asp = roundToNearest50(msp + margin/100*msp);
-  const gasp = (asp * 1.18); // Adding 18% GST
-  const mrp = roundToNearest50(asp + (asp * dispMargin / 100));
-  const totalRevenue = asp - msp
 
+  // Actual Sales Price (ASP) with margin
+  const asp = roundToNearest50(msp + (margin / 100 * msp));
+
+  // GST Added Price (18%)
+  const gasp = asp * 1.18;
+
+  // Display Price
+  const mrp = roundToNearest50(asp + (asp * dispMargin / 100));
+
+  // Revenue (profit before GST)
+  const totalRevenue = asp - msp;
+
+  // Update UI
   document.getElementById("msp").value = msp;
   document.getElementById("asp").value = asp;
   document.getElementById("gasp").value = gasp;
