@@ -817,7 +817,7 @@ body {
   <div class="nav-sidebar-body">
     <ul class="nav-sidebar-menu">
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" href="../index.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" href="/index.php">
           <i class="bi bi-house"></i>
           Home
         </a>
@@ -829,30 +829,36 @@ body {
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
         <div class="collapse nav-sidebar-dropdown-menu" id="perfumeSubmenu">
-          <a class="nav-sidebar-dropdown-item" href="./products/perfume-men.php">Him</a>
-          <a class="nav-sidebar-dropdown-item" href="./products/perfume-women.php">Her</a>
-          <a class="nav-sidebar-dropdown-item" href="./products/perfume.php">Unisex</a>
+          <a class="nav-sidebar-dropdown-item" href="/products/perfume-men.php">Him</a>
+          <a class="nav-sidebar-dropdown-item" href="/products/perfume-women.php">Her</a>
+          <a class="nav-sidebar-dropdown-item" href="/products/perfume.php">Unisex</a>
         </div>
       </li>
       
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="./products/attar.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="/products/attar.php">
           <i class="bi bi-flower1"></i>
           ATTARS
         </a>
       </li>
       
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'EssenceOil.php' ? 'active' : '' ?>" href="/products/EssenceOil.php">
           <i class="bi bi-droplet-half"></i>
           AROMA OILS
         </a>
       </li>
       
       <li class="nav-sidebar-item">
-        <a class="nav-sidebar-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="./products/diffuser.php">
+        <a class="nav-sidebar-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="/products/diffuser.php">
           <i class="bi bi-wind"></i>
           DIFFUSERS
+        </a>
+      </li>
+      <li class="nav-sidebar-item">
+        <a class="nav-sidebar-link <?= $currentPage === 'faqs.php' ? 'active' : '' ?>" href="/faqs.php">
+          <i class="bi bi-question-circle"></i>
+          FAQs
         </a>
       </li>
     </ul>
@@ -862,7 +868,7 @@ body {
 <!-- Professional Navbar -->
 <nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
   <div class="container">
-<a class="navbar-brand" href="../index.php">
+<a class="navbar-brand" href="/index.php">
   <img src="../assets/adalogo.png" alt="ADA AROMAS Logo" style="width: 40px; height: auto; border-radius: 50%;">
   <img src="../assets/adaname.png" alt="ADAAROMAS" style="height: 32px; width: auto; margin-left: 8px;">
 </a>
@@ -894,32 +900,32 @@ body {
             PERFUMES
           </a>
           <ul class="dropdown-menu" aria-labelledby="perfumeDropdown">
-            <li><a class="dropdown-item" href="../products/perfume-men.php">Him</a></li>
-            <li><a class="dropdown-item" href="../products/perfume-women.php">Her</a></li>
-            <li><a class="dropdown-item" href="../products/perfume.php">Unisex</a></li>
+            <li><a class="dropdown-item" href="/products/perfume-men.php">Him</a></li>
+            <li><a class="dropdown-item" href="/products/perfume-women.php">Her</a></li>
+            <li><a class="dropdown-item" href="/products/perfume.php">Unisex</a></li>
           </ul>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="./products/attar.php">
+          <a class="nav-link <?= $currentPage === 'attar.php' ? 'active' : '' ?>" href="/products/attar.php">
             ATTARS
           </a>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'Essenceoil.php' ? 'active' : '' ?>" href="./products/Essenceoil.php">
+          <a class="nav-link <?= $currentPage === 'EssenceOil.php' ? 'active' : '' ?>" href="/products/EssenceOil.php">
             AROMA OILS
           </a>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="./products/diffuser.php">
+          <a class="nav-link <?= $currentPage === 'diffuser.php' ? 'active' : '' ?>" href="/products/diffuser.php">
             DIFFUSERS
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link <?= $currentPage === 'faqs.php' ? 'active' : '' ?>" href="./faqs.php">
+          <a class="nav-link <?= $currentPage === 'faqs.php' ? 'active' : '' ?>" href="/faqs.php">
             FAQs
           </a>
         </li>
