@@ -829,9 +829,9 @@ body {
           <i class="bi bi-chevron-down dropdown-icon"></i>
         </button>
         <div class="collapse nav-sidebar-dropdown-menu" id="perfumeSubmenu">
-          <a class="nav-sidebar-dropdown-item" href="./products/perfume-men.php">For Him</a>
-          <a class="nav-sidebar-dropdown-item" href="./products/perfume-women.php">For Her</a>
-          <a class="nav-sidebar-dropdown-item" href="./products/perfume.php">All Collection</a>
+          <a class="nav-sidebar-dropdown-item" href="./products/perfume-men.php">Him</a>
+          <a class="nav-sidebar-dropdown-item" href="./products/perfume-women.php">Her</a>
+          <a class="nav-sidebar-dropdown-item" href="./products/perfume.php">Unisex</a>
         </div>
       </li>
       
@@ -894,9 +894,9 @@ body {
             PERFUMES
           </a>
           <ul class="dropdown-menu" aria-labelledby="perfumeDropdown">
-            <li><a class="dropdown-item" href="../products/perfume-men.php">For Him</a></li>
-            <li><a class="dropdown-item" href="../products/perfume-women.php">For Her</a></li>
-            <li><a class="dropdown-item" href="../products/perfume.php">All Collection</a></li>
+            <li><a class="dropdown-item" href="../products/perfume-men.php">Him</a></li>
+            <li><a class="dropdown-item" href="../products/perfume-women.php">Her</a></li>
+            <li><a class="dropdown-item" href="../products/perfume.php">Unisex</a></li>
           </ul>
         </li>
         
