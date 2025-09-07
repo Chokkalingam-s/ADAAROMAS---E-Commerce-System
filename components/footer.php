@@ -197,6 +197,18 @@ function isEssenceOil(product) {
 function getEssenceOilItems(cart) {
   return cart.filter(p => isEssenceOil(p));
 }
+// Detect Attar
+function isAttar(product) {
+  return product.category && product.category.toLowerCase() === "attar";
+}
+function getAttarItems(cart) {
+  return cart.filter(p => isAttar(p));
+}
+
+// Check Attar size >= 12ml
+function attarIsValidSize(product) {
+  return !isNaN(product.size) && Number(product.size) >= 12;
+}
 
 function addToCart(product) {
   const cart = getCart();
@@ -212,13 +224,18 @@ if (isEssenceOil(product)) {
         const quantity = (essenceItems.length === 0) ? 3 : 1; // First EO → 3, others → 1
         cart.push({ ...product, quantity });
     }
+} else if (isAttar(product)) {
+  const attarItems = getAttarItems(cart);
+  if (index !== -1) {
+    cart[index].quantity += 1;
+  } else {
+    const quantity = (attarItems.length === 0) ? 3 : 1; // First Attar → 3, others → 1
+    cart.push({ ...product, quantity });
+  }
 } else {
-    // Normal products (no restrictions)
-    if (index !== -1) {
-        cart[index].quantity += 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
+  // Normal products
+  if (index !== -1) cart[index].quantity += 1;
+  else cart.push({ ...product, quantity: 1 });
 }
 
 
@@ -261,6 +278,28 @@ function updateQuantity(title, change) {
   } else {
     if (item.quantity < 1) item.quantity = 1;
   }
+
+  if (isAttar(item)) {
+  const attarItems = getAttarItems(cart);
+
+  item.quantity += change;
+  if (item.quantity < 1) item.quantity = 1;
+
+  // Rule 1: At least 3 total Attar
+  const totalAttar = attarItems.reduce((s, p) => s + p.quantity, 0);
+  if (totalAttar < 3) {
+    alert("❌ Minimum 3 units of Attar required.");
+    item.quantity = Math.max(item.quantity, 3);
+  }
+
+  // Rule 2: At least 2 Attar ≥ 12ml
+  const bigAttars = attarItems.filter(p => attarIsValidSize(p));
+  if (bigAttars.length < 2) {
+    alert("❌ At least 2 Attar products must be 12ml or above.");
+    if (change > 0) item.quantity -= change; // rollback
+  }
+}
+
 
   saveCart(cart);
   renderCart();
@@ -337,36 +376,6 @@ document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
   renderRecommendations();
 });
-</script>
-
-
-
-<!--Enable Payment button script -->
-<script>
-const payButton = document.getElementById('rzp-button1');
-const billingForm = document.getElementById('billingForm');
-
-// Disable button initially
-payButton.disabled = true;
-payButton.style.opacity = 0.6;
-
-// Monitor changes on form
-billingForm.addEventListener('input', checkFormValidity);
-
-function checkFormValidity() {
-  const form = billingForm;
-  const requiredFields = form.querySelectorAll('[required]');
-  let allFilled = true;
-
-  requiredFields.forEach(field => {
-    if (!field.value.trim()) {
-      allFilled = false;
-    }
-  });
-
-  payButton.disabled = !allFilled;
-  payButton.style.opacity = allFilled ? 1 : 0.6;
-}
 </script>
 
 <!-- checkout.php script -->
@@ -496,7 +505,25 @@ function updateCheckoutQuantityEncoded(encodedTitle, change) {
         if (item.quantity < 1) item.quantity = 1;
       }
     }
+  }else if (isAttar(item)) {
+  const attarItems = getAttarItems(cart);
+  const totalAfter = attarItems.reduce((s, it) => s + it.quantity, 0);
+
+  // Rule 1: At least 3 Attar total
+  if (totalAfter < 3) {
+    alert("❌ Minimum 3 units of Attar required.");
+    item.quantity = Math.max(item.quantity, 3);
   }
+
+  // Rule 2: At least 2 Attar must be ≥ 12ml
+  const bigAttars = attarItems.filter(p => attarIsValidSize(p));
+  if (bigAttars.length < 2) {
+    alert("❌ At least 2 Attar products must be 12ml or above.");
+    item.quantity -= change; // rollback
+    if (item.quantity < 1) item.quantity = 1;
+  }
+}
+
 
   saveCart(cart);
   renderCheckoutOrder();
@@ -519,6 +546,23 @@ function removeFromCheckoutEncoded(encodedTitle) {
       return;
     }
   }
+  if (isAttar(item)) {
+  const remaining = cart.filter(p => p.title !== title);
+  const remainingAttars = getAttarItems(remaining);
+
+  const totalAttar = remainingAttars.reduce((s, i) => s + i.quantity, 0);
+  if (totalAttar < 3 && totalAttar > 0) {
+    alert("❌ Cannot remove this Attar — minimum 3 Attar units are required.");
+    return;
+  }
+
+  const bigAttars = remainingAttars.filter(p => attarIsValidSize(p));
+  if (bigAttars.length < 2 && remainingAttars.length > 0) {
+    alert("❌ At least 2 Attar products in your cart must be 12ml or above.");
+    return;
+  }
+}
+
 
   cart = cart.filter(p => p.title !== title);
   saveCart(cart);
@@ -650,6 +694,34 @@ function applyDiscount(coupon) {
   document.getElementById('totalPrice').innerText = discountedTotal.toFixed(0);
   document.getElementById('discountInfo').innerText = `Coupon applied! You saved ₹${discount.toFixed(0)}.`;
   document.getElementById('discountInfo').style.display = 'block';
+}
+</script>
+
+<!--Enable Payment button script -->
+<script>
+const payButton = document.getElementById('rzp-button1');
+const billingForm = document.getElementById('billingForm');
+
+// Disable button initially
+payButton.disabled = true;
+payButton.style.opacity = 0.6;
+
+// Monitor changes on form
+billingForm.addEventListener('input', checkFormValidity);
+
+function checkFormValidity() {
+  const form = billingForm;
+  const requiredFields = form.querySelectorAll('[required]');
+  let allFilled = true;
+
+  requiredFields.forEach(field => {
+    if (!field.value.trim()) {
+      allFilled = false;
+    }
+  });
+
+  payButton.disabled = !allFilled;
+  payButton.style.opacity = allFilled ? 1 : 0.6;
 }
 </script>
 
