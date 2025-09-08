@@ -103,7 +103,7 @@ foreach ($products as $p) {
 $inStock = $_GET['inStock'] ?? '1';
 $outOfStock = $_GET['outOfStock'] ?? '0';
 $min = $_GET['min'] ?? 0;
-$max = $_GET['max'] ?? 2000;
+$max = $_GET['max'] ?? 5000;
 
 $filteredProducts = array_filter($products, function ($p) use ($inStock, $outOfStock, $min, $max) {
   $stockStatus = $p['stock'] ? 'in' : 'out';

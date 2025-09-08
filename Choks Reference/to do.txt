@@ -1,7 +1,4 @@
 TO DO:
-filters 5000
-price range - window increase
-
 logo left align in laptop
 
 admin crm change username and password 
@@ -31,6 +28,8 @@ Done:
 > /products/products bug
 > Perfume 3rd image bug resolved
 > attar 3 units - of 12ml Tried
+> Price range ui fixed 
+> 5000 Max price filter incorporated
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
