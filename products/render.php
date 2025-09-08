@@ -197,6 +197,22 @@
     font-size: 0.9rem;
   }
 
+  .noUi-target {
+  overflow: visible;   /* <-- makes the full circle visible */
+}
+
+.noUi-horizontal .noUi-handle {
+  right: -10px;  /* adjust slightly instead of -11px */
+}
+
+#priceSlider, #mobilePriceSlider {
+  margin: 1.5rem 0;
+  height: 6px;
+  padding: 0 12px;  /* <-- space for handles */
+}
+
+
+
   /* Products Grid - FIXED: Proper spacing without affecting card size */
   .products-grid {
     margin: 0 -0.5rem; /* Negative margin to offset column padding */
