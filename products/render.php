@@ -575,7 +575,7 @@
         <h4 class="filters-title">Filters</h4>
         
         <div class="filter-tags">
-          <?php if ($min > 0 || $max < 2000): ?>
+          <?php if ($min > 0 || $max < 5000): ?>
             <span class="filter-tag">
               Price: ₹<?= $min ?> – ₹<?= $max ?>
               <a href="?inStock=<?= $inStock ?>&outOfStock=<?= $outOfStock ?>" class="filter-tag-close" title="Remove filter">&times;</a>
@@ -800,7 +800,7 @@
       step: 10,
       range: {
         min: 0,
-        max: 2000
+        max: 5000
       },
       tooltips: false,
       format: {
@@ -834,7 +834,7 @@
       step: 10,
       range: {
         min: 0,
-        max: 2000
+        max: 5000
       },
       tooltips: false,
       format: {
