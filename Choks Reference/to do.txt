@@ -1,8 +1,5 @@
 TO DO:
 logo left align in laptop
-
-admin crm change username and password 
-
 initial 17 products for aroma oil
 
 3rd image for essence oil ( would be shared )
@@ -30,6 +27,7 @@ Done:
 > attar 3 units - of 12ml Tried
 > Price range ui fixed 
 > 5000 Max price filter incorporated
+> admin crm change username and password 
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
