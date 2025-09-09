@@ -129,8 +129,8 @@ $products = $uniqueProducts;
         $title = $p['name'];
         $image = $p['image'];
         $backImage = $p['backImage'] ?? $p['image'];
-        $price = $p['asp'];
-        $mrp = $p['mrp'];
+        $price = intval($p['asp']);
+        $mrp = intval($p['mrp']);
         $productId = $p['productId'];
         $size = $p['size'] ?? '1 Nos';
         // Step 1: Get all same name + category product variants
@@ -157,16 +157,16 @@ if ($available) {
   // Use the available variant details
   $productId = $available['productId'];
   $size = $available['size'];
-  $price = $available['asp'];
-  $mrp = $available['mrp'];
+$price = intval($available['asp']);
+$mrp = intval($available['mrp']);
   $inStock = true;
 } else {
   // fallback - still render with lowest size but disable cart
   $fallback = $variants[0];
   $productId = $fallback['productId'];
   $size = $fallback['size'];
-  $price = $fallback['asp'];
-  $mrp = $fallback['mrp'];
+$price = intval($available['asp']);
+$mrp = intval($available['mrp']);
   $inStock = false;
 }
 
